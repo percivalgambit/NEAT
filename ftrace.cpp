@@ -46,16 +46,14 @@ INT32 Usage()
  * @param[in]   numInstInBbl    number of instructions in the basic block
  * @note use atomic operations for multi-threaded applications
  */
-VOID print_fargs(INS *ins, CONTEXT *ctxt)
+VOID print_fargs(INS ins, CONTEXT *ctxt)
 {
     PIN_REGISTER st0, st1;
-
-    string ins_name = INS_Mnemonic(*ins);
 
     PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
     PIN_GetContextRegval(ctxt, REG_ST1, (UINT8 *)st1.byte);
 
-    TraceFile << ins_name << " " << st0.dbl << " " << st1.dbl << endl;
+    TraceFile << INS_Mnemonic(ins) << " " << *st0.dbl << " " << *st1.dbl << endl;
 }
 
 VOID print_fresult(CONTEXT *ctxt)
@@ -64,7 +62,7 @@ VOID print_fresult(CONTEXT *ctxt)
 
     PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
 
-    TraceFile << "  returns " << st0.dbl << endl;
+    TraceFile << "  returns " << *st0.dbl << endl;
 }
 
 /* ===================================================================== */
@@ -98,16 +96,16 @@ BOOL isFpInstruction(INS ins)
  */
 VOID Trace(INS ins, VOID *v)
 {
-    if (isFpInstruction(ins))
-    {
+    //if (isFpInstruction(ins))
+    //{
         // Insert a call to print_fargs before every fp instruction, and pass it
         // the values of the top two fp stack registers
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fargs, IARG_PTR, &ins, IARG_CONTEXT, IARG_END);
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fargs, IARG_ADDRINT, ins, IARG_CONTEXT, IARG_END);
 
         // Insert a call to print_fresult after every fp instruction, and pass it
         // the values of the top fp stack register
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fresult, IARG_CONTEXT, IARG_END);
-    }
+    //}
 }
 
 /*!
