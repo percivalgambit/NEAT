@@ -4,18 +4,22 @@
  *  and could serve as the starting point for developing your first PIN tool
  */
 
-#include <stdio.h>
 #include "pin.H"
+#include <iostream>
+#include <fstream>
 
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
 
-FILE *trace;
+std::ofstream TraceFile;
 
 /* ===================================================================== */
 // Command line switches
 /* ===================================================================== */
+
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
+    "o", "ftrace.out", "specify trace file name");
 
 /* ===================================================================== */
 // Utilities
@@ -26,10 +30,9 @@ FILE *trace;
  */
 INT32 Usage()
 {
-    PIN_ERROR("This tool produces a trace of floating point "
-              "arithmetic and comparison instruction calls.\n"
-              + KNOB_BASE::StringKnobSummary() + "\n");
-
+    cerr << "This tool produces a trace of floating point "
+            "arithmetic and comparison instruction calls." << endl;
+    cerr << endl << KNOB_BASE::StringKnobSummary() << endl;
     return -1;
 }
 
@@ -43,36 +46,30 @@ INT32 Usage()
  * @param[in]   numInstInBbl    number of instructions in the basic block
  * @note use atomic operations for multi-threaded applications
  */
-VOID print_fargs(CHAR *op, PIN_REGISTER *arg1, PIN_REGISTER *arg2)
+VOID print_fargs(INS *ins, CONTEXT *ctxt)
 {
-    fprintf(trace, "%s %f %f\n", op, *arg1->dbl, *arg2->dbl);
+    PIN_REGISTER st0, st1;
+
+    string ins_name = INS_Mnemonic(*ins);
+
+    PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
+    PIN_GetContextRegval(ctxt, REG_ST1, (UINT8 *)st1.byte);
+
+    TraceFile << ins_name << " " << st0.dbl << " " << st1.dbl << endl;
 }
 
-VOID print_fresult(PIN_REGISTER *result)
+VOID print_fresult(CONTEXT *ctxt)
 {
-    fprintf(trace, "%f\n", *result->dbl);
+    PIN_REGISTER st0;
+
+    PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
+
+    TraceFile << "  returns " << st0.dbl << endl;
 }
 
 /* ===================================================================== */
 // Instrumentation callbacks
 /* ===================================================================== */
-
-/*!
- * Insert call to the CountBbl() analysis routine before every basic block
- * of the trace.
- * This function is called every time a new trace is encountered.
- * @param[in]   trace    trace to be instrumented
- * @param[in]   v        value specified by the tool in the TRACE_AddInstrumentFunction
- *                       function call
- */
-VOID Trace(INS ins, VOID *v)
-{
-    // Insert a call to print_fargs before every fp instruction, and pass it
-    // the values of the top two fp stack registers
-
-    // Insert a call to print_fresult after every fp instruction, and pass it
-    // the values of the top fp stack register
-}
 
 // returns true if an instruction is an arithmentic or comparison floating-point instruction
 BOOL isFpInstruction(INS ins)
@@ -92,6 +89,28 @@ BOOL isFpInstruction(INS ins)
 }
 
 /*!
+ * Insert call to the CountBbl() analysis routine before every basic block
+ * of the trace.
+ * This function is called every time a new trace is encountered.
+ * @param[in]   trace    trace to be instrumented
+ * @param[in]   v        value specified by the tool in the TRACE_AddInstrumentFunction
+ *                       function call
+ */
+VOID Trace(INS ins, VOID *v)
+{
+    if (isFpInstruction(ins))
+    {
+        // Insert a call to print_fargs before every fp instruction, and pass it
+        // the values of the top two fp stack registers
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fargs, IARG_PTR, &ins, IARG_CONTEXT, IARG_END);
+
+        // Insert a call to print_fresult after every fp instruction, and pass it
+        // the values of the top fp stack register
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fresult, IARG_CONTEXT, IARG_END);
+    }
+}
+
+/*!
  * Print out analysis results.
  * This function is called when the application exits.
  * @param[in]   code            exit code of the application
@@ -100,8 +119,7 @@ BOOL isFpInstruction(INS ins)
  */
 VOID Fini(INT32 code, VOID *v)
 {
-    fprintf(trace, "#eof\n");
-    fclose(trace);
+    TraceFile.close();
 }
 
 /*!
@@ -119,6 +137,11 @@ int main(int argc, char *argv[])
     {
         return Usage();
     }
+
+    // Write to a file since cout and cerr maybe closed by the application
+    TraceFile.open(KnobOutputFile.Value().c_str());
+    TraceFile << hex;
+    TraceFile.setf(ios::showbase);
 
     // Register Trace to be called to instrument instructions
     INS_AddInstrumentFunction(Trace, 0);
