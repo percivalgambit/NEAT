@@ -50,8 +50,6 @@ BOOL isFpInstruction(INS ins)
         case XED_ICLASS_SUBSS:
         case XED_ICLASS_MULSS:
         case XED_ICLASS_DIVSS:
-        case XED_ICLASS_COMISS:
-        case XED_ICLASS_UCOMISS:
             return true;
         default:
             return false;
@@ -71,7 +69,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
 
-    TraceFile << OPCODE_StringShort(op) << " " << *reg1.dbl << " " << *reg2.dbl << endl;
+    TraceFile << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *reg2.flt << endl;
 }
 
 VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)
@@ -80,7 +78,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
 
-    TraceFile << OPCODE_StringShort(op) << " " << *reg1.dbl << " " << *(double *)operand2 << endl;
+    TraceFile << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *(float *)operand2 << endl;
 }
 
 VOID print_fresult(REG operand2, CONTEXT *ctxt)
@@ -89,7 +87,7 @@ VOID print_fresult(REG operand2, CONTEXT *ctxt)
 
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
 
-    TraceFile << "  " << *result.dbl << endl;
+    TraceFile << "  " << *result.flt << endl;
 }
 
 /* ===================================================================== */
@@ -141,7 +139,7 @@ VOID Trace(INS ins, VOID *v)
         // Insert a call to print_fresult after every fp instruction, and pass it
         // the values of the top fp stack register
         INS_InsertCall(ins,
-                       IPOINT_BEFORE,
+                       IPOINT_AFTER,
                        AFUNPTR(print_fresult),
                        IARG_UINT32,
                        REG(INS_OperandReg(ins, 0)),
