@@ -40,51 +40,61 @@ INT32 Usage()
 // Analysis routines
 /* ===================================================================== */
 
-/*!
- * Increase counter of the executed basic blocks and instructions.
- * This function is called for every basic block when it is about to be executed.
- * @param[in]   numInstInBbl    number of instructions in the basic block
- * @note use atomic operations for multi-threaded applications
- */
-VOID print_fargs(INS ins, CONTEXT *ctxt)
-{
-    PIN_REGISTER st0, st1;
-
-    PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
-    PIN_GetContextRegval(ctxt, REG_ST1, (UINT8 *)st1.byte);
-
-    TraceFile << INS_Mnemonic(ins) << " " << *st0.dbl << " " << *st1.dbl << endl;
-}
-
-VOID print_fresult(CONTEXT *ctxt)
-{
-    PIN_REGISTER st0;
-
-    PIN_GetContextRegval(ctxt, REG_ST0, (UINT8 *)st0.byte);
-
-    TraceFile << "  returns " << *st0.dbl << endl;
-}
-
-/* ===================================================================== */
-// Instrumentation callbacks
-/* ===================================================================== */
-
 // returns true if an instruction is an arithmentic or comparison floating-point instruction
 BOOL isFpInstruction(INS ins)
 {
     OPCODE op = INS_Opcode(ins);
 
     switch(op) {
-        case XED_ICLASS_FADD:
-        case XED_ICLASS_FSUB:
-        case XED_ICLASS_FMUL:
-        case XED_ICLASS_FDIV:
-        case XED_ICLASS_FCOM:
+        case XED_ICLASS_ADDSS:
+        case XED_ICLASS_SUBSS:
+        case XED_ICLASS_MULSS:
+        case XED_ICLASS_DIVSS:
+        case XED_ICLASS_COMISS:
+        case XED_ICLASS_UCOMISS:
             return true;
         default:
             return false;
     }
 }
+
+/*!
+ * Increase counter of the executed basic blocks and instructions.
+ * This function is called for every basic block when it is about to be executed.
+ * @param[in]   numInstInBbl    number of instructions in the basic block
+ * @note use atomic operations for multi-threaded applications
+ */
+VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)
+{
+    PIN_REGISTER reg1, reg2;
+
+    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
+    PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
+
+    TraceFile << OPCODE_StringShort(op) << " " << *reg1.dbl << " " << *reg2.dbl << endl;
+}
+
+VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)
+{
+    PIN_REGISTER reg1;
+
+    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
+
+    TraceFile << OPCODE_StringShort(op) << " " << *reg1.dbl << " " << *(double *)operand2 << endl;
+}
+
+VOID print_fresult(REG operand2, CONTEXT *ctxt)
+{
+    PIN_REGISTER result;
+
+    PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
+
+    TraceFile << "  " << *result.dbl << endl;
+}
+
+/* ===================================================================== */
+// Instrumentation callbacks
+/* ===================================================================== */
 
 /*!
  * Insert call to the CountBbl() analysis routine before every basic block
@@ -96,16 +106,48 @@ BOOL isFpInstruction(INS ins)
  */
 VOID Trace(INS ins, VOID *v)
 {
-    //if (isFpInstruction(ins))
-    //{
+    if (isFpInstruction(ins))
+    {
         // Insert a call to print_fargs before every fp instruction, and pass it
         // the values of the top two fp stack registers
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fargs, IARG_ADDRINT, ins, IARG_CONTEXT, IARG_END);
+        if (INS_OperandIsReg(ins, 1))
+        {
+            INS_InsertCall(ins,
+                           IPOINT_BEFORE,
+                           AFUNPTR(print_reg_fargs),
+                           IARG_UINT32,
+                           INS_Opcode(ins),
+                           IARG_UINT32,
+                           REG(INS_OperandReg(ins, 0)),
+                           IARG_UINT32,
+                           REG(INS_OperandReg(ins, 1)),
+                           IARG_CONTEXT,
+                           IARG_END);
+        }
+        else
+        {
+            INS_InsertCall(ins,
+                           IPOINT_BEFORE,
+                           AFUNPTR(print_mem_fargs),
+                           IARG_UINT32,
+                           INS_Opcode(ins),
+                           IARG_UINT32,
+                           REG(INS_OperandReg(ins, 0)),
+                           IARG_MEMORYREAD_EA,
+                           IARG_CONTEXT,
+                           IARG_END);
+        }
 
         // Insert a call to print_fresult after every fp instruction, and pass it
         // the values of the top fp stack register
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)print_fresult, IARG_CONTEXT, IARG_END);
-    //}
+        INS_InsertCall(ins,
+                       IPOINT_BEFORE,
+                       AFUNPTR(print_fresult),
+                       IARG_UINT32,
+                       REG(INS_OperandReg(ins, 0)),
+                       IARG_CONTEXT,
+                       IARG_END);
+    }
 }
 
 /*!
