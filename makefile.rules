@@ -41,7 +41,7 @@ TOOL_ROOTS :=
 SA_TOOL_ROOTS :=
 
 # This defines all the applications that will be run during the tests.
-APP_ROOTS :=
+APP_ROOTS := sse_sample_app
 
 # This defines any additional object files that need to be compiled.
 OBJECT_ROOTS :=
@@ -51,7 +51,6 @@ DLL_ROOTS :=
 
 # This defines any static libraries (archives), that need to be built.
 LIB_ROOTS :=
-
 
 ##############################################################
 #
@@ -63,6 +62,11 @@ LIB_ROOTS :=
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
+ftrace.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace.out
+	echo "" > $(OBJDIR)ftrace_ref.out
+	$(CMP) $(OBJDIR)ftrace.out $(OBJDIR)ftrace_ref.out
+	$(RM) $(OBJDIR)ftrace*.out
 
 ##############################################################
 #
@@ -72,6 +76,14 @@ LIB_ROOTS :=
 
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
+
+###### Special applications' build rules ######
+
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): sse_sample_app.c
+	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
+
+###### Special target rules ######
+
 run: $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 ifndef PROG
 	@echo "Please specify a PROG to instrument"

@@ -12,14 +12,9 @@
 // Global variables
 /* ================================================================== */
 
-std::ofstream TraceFile;
-
 /* ===================================================================== */
 // Command line switches
 /* ===================================================================== */
-
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
-    "o", "ftrace.out", "specify trace file name");
 
 /* ===================================================================== */
 // Utilities
@@ -69,7 +64,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
 
-    TraceFile << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *reg2.flt << endl;
+    cout << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *reg2.flt << endl;
 }
 
 VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)
@@ -78,7 +73,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
 
-    TraceFile << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *(float *)operand2 << endl;
+    cout << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *(float *)operand2 << endl;
 }
 
 VOID print_fresult(REG operand2, CONTEXT *ctxt)
@@ -87,7 +82,7 @@ VOID print_fresult(REG operand2, CONTEXT *ctxt)
 
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
 
-    TraceFile << "  " << *result.flt << endl;
+    cout << "  " << *result.flt << endl;
 }
 
 /* ===================================================================== */
@@ -157,7 +152,6 @@ VOID Trace(INS ins, VOID *v)
  */
 VOID Fini(INT32 code, VOID *v)
 {
-    TraceFile.close();
 }
 
 /*!
@@ -175,11 +169,6 @@ int main(int argc, char *argv[])
     {
         return Usage();
     }
-
-    // Write to a file since cout and cerr maybe closed by the application
-    TraceFile.open(KnobOutputFile.Value().c_str());
-    TraceFile << hex;
-    TraceFile.setf(ios::showbase);
 
     // Register Trace to be called to instrument instructions
     INS_AddInstrumentFunction(Trace, 0);
