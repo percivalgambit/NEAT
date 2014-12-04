@@ -64,9 +64,8 @@ LIB_ROOTS :=
 
 ftrace.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace.out
-	echo "" > $(OBJDIR)ftrace_ref.out
-	$(CMP) $(OBJDIR)ftrace.out $(OBJDIR)ftrace_ref.out
-	$(RM) $(OBJDIR)ftrace*.out
+	$(DIFF) $(OBJDIR)ftrace.out ftrace.reference
+	$(RM) $(OBJDIR)ftrace.out
 
 ##############################################################
 #
