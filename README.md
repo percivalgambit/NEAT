@@ -20,3 +20,5 @@ For the IA-32 architecture, use "obj-ia32" instead of "obj-intel64"
 To run the tests for this pintool, run the following command:
 
     make test
+
+The latest documentation can be found here: [http://percivalgambit.github.io/ftrace/] (http://percivalgambit.github.io/ftrace/)
