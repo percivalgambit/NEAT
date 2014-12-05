@@ -1,6 +1,17 @@
+
+/*! @file
+ *  This is a sample application using SSE floating-point arithmetic instructions to
+ * test the ftrace tool.
+ */
+
 #include <xmmintrin.h>
 
-int main() {
+/*!
+ * The main procedure of the application.
+ * @param[in]   argc            total number of elements in the argv array
+ * @param[in]   argv            array of command line arguments
+ */
+int main(int argc, char *argv[]) {
     float a_double[] __attribute__ ((aligned (16))) = { 2.0,  0, 0, 2.0 };
     float b_double[] __attribute__ ((aligned (16))) = { 0.5,  0, 0, 0.5 };
 
