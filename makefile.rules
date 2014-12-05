@@ -97,8 +97,3 @@ endif
 .PHONY: html latex
 html latex: Doxyfile
 	doxygen $^
-
-clean: doc-clean
-
-doc-clean:
-	-rm -rf html/ latex/
