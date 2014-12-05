@@ -93,3 +93,6 @@ else
 	$(PIN) -t $< -- $(PROG)
 endif
 endif
+
+html latex: Doxyfile
+	doxygen $^
