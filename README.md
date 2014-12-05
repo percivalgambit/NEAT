@@ -14,6 +14,7 @@ After cloning the repository, run the following commands:
 Alternatively, after making the pintool, to invoke it from the commandline run the following command:
 
     pin -t obj-intel64/ftrace.so -- <your_program>
+
 For the IA-32 architecture, use "obj-ia32" instead of "obj-intel64"
 
 To run the tests for this pintool, run the following command:
