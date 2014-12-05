@@ -33,32 +33,6 @@ INT32 Usage() {
 /* ===================================================================== */
 // Analysis routines
 /* ===================================================================== */
-/*!
- * Return true if an instruction is an SSE floating-point arithmetic instruction.
- * This function is called on every instruction.
- * @param[in]   ins     the instruction to test
- * @return true if the instruction is an SSE floating-point arithmetic instruction,
- *         false if not
- * @note Currently, the instructions defined as SSE floating-point arithmetic
- *       operations are:
- *  - ADDSS
- *  - SUBSS
- *  - MULSS
- *  - DIVSS
- */
-BOOL isFpInstruction(INS ins) {
-    OPCODE op = INS_Opcode(ins);
-
-    switch(op) {
-        case XED_ICLASS_ADDSS:
-        case XED_ICLASS_SUBSS:
-        case XED_ICLASS_MULSS:
-        case XED_ICLASS_DIVSS:
-            return true;
-        default:
-            return false;
-    }
-}
 
 /*!
  * Print the name of a floating-point instruction and its operands.
@@ -116,6 +90,33 @@ VOID print_fresult(REG operand2, CONTEXT *ctxt) {
 /* ===================================================================== */
 // Instrumentation callbacks
 /* ===================================================================== */
+
+/*!
+ * Return true if an instruction is an SSE floating-point arithmetic instruction.
+ * This function is called on every instruction.
+ * @param[in]   ins     the instruction to test
+ * @return true if the instruction is an SSE floating-point arithmetic instruction,
+ *         false if not
+ * @note Currently, the instructions defined as SSE floating-point arithmetic
+ *       operations are:
+ *  - ADDSS
+ *  - SUBSS
+ *  - MULSS
+ *  - DIVSS
+ */
+BOOL isFpInstruction(INS ins) {
+    OPCODE op = INS_Opcode(ins);
+
+    switch(op) {
+        case XED_ICLASS_ADDSS:
+        case XED_ICLASS_SUBSS:
+        case XED_ICLASS_MULSS:
+        case XED_ICLASS_DIVSS:
+            return true;
+        default:
+            return false;
+    }
+}
 
 /*!
  * Insert calls to the analysis routines before and after every floating-point
