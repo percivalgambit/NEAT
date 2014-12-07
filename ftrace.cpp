@@ -43,6 +43,7 @@ INT32 Usage() {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
+ * @note All operands are printed in hex format so they can more easily be analyzed.
  */
 VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1, reg2;
@@ -50,7 +51,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
 
-    cout << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *reg2.flt << endl;
+    cout << OPCODE_StringShort(op) << " " << hex << *(UINT32 *)reg1.flt << " " << hex << *(UINT32 *)reg2.flt << endl;
 }
 
 /*!
@@ -62,13 +63,14 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
+ * @note All operands are printed in hex format so they can more easily be analyzed.
  */
 VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
 
-    cout << OPCODE_StringShort(op) << " " << *reg1.flt << " " << *(float *)operand2 << endl;
+    cout << OPCODE_StringShort(op) << " " << hex << *(UINT32 *)reg1.flt << " " << hex << *(UINT32 *)operand2 << endl;
 }
 
 /*!
@@ -78,13 +80,14 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
  * @param[in]   operand2    the register where the result of the instruction is stored
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          after the instruction is executed
+ * @note The result is printed in hex format so they can more easily be analyzed.
  */
 VOID print_fresult(REG operand2, CONTEXT *ctxt) {
     PIN_REGISTER result;
 
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
 
-    cout << "  " << *result.flt << endl;
+    cout << "  " << hex << *(UINT32 *)result.flt << endl;
 }
 
 /* ===================================================================== */
