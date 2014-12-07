@@ -102,14 +102,14 @@ $(document).ready(function(){initNavTree('ftrace_8cpp.html','');});
 Functions</h2></td></tr>
 <tr class="memitem:a9c89b15666dec97b4af91ba247b6a230"><td class="memItemLeft" align="right" valign="top">INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a> ()</td></tr>
 <tr class="separator:a9c89b15666dec97b4af91ba247b6a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memItemLeft" align="right" valign="top">BOOL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a> (INS ins)</td></tr>
-<tr class="separator:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a530ae3d178fff7ea0bbcf84cddda9f03"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a> (OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)</td></tr>
 <tr class="separator:a530ae3d178fff7ea0bbcf84cddda9f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5953dcb8b2676b7343942e31fc25a0f"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">print_mem_fargs</a> (OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)</td></tr>
 <tr class="separator:aa5953dcb8b2676b7343942e31fc25a0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76cdaebce86b7e654cdd544259bc4427"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a76cdaebce86b7e654cdd544259bc4427">print_fresult</a> (REG operand2, CONTEXT *ctxt)</td></tr>
 <tr class="separator:a76cdaebce86b7e654cdd544259bc4427"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memItemLeft" align="right" valign="top">BOOL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a> (INS ins)</td></tr>
+<tr class="separator:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0780e667c01391713f7ff52900cad63b"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a0780e667c01391713f7ff52900cad63b">Trace</a> (INS ins, VOID *v)</td></tr>
 <tr class="separator:a0780e667c01391713f7ff52900cad63b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa61669c70de306a0ba47bf5878b9f806"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a> (INT32 code, VOID *v)</td></tr>
@@ -153,7 +153,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00180">180</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00184">184</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -185,7 +185,7 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00049">49</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00110">110</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -220,7 +220,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00189">189</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00193">193</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -254,8 +254,9 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>The result is printed in hex format so they can more easily be analyzed. </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00108">108</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00085">85</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -303,8 +304,9 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>All operands are printed in hex format so they can more easily be analyzed. </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00092">92</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00068">68</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -352,8 +354,9 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>All operands are printed in hex format so they can more easily be analyzed. </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00073">73</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00048">48</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -388,7 +391,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00128">128</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00132">132</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +419,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Fri Dec 5 2014 05:37:08 for ftrace by
+    <li class="footer">Generated on Sun Dec 7 2014 02:34:02 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
