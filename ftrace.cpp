@@ -51,7 +51,6 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
 
-    cout << hex;
     cout << OPCODE_StringShort(op) << " " << *(UINT32 *)reg1.flt << " " << *(UINT32 *)reg2.flt << endl;
 }
 
@@ -71,7 +70,6 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
 
-    cout << hex;
     cout << OPCODE_StringShort(op) << " " << *(UINT32 *)reg1.flt << " " << *(UINT32 *)operand2 << endl;
 }
 
@@ -89,7 +87,6 @@ VOID print_fresult(REG operand2, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
 
-    cout << hex;
     cout << "  " << *(UINT32 *)result.flt << endl;
 }
 
@@ -205,6 +202,9 @@ int main(int argc, char *argv[]) {
 
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
+
+    // Make sure all values are printed as hex values
+    cout << hex;
 
     // Start the program, never returns
     PIN_StartProgram();
