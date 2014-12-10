@@ -147,7 +147,7 @@ VOID Trace(INS ins, VOID *v) {
         }
         else {
             // If an instruction is a floating-point instruction that operates on a
-            // register and a memory location, call print_reg_fargs and pass it the
+            // register and a memory location, call print_mem_fargs and pass it the
             // two operands
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
