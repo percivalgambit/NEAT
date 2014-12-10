@@ -2,6 +2,7 @@
 /*! @file
  *  This is a PIN tool that traces every floating-point arithmetic operation and
  * displays the arguments and results.
+ * @note All values are printed in hex format.
  */
 
 #include "pin.H"
@@ -43,7 +44,6 @@ INT32 Usage() {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
- * @note All values are printed in hex format.
  */
 VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1, reg2;
@@ -63,7 +63,6 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
- * @note All values are printed in hex format.
  */
 VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1;
@@ -80,7 +79,6 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
  * @param[in]   operand2    the register where the result of the instruction is stored
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          after the instruction is executed
- * @note All values are printed in hex format.
  */
 VOID print_fresult(REG operand2, CONTEXT *ctxt) {
     PIN_REGISTER result;
