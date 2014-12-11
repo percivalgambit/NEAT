@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>ftrace: Main Page</title>
+<title>ftrace: ftrace</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -87,22 +87,23 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">ftrace Documentation</div>  </div>
+<div class="title">ftrace </div>  </div>
 </div><!--header-->
 <div class="contents">
-<ul><li><a href="index.html"><span>Main&#160;Page</span></a>
-</li><li><a href="pages.html"><span>Related&#160;Pages</span></a>
-</li><li><a href="files.html"><span>Files</span></a>
-<ul><li><a href="files.html"><span>File&#160;List</span></a>
-</li><li><a href="globals.html"><span>File&#160;Members</span></a>
-</li></ul>
-</li></ul>
-</div><!-- contents -->
+<div class="textblock"><p>A PIN tool to trace the value of the arguments and result of each floating point instruction in an IA-32 or x86-64 program.</p>
+<h2>Setup </h2>
+<p>After cloning the repository, run the following commands: </p><pre class="fragment">make
+make PROG=&lt;your_program&gt; run
+</pre><p>Alternatively, after making the pintool, to invoke it from the commandline run the following command: </p><pre class="fragment">pin -t obj-intel64/ftrace.so -- &lt;your_program&gt;
+</pre><p>For the IA-32 architecture, use "obj-ia32" instead of "obj-intel64"</p>
+<p>To run the tests for this pintool, run the following command: </p><pre class="fragment">make test
+</pre><p>The latest documentation can be found here: <a href="http://percivalgambit.github.io/ftrace/">http://percivalgambit.github.io/ftrace/</a> </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Dec 9 2014 20:02:51 for ftrace by
+    <li class="footer">Generated on Wed Dec 10 2014 21:37:42 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

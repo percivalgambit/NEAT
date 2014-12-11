@@ -1,7 +1,6 @@
 var NAVTREE =
 [
   [ "ftrace", "index.html", [
-    [ "ftrace", "md_README.html", null ],
     [ "Files", null, [
       [ "File List", "files.html", "files" ],
       [ "File Members", "globals.html", [

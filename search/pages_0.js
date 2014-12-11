@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ftrace',['ftrace',['../md_README.html',1,'']]]
+  ['ftrace',['ftrace',['../index.html',1,'']]]
 ];
