@@ -9,16 +9,14 @@ var indexSectionsWithContent =
 {
   0: "fimpstu",
   1: "fs",
-  2: "fimptu",
-  3: "f"
+  2: "fimptu"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "files",
-  2: "functions",
-  3: "pages"
+  2: "functions"
 };
 
 function convertToId(search)
