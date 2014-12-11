@@ -80,10 +80,10 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          after the instruction is executed
  */
-VOID print_fresult(REG operand2, CONTEXT *ctxt) {
+VOID print_fresult(REG operand1, CONTEXT *ctxt) {
     PIN_REGISTER result;
 
-    PIN_GetContextRegval(ctxt, operand2, (UINT8 *)result.byte);
+    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)result.byte);
 
     cout << "  " << *(UINT32 *)result.flt << endl;
 }
