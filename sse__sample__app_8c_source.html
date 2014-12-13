@@ -93,24 +93,24 @@ $(document).ready(function(){initNavTree('sse__sample__app_8c_source.html','');}
 <a href="sse__sample__app_8c.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97">   12</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]) {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">// Make sure that normal arithmetic operations produce the right output</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keywordtype">float</span> a = 2.0f;        </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordtype">float</span> b = 0.3f;        </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">float</span> c = a + b;       </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">float</span> d = b - a;       </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">float</span> e = a * c;       </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">float</span> f = a / b;       </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">float</span> g = (f + a) / b; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keywordtype">float</span> a = 2.0f;        <span class="comment">// a = 2.0</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordtype">float</span> b = 0.3f;        <span class="comment">// b = 0.3</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">float</span> c = a + b;       <span class="comment">// c = 2.0 + 0.3 = 2.3</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">float</span> d = b - a;       <span class="comment">// d = 0.3 - 2.0 = -1.7</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">float</span> e = a * c;       <span class="comment">// e = 2.0 * 2.3 = 4.6</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">float</span> f = a / b;       <span class="comment">// f = 2.0 / 0.3 = 6.666666...</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">float</span> g = (f + a) / b; <span class="comment">// g = (6.66666... + 2.0) / 0.3 = 28.888885</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// Make sure that arithmetic instructions operating on two registers work correctly</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">float</span> h = b + b;       </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">float</span> h = b + b;       <span class="comment">// h = 0.3 + 0.3 = 0.6</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// Make sure that arithmetic with large and small numbers produces the right output</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">float</span> i = 6.01e+30f;   </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">float</span> j = i + a;       </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">float</span> k = i * a;       </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">float</span> l = 1.2345e-35f; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">float</span> m = l + a;       </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">float</span> n = l + l;       </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">float</span> i = 6.01e+30f;   <span class="comment">// i = 6.01e+30</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">float</span> j = i + a;       <span class="comment">// j = 6.01e+30 + 2.0 = 6.01e+30</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">float</span> k = i * a;       <span class="comment">// k = 6.01e+30 * 2.0 = 1.202e+31</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">float</span> l = 1.2345e-35f; <span class="comment">// l = 1.2345e-35</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">float</span> m = l + a;       <span class="comment">// m = 1.2345e-35 + 2.0 = 2.0</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">float</span> n = l + l;       <span class="comment">// n  = 1.2345e-35 + 1.2345e-35 = 2.4690e-35</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
@@ -121,7 +121,7 @@ $(document).ready(function(){initNavTree('sse__sample__app_8c_source.html','');}
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="sse__sample__app_8c.html">sse_sample_app.c</a></li>
-    <li class="footer">Generated on Sat Dec 13 2014 18:03:20 for ftrace by
+    <li class="footer">Generated on Sat Dec 13 2014 18:12:56 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
