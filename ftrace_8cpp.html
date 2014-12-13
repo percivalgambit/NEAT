@@ -93,8 +93,9 @@ $(document).ready(function(){initNavTree('ftrace_8cpp.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;pin.H&quot;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;iomanip&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
 </div>
 <p><a href="ftrace_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -118,7 +119,7 @@ Functions</h2></td></tr>
 <tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays the arguments and results. </p><dl class="section note"><dt>Note</dt><dd>All values are printed in hex format. </dd></dl>
+<div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays the arguments and results. </p><dl class="section note"><dt>Note</dt><dd>All float values are printed as 8 digit hex numbers padded with 0's. </dd></dl>
 
 <p>Definition in file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -153,7 +154,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00182">182</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00188">188</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -185,7 +186,7 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00108">108</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00114">114</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -220,7 +221,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00191">191</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00197">197</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -249,13 +250,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Print the result of a floating-point instruction. This function is called for every floating-point arithmetic instruction after it has finished executing. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">operand2</td><td>the register where the result of the instruction is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>the register where the result of the instruction is stored </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ctxt</td><td>the context of the instrumented application immediately after the instruction is executed </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00083">83</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00088">88</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -304,7 +305,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00067">67</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00070">70</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +354,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00048">48</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00049">49</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -388,7 +389,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00130">130</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00136">136</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -406,7 +407,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Print out help message. </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00027">27</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00028">28</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +417,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Wed Dec 10 2014 21:46:55 for ftrace by
+    <li class="footer">Generated on Sat Dec 13 2014 18:03:20 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
