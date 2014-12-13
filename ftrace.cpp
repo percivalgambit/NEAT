@@ -2,12 +2,13 @@
 /*! @file
  *  This is a PIN tool that traces every floating-point arithmetic operation and
  * displays the arguments and results.
- * @note All values are printed in hex format.
+ * @note All float values are printed as 8 digit hex numbers padded with 0's.
  */
 
 #include "pin.H"
-#include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 
 /* ================================================================== */
 // Global variables
@@ -51,7 +52,9 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
 
-    cout << OPCODE_StringShort(op) << " " << *(UINT32 *)reg1.flt << " " << *(UINT32 *)reg2.flt << endl;
+    cout << OPCODE_StringShort(op) << " ";
+    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
+    cout << setw(8) << setfill('0') << *(UINT32 *)reg2.flt << endl;
 }
 
 /*!
@@ -69,7 +72,9 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
 
-    cout << OPCODE_StringShort(op) << " " << *(UINT32 *)reg1.flt << " " << *(UINT32 *)operand2 << endl;
+    cout << OPCODE_StringShort(op) << " ";
+    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
+    cout << setw(8) << setfill('0') << *(UINT32 *)operand2 << endl;
 }
 
 /*!
@@ -85,7 +90,8 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, (UINT8 *)result.byte);
 
-    cout << "  " << *(UINT32 *)result.flt << endl;
+    cout << "  ";
+    cout << setw(8) << setfill('0') << *(UINT32 *)result.flt << endl;
 }
 
 /* ===================================================================== */
@@ -201,7 +207,7 @@ int main(int argc, char *argv[]) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    // Make sure all values are printed as hex values
+    // Make sure all values are printed as hex numbers
     cout << hex;
 
     // Start the program, never returns
