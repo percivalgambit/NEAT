@@ -81,7 +81,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
  * Print the result of a floating-point instruction.
  * This function is called for every floating-point arithmetic instruction after it
  * has finished executing.
- * @param[in]   operand2    the register where the result of the instruction is stored
+ * @param[in]   operand1    the register where the result of the instruction is stored
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          after the instruction is executed
  */
