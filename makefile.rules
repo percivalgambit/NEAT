@@ -94,6 +94,6 @@ else
 endif
 endif
 
-.PHONY: html latex
-html latex: Doxyfile
+.PHONY: html
+html: Doxyfile
 	doxygen $^
