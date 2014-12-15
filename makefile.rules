@@ -20,7 +20,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex
+TEST_ROOTS := ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -93,6 +93,12 @@ ftrace_replace_fp_ins_complex.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_complex.out
 	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_complex.out ftrace_replace_fp_ins_complex.reference
 	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+
+ftrace_no_replace.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -fp-replace 0 -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_replace.out
+	$(DIFF) $(OBJDIR)ftrace_no_replace.out ftrace.reference
+	$(RM) $(OBJDIR)ftrace_no_replace.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 
 ##############################################################
 #

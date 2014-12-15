@@ -24,6 +24,12 @@
 KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
                           "turn floating-point instruction tracing on or off");
 
+/**!
+ *  Turn floating-point instruction replacing on or off for the program.
+ */
+KNOB<BOOL> KnobReplaceFPIns(KNOB_MODE_WRITEONCE, "pintool", "fp-replace", "1",
+                          "turn floating-point instruction replacing on or off");
+
 /* ===================================================================== */
 // Utilities
 /* ===================================================================== */
@@ -63,10 +69,12 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     cout << setw(8) << setfill('0') << *(UINT32 *)reg2.flt << endl;
 
 #ifdef REPLACE_FP_FN
-    PIN_REGISTER result;
+    if (KnobReplaceFPIns) {
+        PIN_REGISTER result;
 
-    *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)reg2.flt, op);
-    PIN_SetContextRegval(ctxt, operand1, result.byte);
+        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)reg2.flt, op);
+        PIN_SetContextRegval(ctxt, operand1, result.byte);
+    }
 #endif
 }
 
@@ -90,10 +98,12 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
     cout << setw(8) << setfill('0') << *(UINT32 *)operand2 << endl;
 
 #ifdef REPLACE_FP_FN
-    PIN_REGISTER result;
+    if (KnobReplaceFPIns) {
+        PIN_REGISTER result;
 
-    *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)operand2, op);
-    PIN_SetContextRegval(ctxt, operand1, result.byte);
+        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)operand2, op);
+        PIN_SetContextRegval(ctxt, operand1, result.byte);
+    }
 #endif
 }
 
@@ -157,7 +167,8 @@ VOID Trace(INS ins, VOID *v) {
     if (isFpInstruction(ins)) {
 
 #ifdef REPLACE_FP_FN
-        INS_Delete(ins);
+        if (KnobReplaceFPIns)
+            INS_Delete(ins);
 #endif
 
         REGSET regsIn, regsOut;
