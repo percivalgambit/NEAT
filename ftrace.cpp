@@ -55,12 +55,19 @@ INT32 Usage() {
 VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1, reg2;
 
-    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
-    PIN_GetContextRegval(ctxt, operand2, (UINT8 *)reg2.byte);
+    PIN_GetContextRegval(ctxt, operand1, reg1.byte);
+    PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
     cout << OPCODE_StringShort(op) << " ";
     cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
     cout << setw(8) << setfill('0') << *(UINT32 *)reg2.flt << endl;
+
+#ifdef REPLACE_FP_FN
+    PIN_REGISTER result;
+
+    *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)reg2.flt, op);
+    PIN_SetContextRegval(ctxt, operand1, result.byte);
+#endif
 }
 
 /*!
@@ -76,11 +83,18 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
 VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
     PIN_REGISTER reg1;
 
-    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)reg1.byte);
+    PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
     cout << OPCODE_StringShort(op) << " ";
     cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
     cout << setw(8) << setfill('0') << *(UINT32 *)operand2 << endl;
+
+#ifdef REPLACE_FP_FN
+    PIN_REGISTER result;
+
+    *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)operand2, op);
+    PIN_SetContextRegval(ctxt, operand1, result.byte);
+#endif
 }
 
 /*!
@@ -94,7 +108,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 VOID print_fresult(REG operand1, CONTEXT *ctxt) {
     PIN_REGISTER result;
 
-    PIN_GetContextRegval(ctxt, operand1, (UINT8 *)result.byte);
+    PIN_GetContextRegval(ctxt, operand1, result.byte);
 
     cout << "  ";
     cout << setw(8) << setfill('0') << *(UINT32 *)result.flt << endl;
@@ -142,7 +156,19 @@ BOOL isFpInstruction(INS ins) {
 VOID Trace(INS ins, VOID *v) {
     if (isFpInstruction(ins)) {
 
+#ifdef REPLACE_FP_FN
+        INS_Delete(ins);
+#endif
+
+        REGSET regsIn, regsOut;
+        REGSET_Clear(regsIn);
+        REGSET_Clear(regsOut);
+        REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
+        REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
+
         if (INS_OperandIsReg(ins, 1)) {
+            REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
+
             // If an instruction is a floating-point instruction that operates on two
             // registers, call print_reg_fargs and pass it the two operands
             INS_InsertCall(ins,
@@ -154,7 +180,9 @@ VOID Trace(INS ins, VOID *v) {
                            REG(INS_OperandReg(ins, 0)),
                            IARG_UINT32,
                            REG(INS_OperandReg(ins, 1)),
-                           IARG_CONTEXT,
+                           IARG_PARTIAL_CONTEXT,
+                           &regsIn,
+                           &regsOut,
                            IARG_END);
         }
         else {
@@ -169,9 +197,12 @@ VOID Trace(INS ins, VOID *v) {
                            IARG_UINT32,
                            REG(INS_OperandReg(ins, 0)),
                            IARG_MEMORYREAD_EA,
-                           IARG_CONTEXT,
+                           IARG_PARTIAL_CONTEXT,
+                           &regsIn,
+                           &regsOut,
                            IARG_END);
         }
+
 
         // Call print_fresult after every floating-point instruction, and pass it the
         // result of the instruction

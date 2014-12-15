@@ -3,6 +3,6 @@
 
 #include "pin.H"
 
-float replace_fp_ins_complex(float operand1, float operand2, OPCODE operation);
+FLT32 replace_fp_ins_complex(FLT32 operand1, FLT32 operand2, OPCODE operation);
 
 #endif
