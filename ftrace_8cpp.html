@@ -101,6 +101,10 @@ $(document).ready(function(){initNavTree('ftrace_8cpp.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a38affe937715aa065d87b2c29e7e58be"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;instrument&quot;,&quot;1&quot;,&quot;turn floating-point instruction tracing on or off&quot;)</td></tr>
+<tr class="separator:a38affe937715aa065d87b2c29e7e58be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f1d652654648d584fd9bf089c64828c"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;fp-replace&quot;,&quot;1&quot;,&quot;turn floating-point instruction replacing on or off&quot;)</td></tr>
+<tr class="separator:a4f1d652654648d584fd9bf089c64828c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c89b15666dec97b4af91ba247b6a230"><td class="memItemLeft" align="right" valign="top">INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a> ()</td></tr>
 <tr class="separator:a9c89b15666dec97b4af91ba247b6a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a530ae3d178fff7ea0bbcf84cddda9f03"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a> (OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)</td></tr>
@@ -154,7 +158,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00188">188</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00236">236</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -186,7 +190,97 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00114">114</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00144">144</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a38affe937715aa065d87b2c29e7e58be"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KNOB&lt;BOOL&gt; KnobInstrument </td>
+          <td>(</td>
+          <td class="paramtype">KNOB_MODE_WRITEONCE&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;pintool&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;instrument&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;1&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;turn floating-point instruction tracing on or off&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>! Turn instrumentation on or off for the program. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4f1d652654648d584fd9bf089c64828c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KNOB&lt;BOOL&gt; KnobReplaceFPIns </td>
+          <td>(</td>
+          <td class="paramtype">KNOB_MODE_WRITEONCE&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;pintool&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;fp-replace&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;1&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;turn floating-point instruction replacing on or off&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>! Turn floating-point instruction replacing on or off for the program. </p>
 
 </div>
 </div>
@@ -221,7 +315,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00197">197</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00245">245</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -256,7 +350,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00088">88</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00118">118</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -305,7 +399,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00070">70</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00091">91</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +448,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00049">49</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00061">61</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -389,7 +483,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00136">136</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00166">166</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -407,7 +501,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Print out help message. </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00028">28</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00040">40</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -417,7 +511,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Sat Dec 13 2014 18:12:56 for ftrace by
+    <li class="footer">Generated on Mon Dec 15 2014 00:39:33 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
