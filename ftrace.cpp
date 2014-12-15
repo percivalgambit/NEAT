@@ -18,6 +18,12 @@
 // Command line switches
 /* ===================================================================== */
 
+/**!
+ *  Turn instrumentation on or off for the program.
+ */
+KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
+                          "turn floating-point instruction tracing on or off");
+
 /* ===================================================================== */
 // Utilities
 /* ===================================================================== */
@@ -201,14 +207,16 @@ int main(int argc, char *argv[]) {
         return Usage();
     }
 
-    // Register Trace to be called to instrument instructions
-    INS_AddInstrumentFunction(Trace, 0);
+    if (KnobInstrument) {
+        // Register Trace to be called to instrument instructions
+        INS_AddInstrumentFunction(Trace, 0);
 
-    // Register Fini to be called when the application exits
-    PIN_AddFiniFunction(Fini, 0);
+        // Register Fini to be called when the application exits
+        PIN_AddFiniFunction(Fini, 0);
 
-    // Make sure all values are printed as hex numbers
-    cout << hex;
+        // Make sure all values are printed as hex numbers
+        cout << hex;
+    }
 
     // Start the program, never returns
     PIN_StartProgram();
