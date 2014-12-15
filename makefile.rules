@@ -20,7 +20,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_no_instrument
+TEST_ROOTS := ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -52,6 +52,16 @@ DLL_ROOTS :=
 # This defines any static libraries (archives), that need to be built.
 LIB_ROOTS :=
 
+###### User-defined make variables ######
+
+# This defines the name of the function that will be used to replace all floating-point
+# operations in the instrumented program
+REPLACE_FP_FN :=
+
+# This defines the file containing the function that will replace the floating-point
+# operations in the instrumented program
+REPLACE_FP_FILE :=
+
 ##############################################################
 #
 # Test recipes
@@ -72,6 +82,24 @@ ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_
 	$(DIFF) $(OBJDIR)ftrace_no_instrument.out ftrace_no_instrument.reference
 	$(RM) $(OBJDIR)ftrace_no_instrument.out
 
+ftrace_replace_fp_ins_simple.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_simple.out
+	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_simple.out ftrace_replace_fp_ins_simple.reference
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_simple.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+
+ftrace_replace_fp_ins_complex.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_complex $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_complex.out
+	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_complex.out ftrace_replace_fp_ins_complex.reference
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+
+ftrace_no_replace.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -fp-replace 0 -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_replace.out
+	$(DIFF) $(OBJDIR)ftrace_no_replace.out ftrace.reference
+	$(RM) $(OBJDIR)ftrace_no_replace.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+
 ##############################################################
 #
 # Build rules
@@ -80,6 +108,24 @@ ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_
 
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
+
+###### Special tools' build rules ######
+
+ifdef REPLACE_FP_FN
+
+ifndef REPLACE_FP_FILE
+REPLACE_FP_FILE := $(REPLACE_FP_FN).cpp
+endif
+REPLACE_FP_BASENAME := $(basename $(REPLACE_FP_FILE))
+
+.PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
+$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp $(REPLACE_FP_BASENAME).h
+	$(CXX) -DREPLACE_FP_FN=$(REPLACE_FP_FN) -include $(REPLACE_FP_BASENAME).h $(TOOL_CXXFLAGS)$(COMP_OBJ)$@ $<
+
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(OBJDIR)$(REPLACE_FP_BASENAME)$(OBJ_SUFFIX) $(REPLACE_FP_BASENAME).h
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $(^:%.h=) $(TOOL_LPATHS) $(TOOL_LIBS)
+
+endif
 
 ###### Special applications' build rules ######
 
