@@ -20,7 +20,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS :=
+TEST_ROOTS := ftrace_no_instrument
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -66,6 +66,11 @@ ftrace.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFI
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace.out
 	$(DIFF) $(OBJDIR)ftrace.out ftrace.reference
 	$(RM) $(OBJDIR)ftrace.out
+
+ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -instrument 0 -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_instrument.out
+	$(DIFF) $(OBJDIR)ftrace_no_instrument.out ftrace_no_instrument.reference
+	$(RM) $(OBJDIR)ftrace_no_instrument.out
 
 ##############################################################
 #
