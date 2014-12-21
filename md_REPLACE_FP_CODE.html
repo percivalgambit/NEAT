@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>ftrace: File Members</title>
+<title>ftrace: Replacing floating-point instructions</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('globals_func.html','');});
+$(document).ready(function(){initNavTree('md_REPLACE_FP_CODE.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -85,47 +85,15 @@ $(document).ready(function(){initNavTree('globals_func.html','');});
 </iframe>
 </div>
 
+<div class="header">
+  <div class="headertitle">
+<div class="title">Replacing floating-point instructions </div>  </div>
+</div><!--header-->
 <div class="contents">
-&#160;<ul>
-<li>Fini()
-: <a class="el" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">ftrace.cpp</a>
-</li>
-<li>isFpInstruction()
-: <a class="el" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">ftrace.cpp</a>
-</li>
-<li>KnobInstrument()
-: <a class="el" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">ftrace.cpp</a>
-</li>
-<li>KnobReplaceFPIns()
-: <a class="el" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">ftrace.cpp</a>
-</li>
-<li>main()
-: <a class="el" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">ftrace.cpp</a>
-, <a class="el" href="sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97">sse_sample_app.c</a>
-</li>
-<li>print_fresult()
-: <a class="el" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">ftrace.cpp</a>
-</li>
-<li>print_mem_fargs()
-: <a class="el" href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">ftrace.cpp</a>
-</li>
-<li>print_reg_fargs()
-: <a class="el" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">ftrace.cpp</a>
-</li>
-<li>replace_fp_ins_complex()
-: <a class="el" href="replace__fp__ins__complex_8cpp.html#af8c4d3783ae36d193ad83e67287fbcff">replace_fp_ins_complex.cpp</a>
-</li>
-<li>replace_fp_ins_simple()
-: <a class="el" href="replace__fp__ins__simple_8cpp.html#a0227e7feea8e2a3368c6a39738d62248">replace_fp_ins_simple.cpp</a>
-</li>
-<li>Trace()
-: <a class="el" href="ftrace_8cpp.html#a0780e667c01391713f7ff52900cad63b">ftrace.cpp</a>
-</li>
-<li>Usage()
-: <a class="el" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">ftrace.cpp</a>
-</li>
-</ul>
-</div><!-- contents -->
+<div class="textblock"><p>When compiling the tool with code to replace floating-point instructions, the type signature of the replacement function should be: </p><pre class="fragment">FLT32 &lt;replacement_fn&gt;(FLT32, FLT32, OPCODE)
+</pre><p>The first two function arguments are the two operands to the instruction and the last argument is the opcode of the instruction being replaced. The file containing the replacement function must also include pin.H as a header file.</p>
+<p>See <a class="el" href="replace__fp__ins__simple_8cpp.html">replace_fp_ins_simple.cpp</a> and <a class="el" href="replace__fp__ins__complex_8cpp.html">replace_fp_ins_complex.cpp</a> for examples of replacement functions. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

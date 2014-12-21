@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ftrace',['ftrace',['../index.html',1,'']]]
+  ['replacing_20floating_2dpoint_20instructions',['Replacing floating-point instructions',['../md_REPLACE_FP_CODE.html',1,'']]]
 ];

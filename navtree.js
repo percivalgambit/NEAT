@@ -1,6 +1,7 @@
 var NAVTREE =
 [
   [ "ftrace", "index.html", [
+    [ "Replacing floating-point instructions", "md_REPLACE_FP_CODE.html", null ],
     [ "Files", null, [
       [ "File List", "files.html", "files" ],
       [ "File Members", "globals.html", [

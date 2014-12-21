@@ -7,16 +7,18 @@
 
 var indexSectionsWithContent =
 {
-  0: "fikmpstu",
-  1: "fs",
-  2: "fikmptu"
+  0: "fikmprstu",
+  1: "frs",
+  2: "fikmprtu",
+  3: "r"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "files",
-  2: "functions"
+  2: "functions",
+  3: "pages"
 };
 
 function convertToId(search)
