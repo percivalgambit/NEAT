@@ -95,9 +95,9 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>After cloning the repository, run the following commands: </p><pre class="fragment">make
 make PROG=&lt;your_program&gt; run
 </pre><p>Alternatively, after making the pintool, to invoke it from the commandline run the following command: </p><pre class="fragment">pin -t obj-intel64/ftrace.so -- &lt;your_program&gt;
-</pre><p>For the IA-32 architecture, use "obj-ia32" instead of "obj-intel64"</p>
-<p>To compile with floating-point instruction replacement code, either specify REPLACE_FP_FN and REPLACE_FP_FILE in makefile.rules or run the following command: </p><pre class="fragment">make REPLACE_FP_FN=&lt;replacement_fn&gt; REPLACE_FP_FILE=&lt;replacement_fn_file&gt;
-</pre><p>If the file containing the replacement function is named &lt;fp_replacement_function&gt;.cpp, REPLACE_FP_FILE can be omitted. Currently only C++ replacement code is supported. See <a class="el" href="REPLACE__FP__CODE_8md_source.html">REPLACE_FP_CODE.md</a> for more information on the replacement code.</p>
+</pre><p>For the IA-32 architecture, use <code>obj-ia32</code> instead of <code>obj-intel64</code></p>
+<p>To compile with floating-point instruction replacement code, either specify <code>REPLACE_FP_FN</code> and <code>REPLACE_FP_FILE</code> in <code>makefile.rules</code> or run the following command: </p><pre class="fragment">make REPLACE_FP_FN=&lt;replacement_fn&gt; REPLACE_FP_FILE=&lt;replacement_fn_file&gt;
+</pre><p>If the file containing the replacement function is named <code>&lt;fp_replacement_function&gt;.cpp</code>, <code>REPLACE_FP_FILE</code> can be omitted. Currently only C++ replacement code is supported. See <code><a class="el" href="REPLACE__FP__CODE_8md_source.html">REPLACE_FP_CODE.md</a></code> for more information on the replacement code.</p>
 <p>To run the tests for this pintool, run the following command: </p><pre class="fragment">make test
 </pre><p>Full documentation can be found here: <a href="http://percivalgambit.github.io/ftrace/">http://percivalgambit.github.io/ftrace/</a> </p>
 </div></div><!-- contents -->
@@ -105,7 +105,7 @@ make PROG=&lt;your_program&gt; run
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Dec 21 2014 00:33:42 for ftrace by
+    <li class="footer">Generated on Sun Dec 21 2014 00:42:17 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
