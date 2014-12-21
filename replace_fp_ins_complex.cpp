@@ -1,7 +1,19 @@
+
+/*! @file
+ * This is a more complex replacement function for arithmetic floating-point
+ * instructions in the ftrace tool.
+ */
+
+#include "pin.H"
 #include <iostream>
 
-#include "replace_fp_ins_complex.h"
-
+/*!
+ * The floating-point replacement function.
+ * @param[in]   operand1    first operand of the floating-point instruction
+ * @param[in]   operand2    second operand of the floating-point instruction
+ * @param[in]   operation   type of floating-point instruction
+ * @return the new result of the floating-point instruction
+ */
 FLT32 replace_fp_ins_complex(FLT32 operand1, FLT32 operand2, OPCODE operation) {
     switch (operation) {
         case XED_ICLASS_ADDSS:

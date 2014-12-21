@@ -89,7 +89,7 @@ ftrace_replace_fp_ins_simple.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(RM) $(OBJDIR)ftrace_replace_fp_ins_simple.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 
 ftrace_replace_fp_ins_complex.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(MAKE) REPLACE_FP_FN=replace_fp_ins_complex $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_complex REPLACE_FP_FILE=replace_fp_ins_complex.cpp $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_complex.out
 	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_complex.out ftrace_replace_fp_ins_complex.reference
 	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
@@ -116,14 +116,13 @@ ifdef REPLACE_FP_FN
 ifndef REPLACE_FP_FILE
 REPLACE_FP_FILE := $(REPLACE_FP_FN).cpp
 endif
-REPLACE_FP_BASENAME := $(basename $(REPLACE_FP_FILE))
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
-$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp $(REPLACE_FP_BASENAME).h
-	$(CXX) -DREPLACE_FP_FN=$(REPLACE_FP_FN) -include $(REPLACE_FP_BASENAME).h $(TOOL_CXXFLAGS)$(COMP_OBJ)$@ $<
+$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp
+	$(CXX) -DREPLACE_FP_FN=$(REPLACE_FP_FN) $(TOOL_CXXFLAGS)$(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(OBJDIR)$(REPLACE_FP_BASENAME)$(OBJ_SUFFIX) $(REPLACE_FP_BASENAME).h
-	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $(^:%.h=) $(TOOL_LPATHS) $(TOOL_LIBS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(OBJDIR)$(basename $(REPLACE_FP_FILE))$(OBJ_SUFFIX)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
 
 endif
 

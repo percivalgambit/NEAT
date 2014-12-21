@@ -1,8 +1,9 @@
 
 /*! @file
  *  This is a PIN tool that traces every floating-point arithmetic operation and
- * displays the arguments and results.
- * @note All float values are printed as 8 digit hex numbers padded with 0's.
+ * displays the arguments and results.  This tool can also replace floating-point
+ * instructions with arbitrary code to test different floating-point implementations.
+ * @note All floating-point values are printed as 8 digit hex numbers padded with 0's.
  */
 
 #include "pin.H"
@@ -13,6 +14,10 @@
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
+
+#ifdef REPLACE_FP_FN
+FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
+#endif
 
 /* ===================================================================== */
 // Command line switches
@@ -26,6 +31,9 @@ KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
 
 /**!
  *  Turn floating-point instruction replacing on or off for the program.
+ *  @note Has no effect unless the pintool is compiled with the instruction
+ *  replacing code.  The best way to do this is to define REPLACE_FP_FN in the
+ *  makefile.
  */
 KNOB<BOOL> KnobReplaceFPIns(KNOB_MODE_WRITEONCE, "pintool", "fp-replace", "1",
                           "turn floating-point instruction replacing on or off");
@@ -49,7 +57,9 @@ INT32 Usage() {
 /* ===================================================================== */
 
 /*!
- * Print the name of a floating-point instruction and its operands.
+ * Print the name of a floating-point instruction and its operands. Replace
+ * floating-point instructions with a user-specified function, if specified during
+ * compilation.
  * This function is called for every floating-point arithmetic instruction that
  * operates on two registers, when it is about to be executed.
  * @param[in]   op          the opcode of the floating-point instruction
@@ -79,7 +89,9 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
 }
 
 /*!
- * Print the name of a floating-point instruction and its operands.
+ * Print the name of a floating-point instruction and its operands. Replace
+ * floating-point instructions with a user-specified function, if specified during
+ * compilation.
  * This function is called for every floating-point arithmetic instruction that
  * operates on a register and a memory location, when it is about to be executed.
  * @param[in]   op          the opcode of the floating-point instruction
