@@ -7,8 +7,6 @@
  */
 
 #include "pin.H"
-#include <fstream>
-#include <iomanip>
 #include <iostream>
 
 /* ================================================================== */
@@ -74,9 +72,10 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    cout << OPCODE_StringShort(op) << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg2.flt << endl;
+    cout << OPCODE_StringShort(op)
+         << " " << StringHex(*(UINT32 *)reg1.flt, 8, false)
+         << " " << StringHex(*(UINT32 *)reg2.flt, 8, false)
+         << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -105,9 +104,10 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    cout << OPCODE_StringShort(op) << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)operand2 << endl;
+    cout << OPCODE_StringShort(op)
+         << " " << StringHex(*(UINT32 *)reg1.flt, 8, false)
+         << " " << StringHex(*(UINT32 *)operand2, 8, false)
+         << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -132,8 +132,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)result.flt << endl;
+    cout << "  " << StringHex(*(UINT32 *)result.flt, 8, false) << endl;
 }
 
 /* ===================================================================== */
@@ -267,9 +266,6 @@ int main(int argc, char *argv[]) {
 
         // Register Fini to be called when the application exits
         PIN_AddFiniFunction(Fini, 0);
-
-        // Make sure all values are printed as hex numbers
-        cout << hex;
     }
 
     // Start the program, never returns
