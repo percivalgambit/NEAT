@@ -73,15 +73,15 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
     cout << OPCODE_StringShort(op)
-         << " " << StringHex(*(UINT32 *)reg1.flt, 8, false)
-         << " " << StringHex(*(UINT32 *)reg2.flt, 8, false)
+         << " " << StringHex(*reg1.dword, 8, false)
+         << " " << StringHex(*reg2.dword, 8, false)
          << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)reg2.flt, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -105,15 +105,15 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
     cout << OPCODE_StringShort(op)
-         << " " << StringHex(*(UINT32 *)reg1.flt, 8, false)
-         << " " << StringHex(*(UINT32 *)operand2, 8, false)
+         << " " << StringHex(*reg1.dword, 8, false)
+         << " " << StringHex(*operand2, 8, false)
          << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)operand2, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -132,7 +132,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  " << StringHex(*(UINT32 *)result.flt, 8, false) << endl;
+    cout << "  " << StringHex(*result.dword, 8, false) << endl;
 }
 
 /* ===================================================================== */
