@@ -73,8 +73,8 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
     cout << OPCODE_StringShort(op)
-         << " " << StringHex(*reg1.dword, 8, false)
-         << " " << StringHex(*reg2.dword, 8, false)
+         << " " << StringHex(*reg1.dword, 8, FALSE)
+         << " " << StringHex(*reg2.dword, 8, FALSE)
          << endl;
 
 #ifdef REPLACE_FP_FN
@@ -105,8 +105,8 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
     cout << OPCODE_StringShort(op)
-         << " " << StringHex(*reg1.dword, 8, false)
-         << " " << StringHex(*operand2, 8, false)
+         << " " << StringHex(*reg1.dword, 8, FALSE)
+         << " " << StringHex(*operand2, 8, FALSE)
          << endl;
 
 #ifdef REPLACE_FP_FN
@@ -132,7 +132,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  " << StringHex(*result.dword, 8, false) << endl;
+    cout << "  " << StringHex(*result.dword, 8, FALSE) << endl;
 }
 
 /* ===================================================================== */
@@ -160,9 +160,9 @@ BOOL isFpInstruction(INS ins) {
         case XED_ICLASS_SUBSS:
         case XED_ICLASS_MULSS:
         case XED_ICLASS_DIVSS:
-            return true;
+            return TRUE;
         default:
-            return false;
+            return FALSE;
     }
 }
 
