@@ -233,7 +233,7 @@ VOID Trace(INS ins, VOID *v) {
                        (AFUNPTR)print_fresult,
                        IARG_UINT32,
                        INS_OperandReg(ins, 0),
-                       IARG_CONTEXT,
+                       IARG_CONST_CONTEXT,
                        IARG_END);
     }
 }
