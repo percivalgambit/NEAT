@@ -138,7 +138,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    cout &lt;&lt; OPCODE_StringShort(op)</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg2.dword, 8, FALSE)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;         &lt;&lt; endl;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;         &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
@@ -158,7 +158,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    cout &lt;&lt; OPCODE_StringShort(op)</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*operand2, 8, FALSE)</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;         &lt;&lt; endl;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;         &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
@@ -175,7 +175,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    PIN_GetContextRegval(ctxt, operand1, result.byte);</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; StringHex(*result.dword, 8, FALSE) &lt;&lt; endl;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; StringHex(*result.dword, 8, FALSE) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
@@ -302,7 +302,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Tue Dec 30 2014 00:23:58 for ftrace by
+    <li class="footer">Generated on Tue Dec 30 2014 01:52:40 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9 </li>
   </ul>
