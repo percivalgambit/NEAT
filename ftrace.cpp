@@ -75,7 +75,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     cout << OPCODE_StringShort(op)
          << " " << StringHex(*reg1.dword, 8, FALSE)
          << " " << StringHex(*reg2.dword, 8, FALSE)
-         << endl;
+         << "\n";
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -107,7 +107,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
     cout << OPCODE_StringShort(op)
          << " " << StringHex(*reg1.dword, 8, FALSE)
          << " " << StringHex(*operand2, 8, FALSE)
-         << endl;
+         << "\n";
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -132,7 +132,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  " << StringHex(*result.dword, 8, FALSE) << endl;
+    cout << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
 }
 
 /* ===================================================================== */
