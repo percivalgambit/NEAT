@@ -7,8 +7,6 @@
  */
 
 #include "pin.H"
-#include <fstream>
-#include <iomanip>
 #include <iostream>
 
 /* ================================================================== */
@@ -74,15 +72,16 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    cout << OPCODE_StringShort(op) << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg2.flt << endl;
+    cout << OPCODE_StringShort(op)
+         << " " << StringHex(*reg1.dword, 8, FALSE)
+         << " " << StringHex(*reg2.dword, 8, FALSE)
+         << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)reg2.flt, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -105,15 +104,16 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    cout << OPCODE_StringShort(op) << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)reg1.flt << " ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)operand2 << endl;
+    cout << OPCODE_StringShort(op)
+         << " " << StringHex(*reg1.dword, 8, FALSE)
+         << " " << StringHex(*operand2, 8, FALSE)
+         << endl;
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*(FLT32 *)reg1.flt, *(FLT32 *)operand2, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -132,8 +132,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  ";
-    cout << setw(8) << setfill('0') << *(UINT32 *)result.flt << endl;
+    cout << "  " << StringHex(*result.dword, 8, FALSE) << endl;
 }
 
 /* ===================================================================== */
@@ -161,9 +160,9 @@ BOOL isFpInstruction(INS ins) {
         case XED_ICLASS_SUBSS:
         case XED_ICLASS_MULSS:
         case XED_ICLASS_DIVSS:
-            return true;
+            return TRUE;
         default:
-            return false;
+            return FALSE;
     }
 }
 
@@ -196,13 +195,13 @@ VOID Trace(INS ins, VOID *v) {
             // registers, call print_reg_fargs and pass it the two operands
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
-                           AFUNPTR(print_reg_fargs),
+                           (AFUNPTR)print_reg_fargs,
                            IARG_UINT32,
                            INS_Opcode(ins),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 0)),
+                           INS_OperandReg(ins, 0),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 1)),
+                           INS_OperandReg(ins, 1),
                            IARG_PARTIAL_CONTEXT,
                            &regsIn,
                            &regsOut,
@@ -214,11 +213,11 @@ VOID Trace(INS ins, VOID *v) {
             // two operands
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
-                           AFUNPTR(print_mem_fargs),
+                           (AFUNPTR)print_mem_fargs,
                            IARG_UINT32,
                            INS_Opcode(ins),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 0)),
+                           INS_OperandReg(ins, 0),
                            IARG_MEMORYREAD_EA,
                            IARG_PARTIAL_CONTEXT,
                            &regsIn,
@@ -231,10 +230,10 @@ VOID Trace(INS ins, VOID *v) {
         // result of the instruction
         INS_InsertCall(ins,
                        IPOINT_AFTER,
-                       AFUNPTR(print_fresult),
+                       (AFUNPTR)print_fresult,
                        IARG_UINT32,
-                       REG(INS_OperandReg(ins, 0)),
-                       IARG_CONTEXT,
+                       INS_OperandReg(ins, 0),
+                       IARG_CONST_CONTEXT,
                        IARG_END);
     }
 }
@@ -267,9 +266,6 @@ int main(int argc, char *argv[]) {
 
         // Register Fini to be called when the application exits
         PIN_AddFiniFunction(Fini, 0);
-
-        // Make sure all values are printed as hex numbers
-        cout << hex;
     }
 
     // Start the program, never returns
