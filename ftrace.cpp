@@ -195,13 +195,13 @@ VOID Trace(INS ins, VOID *v) {
             // registers, call print_reg_fargs and pass it the two operands
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
-                           AFUNPTR(print_reg_fargs),
+                           (AFUNPTR)print_reg_fargs,
                            IARG_UINT32,
                            INS_Opcode(ins),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 0)),
+                           INS_OperandReg(ins, 0),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 1)),
+                           INS_OperandReg(ins, 1),
                            IARG_PARTIAL_CONTEXT,
                            &regsIn,
                            &regsOut,
@@ -213,11 +213,11 @@ VOID Trace(INS ins, VOID *v) {
             // two operands
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
-                           AFUNPTR(print_mem_fargs),
+                           (AFUNPTR)print_mem_fargs,
                            IARG_UINT32,
                            INS_Opcode(ins),
                            IARG_UINT32,
-                           REG(INS_OperandReg(ins, 0)),
+                           INS_OperandReg(ins, 0),
                            IARG_MEMORYREAD_EA,
                            IARG_PARTIAL_CONTEXT,
                            &regsIn,
@@ -230,9 +230,9 @@ VOID Trace(INS ins, VOID *v) {
         // result of the instruction
         INS_InsertCall(ins,
                        IPOINT_AFTER,
-                       AFUNPTR(print_fresult),
+                       (AFUNPTR)print_fresult,
                        IARG_UINT32,
-                       REG(INS_OperandReg(ins, 0)),
+                       INS_OperandReg(ins, 0),
                        IARG_CONTEXT,
                        IARG_END);
     }
