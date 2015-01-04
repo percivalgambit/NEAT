@@ -7,6 +7,7 @@
  */
 
 #include "pin.H"
+#include <fstream>
 #include <iostream>
 
 /* ================================================================== */
@@ -17,9 +18,17 @@
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
 
+std::ostream *out = &cerr;
+
 /* ===================================================================== */
 // Command line switches
 /* ===================================================================== */
+
+/**!
+ *  Specify the file name for the ftrace output file.
+ */
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,  "pintool",
+    "o", "", "specify file name for ftrace output");
 
 /**!
  *  Turn instrumentation on or off for the program.
@@ -72,7 +81,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    cout << OPCODE_StringShort(op)
+    *out << OPCODE_StringShort(op)
          << " " << StringHex(*reg1.dword, 8, FALSE)
          << " " << StringHex(*reg2.dword, 8, FALSE)
          << "\n";
@@ -104,7 +113,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    cout << OPCODE_StringShort(op)
+    *out << OPCODE_StringShort(op)
          << " " << StringHex(*reg1.dword, 8, FALSE)
          << " " << StringHex(*operand2, 8, FALSE)
          << "\n";
@@ -132,7 +141,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    cout << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
+    *out << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
 }
 
 /* ===================================================================== */
@@ -244,7 +253,9 @@ VOID Trace(INS ins, VOID *v) {
  * @param[in]   v               value specified by the tool in the
  *                              PIN_AddFiniFunction function call
  */
-VOID Fini(INT32 code, VOID *v) {}
+VOID Fini(INT32 code, VOID *v) {
+    out->flush();
+}
 
 /*!
  * The main procedure of the tool.
@@ -260,12 +271,25 @@ int main(int argc, char *argv[]) {
         return Usage();
     }
 
+    string fileName = KnobOutputFile.Value();
+
+    if (!fileName.empty()) {
+        out = new std::ofstream(fileName.c_str());
+    }
+
     if (KnobInstrument) {
         // Register Trace to be called to instrument instructions
         INS_AddInstrumentFunction(Trace, 0);
 
         // Register Fini to be called when the application exits
         PIN_AddFiniFunction(Fini, 0);
+    }
+
+    if (!KnobOutputFile.Value().empty())
+    {
+        cerr <<  "===============================================" << endl;
+        cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
+        cerr <<  "===============================================" << endl;
     }
 
     // Start the program, never returns
