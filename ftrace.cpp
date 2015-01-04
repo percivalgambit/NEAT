@@ -18,6 +18,9 @@
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
 
+/**!
+ *  Output stream for the pintool.
+ */
 std::ostream *out = &cerr;
 
 /* ===================================================================== */
