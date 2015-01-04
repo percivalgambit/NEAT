@@ -89,18 +89,22 @@ $(document).ready(function(){initNavTree('ftrace_8cpp.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">ftrace.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;pin.H&quot;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 </div>
 <p><a href="ftrace_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a4bfdd0956e5f2dfdd462ff5bea6ffe98"><td class="memItemLeft" align="right" valign="top">KNOB&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;o&quot;,&quot;&quot;,&quot;specify file name for ftrace output&quot;)</td></tr>
+<tr class="separator:a4bfdd0956e5f2dfdd462ff5bea6ffe98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38affe937715aa065d87b2c29e7e58be"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;instrument&quot;,&quot;1&quot;,&quot;turn floating-point instruction tracing on or off&quot;)</td></tr>
 <tr class="separator:a38affe937715aa065d87b2c29e7e58be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f1d652654648d584fd9bf089c64828c"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;fp-replace&quot;,&quot;1&quot;,&quot;turn floating-point instruction replacing on or off&quot;)</td></tr>
@@ -121,6 +125,11 @@ Functions</h2></td></tr>
 <tr class="separator:aa61669c70de306a0ba47bf5878b9f806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
 <tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:ac1e872e3d15c0cda3b66bc218820e2cc"><td class="memItemLeft" align="right" valign="top">std::ostream *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#ac1e872e3d15c0cda3b66bc218820e2cc">out</a> = &amp;cerr</td></tr>
+<tr class="separator:ac1e872e3d15c0cda3b66bc218820e2cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays the arguments and results. This tool can also replace floating-point instructions with arbitrary code to test different floating-point implementations. </p><dl class="section note"><dt>Note</dt><dd>All floating-point values are printed as 8 digit hex numbers padded with 0's. </dd></dl>
@@ -158,7 +167,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00247">247</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00259">259</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -190,7 +199,7 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00155">155</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00167">167</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -236,6 +245,51 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>! Turn instrumentation on or off for the program. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4bfdd0956e5f2dfdd462ff5bea6ffe98"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">KNOB&lt;string&gt; KnobOutputFile </td>
+          <td>(</td>
+          <td class="paramtype">KNOB_MODE_WRITEONCE&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;pintool&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;o&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;specify file name for ftrace output&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>! Specify the file name for the ftrace output file. </p>
 
 </div>
 </div>
@@ -315,7 +369,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00256">256</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00270">270</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -350,7 +404,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00130">130</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00142">142</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -399,7 +453,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00102">102</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00114">114</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -448,7 +502,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00069">69</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00081">81</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -483,7 +537,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00177">177</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00189">189</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -501,7 +555,23 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Print out help message. </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00046">46</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00058">58</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="ac1e872e3d15c0cda3b66bc218820e2cc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream* out = &amp;cerr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>! Output stream for the pintool. </p>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00024">24</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -511,7 +581,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Tue Dec 30 2014 01:52:40 for ftrace by
+    <li class="footer">Generated on Sun Jan 4 2015 16:22:49 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9 </li>
   </ul>
