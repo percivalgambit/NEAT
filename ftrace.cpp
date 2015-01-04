@@ -18,7 +18,7 @@
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
 
-/**!
+/*!
  *  Output stream for the pintool.
  */
 std::ostream *out = &cerr;
@@ -27,19 +27,19 @@ std::ostream *out = &cerr;
 // Command line switches
 /* ===================================================================== */
 
-/**!
+/*!
  *  Specify the file name for the ftrace output file.
  */
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,  "pintool",
     "o", "", "specify file name for ftrace output");
 
-/**!
+/*!
  *  Turn instrumentation on or off for the program.
  */
 KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
                           "turn floating-point instruction tracing on or off");
 
-/**!
+/*!
  *  Turn floating-point instruction replacing on or off for the program.
  *  @note Has no effect unless the pintool is compiled with the instruction
  *  replacing code.  The best way to do this is to define REPLACE_FP_FN in the
