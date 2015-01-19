@@ -83,7 +83,7 @@ ftrace_no_output_file.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample
 	$(RM) $(OBJDIR)ftrace_no_output_file.out
 
 ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -instrument 0 -o $(OBJDIR)ftrace_no_instrument.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -instrument 0 -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) &> $(OBJDIR)ftrace_no_instrument.out
 	$(DIFF) $(OBJDIR)ftrace_no_instrument.out ftrace_no_instrument.reference
 	$(RM) $(OBJDIR)ftrace_no_instrument.out
 

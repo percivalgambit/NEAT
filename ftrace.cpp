@@ -271,25 +271,28 @@ int main(int argc, char *argv[]) {
         return Usage();
     }
 
-    string fileName = KnobOutputFile.Value();
-
-    if (!fileName.empty()) {
-        out = new std::ofstream(fileName.c_str());
-    }
-
     if (KnobInstrument) {
+        string fileName = KnobOutputFile.Value();
+
+        if (!fileName.empty()) {
+            out = new std::ofstream(fileName.c_str());
+        }
+
         // Register Trace to be called to instrument instructions
         INS_AddInstrumentFunction(Trace, 0);
 
         // Register Fini to be called when the application exits
         PIN_AddFiniFunction(Fini, 0);
-    }
 
-    if (!KnobOutputFile.Value().empty())
-    {
-        cerr <<  "===============================================" << endl;
-        cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
-        cerr <<  "===============================================" << endl;
+        if (!KnobOutputFile.Value().empty())
+        {
+            cerr <<  "===============================================" << endl;
+            cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
+            cerr <<  "===============================================" << endl;
+        }
+    }
+    else {
+        PIN_Detach();
     }
 
     // Start the program, never returns
