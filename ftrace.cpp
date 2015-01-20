@@ -6,9 +6,13 @@
  * @note All floating-point values are printed as 8 digit hex numbers padded with 0's.
  */
 
-#include "pin.H"
 #include <fstream>
 #include <iostream>
+
+#include "pin.H"
+#include "instlib.H"
+
+using namespace INSTLIB;
 
 /* ================================================================== */
 // Global variables
@@ -17,6 +21,9 @@
 #ifdef REPLACE_FP_FN
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
+
+// Contains knobs to filter out things to instrument
+FILTER_RTN filter;
 
 std::ostream *out = &cerr; /*!<  Output stream for the pintool */
 
@@ -177,74 +184,87 @@ BOOL isFpInstruction(INS ins) {
 
 /*!
  * Insert calls to the analysis routines before and after every floating-point
- * instruction of the instrumented application.
+ * instruction of the instrumented application in selected routines.
  * This function is called every time a new instruction is encountered.
  * @param[in]   ins     instruction to be instrumented
  * @param[in]   v       value specified by the tool in the INS_AddInstrumentFunction
  *                      function call
+ * @note To select which routines to instument, specify each routine as the
+ *       argument to a -filter_rtn flag on the command line
  */
-VOID Trace(INS ins, VOID *v) {
-    if (isFpInstruction(ins)) {
+VOID Routine(RTN rtn, VOID *v) {
+    if (!filter.SelectRtn(rtn))
+        return;
+
+    RTN_Open(rtn);
+
+    // Forward pass over all instructions in routine
+    for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
+
+        if (isFpInstruction(ins)) {
 
 #ifdef REPLACE_FP_FN
-        if (KnobReplaceFPIns)
-            INS_Delete(ins);
+            if (KnobReplaceFPIns)
+                INS_Delete(ins);
 #endif
 
-        REGSET regsIn, regsOut;
-        REGSET_Clear(regsIn);
-        REGSET_Clear(regsOut);
-        REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
-        REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
+            REGSET regsIn, regsOut;
+            REGSET_Clear(regsIn);
+            REGSET_Clear(regsOut);
+            REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
+            REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
 
-        if (INS_OperandIsReg(ins, 1)) {
-            REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
+            if (INS_OperandIsReg(ins, 1)) {
+                REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
 
-            // If an instruction is a floating-point instruction that operates on two
-            // registers, call print_reg_fargs and pass it the two operands
+                // If an instruction is a floating-point instruction that operates on two
+                // registers, call print_reg_fargs and pass it the two operands
+                INS_InsertCall(ins,
+                               IPOINT_BEFORE,
+                               (AFUNPTR)print_reg_fargs,
+                               IARG_UINT32,
+                               INS_Opcode(ins),
+                               IARG_UINT32,
+                               INS_OperandReg(ins, 0),
+                               IARG_UINT32,
+                               INS_OperandReg(ins, 1),
+                               IARG_PARTIAL_CONTEXT,
+                               &regsIn,
+                               &regsOut,
+                               IARG_END);
+            }
+            else {
+                // If an instruction is a floating-point instruction that operates on a
+                // register and a memory location, call print_mem_fargs and pass it the
+                // two operands
+                INS_InsertCall(ins,
+                               IPOINT_BEFORE,
+                               (AFUNPTR)print_mem_fargs,
+                               IARG_UINT32,
+                               INS_Opcode(ins),
+                               IARG_UINT32,
+                               INS_OperandReg(ins, 0),
+                               IARG_MEMORYREAD_EA,
+                               IARG_PARTIAL_CONTEXT,
+                               &regsIn,
+                               &regsOut,
+                               IARG_END);
+            }
+
+
+            // Call print_fresult after every floating-point instruction, and pass it the
+            // result of the instruction
             INS_InsertCall(ins,
-                           IPOINT_BEFORE,
-                           (AFUNPTR)print_reg_fargs,
-                           IARG_UINT32,
-                           INS_Opcode(ins),
+                           IPOINT_AFTER,
+                           (AFUNPTR)print_fresult,
                            IARG_UINT32,
                            INS_OperandReg(ins, 0),
-                           IARG_UINT32,
-                           INS_OperandReg(ins, 1),
-                           IARG_PARTIAL_CONTEXT,
-                           &regsIn,
-                           &regsOut,
+                           IARG_CONST_CONTEXT,
                            IARG_END);
         }
-        else {
-            // If an instruction is a floating-point instruction that operates on a
-            // register and a memory location, call print_mem_fargs and pass it the
-            // two operands
-            INS_InsertCall(ins,
-                           IPOINT_BEFORE,
-                           (AFUNPTR)print_mem_fargs,
-                           IARG_UINT32,
-                           INS_Opcode(ins),
-                           IARG_UINT32,
-                           INS_OperandReg(ins, 0),
-                           IARG_MEMORYREAD_EA,
-                           IARG_PARTIAL_CONTEXT,
-                           &regsIn,
-                           &regsOut,
-                           IARG_END);
-        }
-
-
-        // Call print_fresult after every floating-point instruction, and pass it the
-        // result of the instruction
-        INS_InsertCall(ins,
-                       IPOINT_AFTER,
-                       (AFUNPTR)print_fresult,
-                       IARG_UINT32,
-                       INS_OperandReg(ins, 0),
-                       IARG_CONST_CONTEXT,
-                       IARG_END);
     }
+
+    RTN_Close(rtn);
 }
 
 /*!
@@ -279,10 +299,12 @@ int main(int argc, char *argv[]) {
         }
 
         // Register Trace to be called to instrument instructions
-        INS_AddInstrumentFunction(Trace, 0);
+        RTN_AddInstrumentFunction(Routine, 0);
 
         // Register Fini to be called when the application exits
         PIN_AddFiniFunction(Fini, 0);
+
+        filter.Activate();
 
         if (!KnobOutputFile.Value().empty())
         {
