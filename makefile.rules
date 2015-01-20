@@ -20,7 +20,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
+TEST_ROOTS := ftrace_no_output_file ftrace_no_instrument ftrace_filter ftrace_bad_filter ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -87,23 +87,33 @@ ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_
 	$(DIFF) $(OBJDIR)ftrace_no_instrument.out ftrace_no_instrument.reference
 	$(RM) $(OBJDIR)ftrace_no_instrument.out
 
+ftrace_filter.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_filter.out -filter_rtn main -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(DIFF) $(OBJDIR)ftrace_filter.out ftrace.reference
+	$(RM) $(OBJDIR)ftrace_filter.out
+
+ftrace_bad_filter.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_bad_filter.out -filter_rtn foo -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(DIFF) $(OBJDIR)ftrace_bad_filter.out ftrace_no_instrument.reference
+	$(RM) $(OBJDIR)ftrace_bad_filter.out
+
 ftrace_replace_fp_ins_simple.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_replace_fp_ins_simple.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_simple.out ftrace_replace_fp_ins_simple.reference
-	$(RM) $(OBJDIR)ftrace_replace_fp_ins_simple.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_simple.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
 
 ftrace_replace_fp_ins_complex.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) REPLACE_FP_FN=replace_fp_ins_complex REPLACE_FP_FILE=replace_fp_ins_complex.cpp $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_replace_fp_ins_complex.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_complex.out ftrace_replace_fp_ins_complex.reference
-	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
 
 ftrace_no_replace.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -fp-replace 0 -o $(OBJDIR)ftrace_no_replace.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(DIFF) $(OBJDIR)ftrace_no_replace.out ftrace.reference
-	$(RM) $(OBJDIR)ftrace_no_replace.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(RM) $(OBJDIR)ftrace_no_replace.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
 
 ##############################################################
 #
