@@ -318,12 +318,9 @@ int main(int argc, char *argv[]) {
 
         filter.Activate();
 
-        if (!KnobOutputFile.Value().empty())
-        {
-            cerr <<  "===============================================" << endl;
-            cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
-            cerr <<  "===============================================" << endl;
-        }
+        cerr <<  "===============================================" << endl;
+        cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
+        cerr <<  "===============================================" << endl;
     }
     else {
         PIN_Detach();
