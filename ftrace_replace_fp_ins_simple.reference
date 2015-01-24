@@ -20,3 +20,5 @@ ADDSS 05834649 40000000
   3f800000
 ADDSS 05834649 05834649
   3f800000
+
+Number of floating point instructions instrumented: 11

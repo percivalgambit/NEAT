@@ -22,10 +22,12 @@ using namespace INSTLIB;
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
 
-// Contains knobs to filter out things to instrument
-FILTER_RTN filter;
+FILTER_RTN filter; /*! Contains knobs to choose which files to instrument */
 
-std::ostream *out = &cerr; /*!<  Output stream for the pintool */
+ofstream OutFile; /*!<  Output file for the pintool */
+
+static UINT64 fpcount = 0; /*!< count of instrumented floating point instructions
+                                in the instrumented program */
 
 /* ===================================================================== */
 // Command line switches
@@ -35,7 +37,7 @@ std::ostream *out = &cerr; /*!<  Output stream for the pintool */
  *  Specify the file name for the ftrace output file.
  */
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,  "pintool",
-    "o", "", "specify file name for ftrace output");
+    "o", "ftrace.out", "specify file name for ftrace output");
 
 /*!
  *  Turn instrumentation on or off for the program.
@@ -71,6 +73,14 @@ INT32 Usage() {
 /* ===================================================================== */
 
 /*!
+ * Increment the count of the number of floating point instructions executed in
+ * the instrumented program.
+ */
+VOID fp_ins_docount() {
+    fpcount++;
+}
+
+/*!
  * Print the name of a floating-point instruction and its operands. Replace
  * floating-point instructions with a user-specified function, if specified during
  * compilation.
@@ -88,10 +98,10 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    *out << OPCODE_StringShort(op)
-         << " " << StringHex(*reg1.dword, 8, FALSE)
-         << " " << StringHex(*reg2.dword, 8, FALSE)
-         << "\n";
+    OutFile << OPCODE_StringShort(op)
+            << " " << StringHex(*reg1.dword, 8, FALSE)
+            << " " << StringHex(*reg2.dword, 8, FALSE)
+            << "\n";
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -120,10 +130,10 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) 
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    *out << OPCODE_StringShort(op)
-         << " " << StringHex(*reg1.dword, 8, FALSE)
-         << " " << StringHex(*operand2, 8, FALSE)
-         << "\n";
+    OutFile << OPCODE_StringShort(op)
+            << " " << StringHex(*reg1.dword, 8, FALSE)
+            << " " << StringHex(*operand2, 8, FALSE)
+            << "\n";
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -148,7 +158,7 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
 
     PIN_GetContextRegval(ctxt, operand1, result.byte);
 
-    *out << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
+    OutFile << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
 }
 
 /* ===================================================================== */
@@ -214,6 +224,8 @@ VOID Routine(RTN rtn, VOID *v) {
             REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
             REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
 
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)fp_ins_docount, IARG_END);
+
             if (INS_OperandIsReg(ins, 1)) {
                 REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
 
@@ -274,7 +286,11 @@ VOID Routine(RTN rtn, VOID *v) {
  *                              PIN_AddFiniFunction function call
  */
 VOID Fini(INT32 code, VOID *v) {
-    out->flush();
+    // Write to a file since cout and cerr maybe closed by the application
+    OutFile.setf(ios::showbase);
+    OutFile << "\nNumber of floating point instructions instrumented: "
+            << fpcount << endl;
+    OutFile.close();
 }
 
 /*!
@@ -292,11 +308,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (KnobInstrument) {
-        string fileName = KnobOutputFile.Value();
-
-        if (!fileName.empty()) {
-            out = new std::ofstream(fileName.c_str());
-        }
+        OutFile.open(KnobOutputFile.Value().c_str());
 
         // Register Trace to be called to instrument instructions
         RTN_AddInstrumentFunction(Routine, 0);
