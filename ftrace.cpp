@@ -26,22 +26,13 @@ FILTER_RTN filter; /*!< Contains knobs to choose which files to instrument */
 
 ofstream OutFile; /*!<  Output file for the pintool */
 
-/*!
- * Count of the total number of instructions in the instrumented program
- */
-static UINT64 ins_count = 0;
-
-/*!
- * Count of the total number of floating point instructions in the instrumented
- * program
- */
-static UINT64 fp_count = 0;
-
-/*!
- * Count of the number of instrumented floating point instructions in the
- * instrumented program
- */
-static UINT64 instrumented_fp_count = 0;
+static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
+                                  instrumented program */
+static UINT64 fp_count = 0; /*!< count of the total number of floating point
+                                 instructions in the instrumented program */
+static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
+                                              floating point instructions in the
+                                              instrumented program */
 
 /* ===================================================================== */
 // Command line switches
@@ -329,7 +320,7 @@ VOID Fini(INT32 code, VOID *v) {
     OutFile.setf(ios::showbase);
     OutFile << "-----------------------" << endl;
     OutFile << "Total number of instructions: " << ins_count << endl;
-    OutFile << "Number of floaring point instructions: " << fp_count << endl;
+    OutFile << "Number of floating point instructions: " << fp_count << endl;
     OutFile << "Number of instrumented floating point instructions: "
             << instrumented_fp_count << endl;
     OutFile.close();
