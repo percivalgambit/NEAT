@@ -13,5 +13,8 @@ var ftrace_8cpp =
     [ "Routine", "ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e", null ],
     [ "Usage", "ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230", null ],
     [ "filter", "ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5", null ],
+    [ "fp_count", "ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b", null ],
+    [ "ins_count", "ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a", null ],
+    [ "instrumented_fp_count", "ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328", null ],
     [ "OutFile", "ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99", null ]
 ];

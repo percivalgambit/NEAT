@@ -135,6 +135,12 @@ Variables</h2></td></tr>
 <tr class="separator:a4ad05dfe70dfabe25a3d2cd618345be5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad115a0fe29ea602faf1908a1ce024c99"><td class="memItemLeft" align="right" valign="top">ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a></td></tr>
 <tr class="separator:ad115a0fe29ea602faf1908a1ce024c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a672f83b526de3bb39a160ec2f49b682a"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> = 0</td></tr>
+<tr class="separator:a672f83b526de3bb39a160ec2f49b682a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> = 0</td></tr>
+<tr class="separator:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93408c88ca87a4338dd70191d80d1328"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> = 0</td></tr>
+<tr class="separator:a93408c88ca87a4338dd70191d80d1328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays the arguments and results. This tool can also replace floating-point instructions with arbitrary code to test different floating-point implementations. </p><dl class="section note"><dt>Note</dt><dd>All floating-point values are printed as 8 digit hex numbers padded with 0's. </dd></dl>
@@ -605,6 +611,75 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7c2aec7c5d253eec1b4a7425ffe7cb4b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT64 fp_count = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Count of the total number of floating point instructions in the instrumented program </p>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00038">38</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a672f83b526de3bb39a160ec2f49b682a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT64 ins_count = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Count of the total number of instructions in the instrumented program </p>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00032">32</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a93408c88ca87a4338dd70191d80d1328"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT64 instrumented_fp_count = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Count of the number of instrumented floating point instructions in the instrumented program </p>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00044">44</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ad115a0fe29ea602faf1908a1ce024c99"></a>
 <div class="memitem">
 <div class="memproto">
@@ -626,7 +701,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Thu Feb 5 2015 15:49:04 for ftrace by
+    <li class="footer">Generated on Thu Feb 5 2015 15:51:17 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

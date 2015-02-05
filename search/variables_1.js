@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['outfile',['OutFile',['../ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99',1,'ftrace.cpp']]]
+  ['ins_5fcount',['ins_count',['../ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a',1,'ftrace.cpp']]],
+  ['instrumented_5ffp_5fcount',['instrumented_fp_count',['../ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328',1,'ftrace.cpp']]]
 ];

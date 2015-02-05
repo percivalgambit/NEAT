@@ -111,11 +111,11 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">   25</a></span>&#160;FILTER_RTN <a class="code" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a>; </div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">   27</a></span>&#160;ofstream <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">static</span> UINT64 ins_count = 0;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">   32</a></span>&#160;<span class="keyword">static</span> UINT64 <a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> = 0;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">static</span> UINT64 fp_count = 0;</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">   38</a></span>&#160;<span class="keyword">static</span> UINT64 <a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> = 0;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">static</span> UINT64 instrumented_fp_count = 0;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">   44</a></span>&#160;<span class="keyword">static</span> UINT64 <a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> = 0;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// Command line switches</span></div>
@@ -227,7 +227,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                       IPOINT_BEFORE,</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                       (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a>,</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                       IARG_PTR,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                       &amp;ins_count,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                       &amp;<a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a>,</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                       IARG_END);</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a>(ins)) {</div>
@@ -237,7 +237,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                           IPOINT_BEFORE,</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                           (AFUNPTR)docount,</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                           IARG_PTR,</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                           &amp;fp_count,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                           &amp;<a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a>,</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                           IARG_END);</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            <span class="comment">// If we are in a routine that we have not chosen to instrument, just</span></div>
@@ -261,7 +261,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                           IPOINT_BEFORE,</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                           (AFUNPTR)docount,</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                           IARG_PTR,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                           &amp;instrumented_fp_count,</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                           &amp;<a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a>,</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                           IARG_END);</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            <span class="keywordflow">if</span> (INS_OperandIsReg(ins, 1)) {</div>
@@ -321,10 +321,10 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// Write to a file since cout and cerr maybe closed by the application</span></div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.setf(ios::showbase);</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;-----------------------&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Total number of instructions: &quot;</span> &lt;&lt; ins_count &lt;&lt; endl;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of floaring point instructions: &quot;</span> &lt;&lt; fp_count &lt;&lt; endl;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Total number of instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> &lt;&lt; endl;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of floaring point instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> &lt;&lt; endl;</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of instrumented floating point instructions: &quot;</span></div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            &lt;&lt; instrumented_fp_count &lt;&lt; endl;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            &lt;&lt; <a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> &lt;&lt; endl;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.close();</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;}</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;</div>
@@ -365,6 +365,8 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
 <div class="ttc" id="ftrace_8cpp_html_ad115a0fe29ea602faf1908a1ce024c99"><div class="ttname"><a href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a></div><div class="ttdeci">ofstream OutFile</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00027">ftrace.cpp:27</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a10df4774fb7bc1bae29770f4cd973d4c"><div class="ttname"><a href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a></div><div class="ttdeci">BOOL isFpInstruction(INS ins)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00196">ftrace.cpp:196</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a7c2aec7c5d253eec1b4a7425ffe7cb4b"><div class="ttname"><a href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a></div><div class="ttdeci">static UINT64 fp_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00038">ftrace.cpp:38</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a93408c88ca87a4338dd70191d80d1328"><div class="ttname"><a href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a></div><div class="ttdeci">static UINT64 instrumented_fp_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00044">ftrace.cpp:44</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_aa61669c70de306a0ba47bf5878b9f806"><div class="ttname"><a href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a></div><div class="ttdeci">VOID Fini(INT32 code, VOID *v)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00327">ftrace.cpp:327</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a9c89b15666dec97b4af91ba247b6a230"><div class="ttname"><a href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a></div><div class="ttdeci">INT32 Usage()</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00078">ftrace.cpp:78</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a38affe937715aa065d87b2c29e7e58be"><div class="ttname"><a href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a></div><div class="ttdeci">KNOB&lt; BOOL &gt; KnobInstrument(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;instrument&quot;,&quot;1&quot;,&quot;turn floating-point instruction tracing on or off&quot;)</div></div>
@@ -373,6 +375,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="ttc" id="ftrace_8cpp_html_a2b849c8c8f4d790ee7cdb37aa4c98c9f"><div class="ttname"><a href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a></div><div class="ttdeci">VOID print_fresult(REG operand1, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00171">ftrace.cpp:171</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a530ae3d178fff7ea0bbcf84cddda9f03"><div class="ttname"><a href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a></div><div class="ttdeci">VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00110">ftrace.cpp:110</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_aa5953dcb8b2676b7343942e31fc25a0f"><div class="ttname"><a href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">print_mem_fargs</a></div><div class="ttdeci">VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00143">ftrace.cpp:143</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a672f83b526de3bb39a160ec2f49b682a"><div class="ttname"><a href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a></div><div class="ttdeci">static UINT64 ins_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00032">ftrace.cpp:32</a></div></div>
 <div class="ttc" id="namespaceINSTLIB_html"><div class="ttname"><a href="namespaceINSTLIB.html">INSTLIB</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a4f1d652654648d584fd9bf089c64828c"><div class="ttname"><a href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a></div><div class="ttdeci">KNOB&lt; BOOL &gt; KnobReplaceFPIns(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;fp-replace&quot;,&quot;1&quot;,&quot;turn floating-point instruction replacing on or off&quot;)</div></div>
 <div class="ttc" id="ftrace_8cpp_html_a4ad05dfe70dfabe25a3d2cd618345be5"><div class="ttname"><a href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a></div><div class="ttdeci">FILTER_RTN filter</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00025">ftrace.cpp:25</a></div></div>
@@ -384,7 +387,7 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Thu Feb 5 2015 15:49:04 for ftrace by
+    <li class="footer">Generated on Thu Feb 5 2015 15:51:17 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
