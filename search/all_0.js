@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['fini',['Fini',['../ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806',1,'ftrace.cpp']]],
-  ['ftrace_2ecpp',['ftrace.cpp',['../ftrace_8cpp.html',1,'']]]
+  ['docount',['docount',['../ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571',1,'ftrace.cpp']]]
 ];
