@@ -20,5 +20,7 @@ ADDSS 05834649 40000000
   3fe66666
 ADDSS 05834649 05834649
   05ec4b50
-
-Number of floating point instructions instrumented: 11
+-----------------------
+Total number of instructions: ?????
+Number of floaring point instructions: 11
+Number of instrumented floating point instructions: 11

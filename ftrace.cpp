@@ -26,8 +26,13 @@ FILTER_RTN filter; /*! Contains knobs to choose which files to instrument */
 
 ofstream OutFile; /*!<  Output file for the pintool */
 
-static UINT64 fpcount = 0; /*!< count of instrumented floating point instructions
-                                in the instrumented program */
+static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
+                                  instrumented program */
+static UINT64 fp_count = 0; /*!< count of the total number of floating point
+                                 instructions in the instrumented program */
+static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
+                                              floating point instructions in the
+                                              instrumented program */
 
 /* ===================================================================== */
 // Command line switches
@@ -73,11 +78,12 @@ INT32 Usage() {
 /* ===================================================================== */
 
 /*!
- * Increment the count of the number of floating point instructions executed in
- * the instrumented program.
+ * Increment a counter.  This is an analysis routine meant to be run every time
+ * a apecified event happens in the instrumented program
+ * @param[in,out]   counter     the counter that is incremented
  */
-VOID fp_ins_docount() {
-    fpcount++;
+VOID docount(UINT64 *counter) {
+    (*counter)++;
 }
 
 /*!
@@ -203,15 +209,33 @@ BOOL isFpInstruction(INS ins) {
  *       argument to a -filter_rtn flag on the command line
  */
 VOID Routine(RTN rtn, VOID *v) {
-    if (!filter.SelectRtn(rtn))
-        return;
-
     RTN_Open(rtn);
 
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
 
+        // Increment the count of the total number of instructions
+        INS_InsertCall(ins,
+                       IPOINT_BEFORE,
+                       (AFUNPTR)docount,
+                       IARG_PTR,
+                       &ins_count,
+                       IARG_END);
+
         if (isFpInstruction(ins)) {
+
+            // Increment the count of floating point instructions
+            INS_InsertCall(ins,
+                           IPOINT_BEFORE,
+                           (AFUNPTR)docount,
+                           IARG_PTR,
+                           &fp_count,
+                           IARG_END);
+
+            // If we are in a routine that we have not chosen to instrument, just
+            // record the count of instructions and floating point instructions
+            if (!filter.SelectRtn(rtn))
+                continue;
 
 #ifdef REPLACE_FP_FN
             if (KnobReplaceFPIns)
@@ -224,7 +248,13 @@ VOID Routine(RTN rtn, VOID *v) {
             REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
             REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
 
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)fp_ins_docount, IARG_END);
+            // Increment the count of instrumented floating point instructions
+            INS_InsertCall(ins,
+                           IPOINT_BEFORE,
+                           (AFUNPTR)docount,
+                           IARG_PTR,
+                           &instrumented_fp_count,
+                           IARG_END);
 
             if (INS_OperandIsReg(ins, 1)) {
                 REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
@@ -288,8 +318,11 @@ VOID Routine(RTN rtn, VOID *v) {
 VOID Fini(INT32 code, VOID *v) {
     // Write to a file since cout and cerr maybe closed by the application
     OutFile.setf(ios::showbase);
-    OutFile << "\nNumber of floating point instructions instrumented: "
-            << fpcount << endl;
+    OutFile << "-----------------------" << endl;
+    OutFile << "Total number of instructions: " << ins_count << endl;
+    OutFile << "Number of floaring point instructions: " << fp_count << endl;
+    OutFile << "Number of instrumented floating point instructions: "
+            << instrumented_fp_count << endl;
     OutFile.close();
 }
 
