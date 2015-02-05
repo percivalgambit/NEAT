@@ -26,13 +26,22 @@ FILTER_RTN filter; /*!< Contains knobs to choose which files to instrument */
 
 ofstream OutFile; /*!<  Output file for the pintool */
 
-static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
-                                  instrumented program */
-static UINT64 fp_count = 0; /*!< count of the total number of floating point
-                                 instructions in the instrumented program */
-static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
-                                              floating point instructions in the
-                                              instrumented program */
+/*!
+ * Count of the total number of instructions in the instrumented program
+ */
+static UINT64 ins_count = 0;
+
+/*!
+ * Count of the total number of floating point instructions in the instrumented
+ * program
+ */
+static UINT64 fp_count = 0;
+
+/*!
+ * Count of the number of instrumented floating point instructions in the
+ * instrumented program
+ */
+static UINT64 instrumented_fp_count = 0;
 
 /* ===================================================================== */
 // Command line switches
