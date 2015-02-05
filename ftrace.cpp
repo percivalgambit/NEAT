@@ -22,7 +22,7 @@ using namespace INSTLIB;
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
 #endif
 
-FILTER_RTN filter; /*! Contains knobs to choose which files to instrument */
+FILTER_RTN filter; /*!< Contains knobs to choose which files to instrument */
 
 ofstream OutFile; /*!<  Output file for the pintool */
 
@@ -202,7 +202,7 @@ BOOL isFpInstruction(INS ins) {
  * Insert calls to the analysis routines before and after every floating-point
  * instruction of the instrumented application in selected routines.
  * This function is called every time a new instruction is encountered.
- * @param[in]   ins     instruction to be instrumented
+ * @param[in]   rtn     routine to be instrumented
  * @param[in]   v       value specified by the tool in the INS_AddInstrumentFunction
  *                      function call
  * @note To select which routines to instument, specify each routine as the
