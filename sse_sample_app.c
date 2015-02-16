@@ -4,6 +4,11 @@
  * test the ftrace tool.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
+#define PRINT_HEX(fp) printf("%08x\n", *(uint32_t *)&(fp))
+
 /*!
  * The main procedure of the application.
  * @param[in]   argc            total number of elements in the argv array
@@ -17,7 +22,7 @@ int main(int argc, char *argv[]) {
     float d = b - a;       // d = 0.3 - 2.0 = -1.7
     float e = a * c;       // e = 2.0 * 2.3 = 4.6
     float f = a / b;       // f = 2.0 / 0.3 = 6.666666...
-    float g = (f + a) / b; // g = (6.66666... + 2.0) / 0.3 = 28.888885
+    float g = (a + f) / b; // g = (6.66666... + 2.0) / 0.3 = 28.888885
 
     // Make sure that arithmetic instructions operating on two registers work correctly
     float h = b + b;       // h = 0.3 + 0.3 = 0.6
@@ -29,6 +34,21 @@ int main(int argc, char *argv[]) {
     float l = 1.2345e-35f; // l = 1.2345e-35
     float m = l + a;       // m = 1.2345e-35 + 2.0 = 2.0
     float n = l + l;       // n  = 1.2345e-35 + 1.2345e-35 = 2.4690e-35
+
+    PRINT_HEX(a);
+    PRINT_HEX(b);
+    PRINT_HEX(c);
+    PRINT_HEX(d);
+    PRINT_HEX(e);
+    PRINT_HEX(f);
+    PRINT_HEX(g);
+    PRINT_HEX(h);
+    PRINT_HEX(i);
+    PRINT_HEX(j);
+    PRINT_HEX(k);
+    PRINT_HEX(l);
+    PRINT_HEX(m);
+    PRINT_HEX(n);
 
     return 0;
 }
