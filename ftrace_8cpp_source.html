@@ -118,8 +118,8 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">// Command line switches</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;KNOB&lt;string&gt; <a class="code" href="ftrace_8cpp.html#adbe4be1e4159009fd53b456996d35a4b">KnobOutputFile</a>(KNOB_MODE_WRITEONCE,  <span class="stringliteral">&quot;pintool&quot;</span>,</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="stringliteral">&quot;o&quot;</span>, <span class="stringliteral">&quot;ftrace.out&quot;</span>, <span class="stringliteral">&quot;specify file name for ftrace output&quot;</span>);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;KNOB&lt;string&gt; <a class="code" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a>(KNOB_MODE_WRITEONCE,  <span class="stringliteral">&quot;pintool&quot;</span>,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="stringliteral">&quot;o&quot;</span>, <span class="stringliteral">&quot;&quot;</span>, <span class="stringliteral">&quot;specify file name for ftrace output&quot;</span>);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;KNOB&lt;BOOL&gt; <a class="code" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a>(KNOB_MODE_WRITEONCE, <span class="stringliteral">&quot;pintool&quot;</span>, <span class="stringliteral">&quot;instrument&quot;</span>, <span class="stringliteral">&quot;1&quot;</span>,</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                          <span class="stringliteral">&quot;turn floating-point instruction tracing on or off&quot;</span>);</div>
@@ -146,245 +146,279 @@ $(document).ready(function(){initNavTree('ftrace_8cpp_source.html','');});
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    (*counter)++;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">  101</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a>(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    PIN_REGISTER reg1, reg2;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    PIN_GetContextRegval(ctxt, operand1, reg1.byte);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    PIN_GetContextRegval(ctxt, operand2, reg2.byte);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; OPCODE_StringShort(op)</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg2.dword, 8, FALSE)</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        PIN_REGISTER result;</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#af18a2ad231dcc8a092812db11fa06c12">  102</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#af18a2ad231dcc8a092812db11fa06c12">print_reg_fargs</a>(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                     BOOL output) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    PIN_REGISTER reg1, reg2;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    PIN_GetContextRegval(ctxt, operand1, reg1.byte);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    PIN_GetContextRegval(ctxt, operand2, reg2.byte);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">if</span> (output) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; OPCODE_StringShort(op)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg2.dword, 8, FALSE)</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        PIN_SetContextRegval(ctxt, operand1, result.byte);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">  134</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">print_mem_fargs</a>(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    PIN_REGISTER reg1;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    PIN_GetContextRegval(ctxt, operand1, reg1.byte);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; OPCODE_StringShort(op)</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*operand2, 8, FALSE)</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        PIN_REGISTER result;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        PIN_SetContextRegval(ctxt, operand1, result.byte);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        PIN_REGISTER result;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        PIN_SetContextRegval(ctxt, operand1, result.byte);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
+<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a3ebfedad8c105c65529a7b9604622147">  139</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#a3ebfedad8c105c65529a7b9604622147">print_mem_fargs</a>(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                     BOOL output) {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    PIN_REGISTER reg1;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    PIN_GetContextRegval(ctxt, operand1, reg1.byte);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordflow">if</span> (output) {</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; OPCODE_StringShort(op)</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*reg1.dword, 8, FALSE)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; StringHex(*operand2, 8, FALSE)</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;}</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">  162</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a>(REG operand1, CONTEXT *ctxt) {</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    PIN_REGISTER result;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    PIN_GetContextRegval(ctxt, operand1, result.byte);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; StringHex(*result.dword, 8, FALSE) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;}</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">// Instrumentation callbacks</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
-<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">  187</a></span>&#160;BOOL <a class="code" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a>(INS ins) {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    OPCODE op = INS_Opcode(ins);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordflow">switch</span>(op) {</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_ADDSS:</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_SUBSS:</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_MULSS:</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_DIVSS:</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;            <span class="keywordflow">return</span> TRUE;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            <span class="keywordflow">return</span> FALSE;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    }</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;}</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e">  211</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e">Routine</a>(RTN rtn, VOID *v) {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    RTN_Open(rtn);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="comment">// Forward pass over all instructions in routine</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordflow">for</span>(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="comment">// Increment the count of the total number of instructions</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        INS_InsertCall(ins,</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                       IPOINT_BEFORE,</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                       (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a>,</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                       IARG_PTR,</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                       &amp;<a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a>,</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                       IARG_END);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>) {</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        PIN_REGISTER result;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        PIN_SetContextRegval(ctxt, operand1, result.byte);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;}</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00170"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">  170</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a>(REG operand1, CONTEXT *ctxt) {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    PIN_REGISTER result;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    PIN_GetContextRegval(ctxt, operand1, result.byte);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; StringHex(*result.dword, 8, FALSE) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;}</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">// Instrumentation callbacks</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">  195</a></span>&#160;BOOL <a class="code" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a>(INS ins) {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    OPCODE op = INS_Opcode(ins);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordflow">switch</span>(op) {</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_ADDSS:</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_SUBSS:</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_MULSS:</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        <span class="keywordflow">case</span> XED_ICLASS_DIVSS:</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            <span class="keywordflow">return</span> TRUE;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            <span class="keywordflow">return</span> FALSE;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;}</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
+<div class="line"><a name="l00219"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">  219</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">Routine</a>(RTN rtn, VOID *output) {</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    RTN_Open(rtn);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="comment">// Forward pass over all instructions in routine</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordflow">for</span>(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a>(ins)) {</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            <span class="comment">// Increment the count of floating point instructions</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            INS_InsertCall(ins,</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                           IPOINT_BEFORE,</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                           (AFUNPTR)docount,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                           IARG_PTR,</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                           &amp;<a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a>,</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                           IARG_END);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordflow">if</span> (*(BOOL *)output) {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="comment">// Increment the count of the total number of instructions</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            INS_InsertCall(ins,</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                           IPOINT_BEFORE,</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                           (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a>,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                           IARG_PTR,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                           &amp;<a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a>,</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                           IARG_END);</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        }</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            <span class="comment">// If we are in a routine that we have not chosen to instrument, just</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <span class="comment">// record the count of instructions and floating point instructions</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a>.SelectRtn(rtn))</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>)</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                INS_Delete(ins);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            REGSET regsIn, regsOut;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            REGSET_Clear(regsIn);</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            REGSET_Clear(regsOut);</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="comment">// Increment the count of instrumented floating point instructions</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            INS_InsertCall(ins,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                           IPOINT_BEFORE,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                           (AFUNPTR)docount,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                           IARG_PTR,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                           &amp;<a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a>,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                           IARG_END);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            <span class="keywordflow">if</span> (INS_OperandIsReg(ins, 1)) {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                <span class="comment">// If an instruction is a floating-point instruction that operates on two</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                <span class="comment">// registers, call print_reg_fargs and pass it the two operands</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                INS_InsertCall(ins,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                               IPOINT_BEFORE,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a>,</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                               IARG_UINT32,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                               INS_Opcode(ins),</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                               IARG_UINT32,</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                               INS_OperandReg(ins, 0),</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                               IARG_UINT32,</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                               INS_OperandReg(ins, 1),</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                               IARG_PARTIAL_CONTEXT,</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                               &amp;regsIn,</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                               &amp;regsOut,</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                               IARG_END);</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            }</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="comment">// If an instruction is a floating-point instruction that operates on a</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                <span class="comment">// register and a memory location, call print_mem_fargs and pass it the</span></div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                <span class="comment">// two operands</span></div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                INS_InsertCall(ins,</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                               IPOINT_BEFORE,</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">print_mem_fargs</a>,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a>(ins)) {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">if</span> (*(BOOL *)output) {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                <span class="comment">// Increment the count of floating point instructions</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                INS_InsertCall(ins,</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                               IPOINT_BEFORE,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a>,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                               IARG_PTR,</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                               &amp;<a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a>,</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                               IARG_END);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            }</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            <span class="comment">// If we are in a routine that we have not chosen to instrument, just</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            <span class="comment">// record the count of instructions and floating point instructions</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a>.SelectRtn(rtn))</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a>)</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                INS_Delete(ins);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            REGSET regsIn, regsOut;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            REGSET_Clear(regsIn);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            REGSET_Clear(regsOut);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <span class="keywordflow">if</span> (*(BOOL *)output) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                <span class="comment">// Increment the count of instrumented floating point instructions</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                INS_InsertCall(ins,</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                               IPOINT_BEFORE,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a>,</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                               IARG_PTR,</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                               &amp;<a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a>,</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                               IARG_END);</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            <span class="keywordflow">if</span> (INS_OperandIsReg(ins, 1)) {</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                <span class="comment">// If an instruction is a floating-point instruction that operates on two</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                <span class="comment">// registers, call print_reg_fargs and pass it the two operands</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                INS_InsertCall(ins,</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                               IPOINT_BEFORE,</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#af18a2ad231dcc8a092812db11fa06c12">print_reg_fargs</a>,</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                               IARG_UINT32,</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                               INS_Opcode(ins),</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                               IARG_UINT32,</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                               INS_OperandReg(ins, 0),</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                               IARG_UINT32,</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                               INS_Opcode(ins),</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                               IARG_UINT32,</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                               INS_OperandReg(ins, 0),</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                               IARG_MEMORYREAD_EA,</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                               IARG_PARTIAL_CONTEXT,</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                               &amp;regsIn,</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                               &amp;regsOut,</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                               IARG_END);</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="comment">// Call print_fresult after every floating-point instruction, and pass it the</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            <span class="comment">// result of the instruction</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            INS_InsertCall(ins,</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                           IPOINT_AFTER,</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                           (AFUNPTR)<a class="code" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a>,</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                           IARG_UINT32,</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                           INS_OperandReg(ins, 0),</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                           IARG_CONST_CONTEXT,</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                           IARG_END);</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    }</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    RTN_Close(rtn);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;}</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00318"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">  318</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a>(INT32 code, VOID *v) {</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="comment">// Write to a file since cout and cerr maybe closed by the application</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.setf(ios::showbase);</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;-----------------------&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Total number of instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> &lt;&lt; endl;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of floating point instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> &lt;&lt; endl;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of instrumented floating point instructions: &quot;</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            &lt;&lt; <a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> &lt;&lt; endl;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.close();</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;}</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;</div>
-<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">  336</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]) {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="comment">// Initialize PIN library. Print help message if -h(elp) is specified</span></div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="comment">// in the command line or the command line is invalid</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keywordflow">if</span>( PIN_Init(argc,argv) ) {</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a>();</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    }</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a>) {</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.open(<a class="code" href="ftrace_8cpp.html#adbe4be1e4159009fd53b456996d35a4b">KnobOutputFile</a>.Value().c_str());</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        <span class="comment">// Register Trace to be called to instrument instructions</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        RTN_AddInstrumentFunction(<a class="code" href="ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e">Routine</a>, 0);</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <span class="comment">// Register Fini to be called when the application exits</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        PIN_AddFiniFunction(<a class="code" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a>, 0);</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        <a class="code" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a>.Activate();</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        cerr &lt;&lt;  <span class="stringliteral">&quot;===============================================&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        cerr &lt;&lt; <span class="stringliteral">&quot;See file &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#adbe4be1e4159009fd53b456996d35a4b">KnobOutputFile</a>.Value() &lt;&lt; <span class="stringliteral">&quot; for analysis results&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        cerr &lt;&lt;  <span class="stringliteral">&quot;===============================================&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    }</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        PIN_Detach();</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                               INS_OperandReg(ins, 1),</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                               IARG_PARTIAL_CONTEXT,</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                               &amp;regsIn,</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                               &amp;regsOut,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                               IARG_BOOL,</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                               *(BOOL *)output,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                               IARG_END);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            }</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                <span class="comment">// If an instruction is a floating-point instruction that operates on a</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                <span class="comment">// register and a memory location, call print_mem_fargs and pass it the</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                <span class="comment">// two operands</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                INS_InsertCall(ins,</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                               IPOINT_BEFORE,</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#a3ebfedad8c105c65529a7b9604622147">print_mem_fargs</a>,</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                               IARG_UINT32,</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                               INS_Opcode(ins),</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                               IARG_UINT32,</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                               INS_OperandReg(ins, 0),</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                               IARG_MEMORYREAD_EA,</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                               IARG_PARTIAL_CONTEXT,</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                               &amp;regsIn,</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                               &amp;regsOut,</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                               IARG_BOOL,</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                               *(BOOL *)output,</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                               IARG_END);</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            <span class="keywordflow">if</span> (*(BOOL *)output) {</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                <span class="comment">// Call print_fresult after every floating-point instruction, and pass it the</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                <span class="comment">// result of the instruction</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                INS_InsertCall(ins,</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                               IPOINT_AFTER,</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                               (AFUNPTR)<a class="code" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a>,</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                               IARG_UINT32,</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                               INS_OperandReg(ins, 0),</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                               IARG_CONST_CONTEXT,</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                               IARG_END);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        }</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    RTN_Close(rtn);</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;}</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;</div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">  337</a></span>&#160;VOID <a class="code" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a>(INT32 code, VOID *v) {</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="comment">// Write to a file since cout and cerr maybe closed by the application</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.setf(ios::showbase);</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;-----------------------&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Total number of instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> &lt;&lt; endl;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of floating point instructions: &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> &lt;&lt; endl;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a> &lt;&lt; <span class="stringliteral">&quot;Number of instrumented floating point instructions: &quot;</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            &lt;&lt; <a class="code" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> &lt;&lt; endl;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.close();</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;}</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;</div>
+<div class="line"><a name="l00355"></a><span class="lineno"><a class="line" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">  355</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]) {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="comment">// Initialize PIN library. Print help message if -h(elp) is specified</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="comment">// in the command line or the command line is invalid</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">if</span>( PIN_Init(argc,argv) ) {</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a>();</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    }</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    <span class="comment">// Start the program, never returns</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    PIN_StartProgram();</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a>) {</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        BOOL output;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;}</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment">/* eof */</span></div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="comment">// If an output file was specified on the command line, instrument the</span></div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        <span class="comment">// program for output, otherwise instrument the program for no output if</span></div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="comment">// a floating point replacement function was specified during compilation</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a>.Value().empty()) {</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            output = TRUE;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>.open(<a class="code" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a>.Value().c_str());</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            <span class="comment">// Register Routine to be called to instrument instructions</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;            RTN_AddInstrumentFunction(<a class="code" href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">Routine</a>, &amp;output);</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            <span class="comment">// Register Fini to be called when the application exits</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;            PIN_AddFiniFunction(<a class="code" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a>, 0);</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            cerr &lt;&lt;  <span class="stringliteral">&quot;===============================================&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;See file &quot;</span> &lt;&lt; <a class="code" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a>.Value() &lt;&lt; <span class="stringliteral">&quot; for analysis results&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            cerr &lt;&lt;  <span class="stringliteral">&quot;===============================================&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;        }</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="preprocessor">#ifdef REPLACE_FP_FN</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            output = FALSE;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            <span class="comment">// Register Routine to be called to instrument instructions</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            RTN_AddInstrumentFunction(<a class="code" href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">Routine</a>, &amp;output);</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        }</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        <a class="code" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a>.Activate();</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    }</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        PIN_Detach();</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    }</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">// Start the program, never returns</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    PIN_StartProgram();</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;}</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">/* eof */</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">/* ===================================================================== */</span></div>
 <div class="ttc" id="ftrace_8cpp_html_ad115a0fe29ea602faf1908a1ce024c99"><div class="ttname"><a href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a></div><div class="ttdeci">ofstream OutFile</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00027">ftrace.cpp:27</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_a10df4774fb7bc1bae29770f4cd973d4c"><div class="ttname"><a href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a></div><div class="ttdeci">BOOL isFpInstruction(INS ins)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00187">ftrace.cpp:187</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a10df4774fb7bc1bae29770f4cd973d4c"><div class="ttname"><a href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a></div><div class="ttdeci">BOOL isFpInstruction(INS ins)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00195">ftrace.cpp:195</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a7c2aec7c5d253eec1b4a7425ffe7cb4b"><div class="ttname"><a href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a></div><div class="ttdeci">static UINT64 fp_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00031">ftrace.cpp:31</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a4bfdd0956e5f2dfdd462ff5bea6ffe98"><div class="ttname"><a href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a></div><div class="ttdeci">KNOB&lt; string &gt; KnobOutputFile(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;o&quot;,&quot;&quot;,&quot;specify file name for ftrace output&quot;)</div></div>
 <div class="ttc" id="ftrace_8cpp_html_a93408c88ca87a4338dd70191d80d1328"><div class="ttname"><a href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a></div><div class="ttdeci">static UINT64 instrumented_fp_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00033">ftrace.cpp:33</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_aa61669c70de306a0ba47bf5878b9f806"><div class="ttname"><a href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a></div><div class="ttdeci">VOID Fini(INT32 code, VOID *v)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00318">ftrace.cpp:318</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_aa61669c70de306a0ba47bf5878b9f806"><div class="ttname"><a href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a></div><div class="ttdeci">VOID Fini(INT32 code, VOID *v)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00337">ftrace.cpp:337</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_aabd534eab1f3ff92a2cf8be192a4f013"><div class="ttname"><a href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">Routine</a></div><div class="ttdeci">VOID Routine(RTN rtn, VOID *output)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00219">ftrace.cpp:219</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a9c89b15666dec97b4af91ba247b6a230"><div class="ttname"><a href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a></div><div class="ttdeci">INT32 Usage()</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00069">ftrace.cpp:69</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a38affe937715aa065d87b2c29e7e58be"><div class="ttname"><a href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a></div><div class="ttdeci">KNOB&lt; BOOL &gt; KnobInstrument(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;instrument&quot;,&quot;1&quot;,&quot;turn floating-point instruction tracing on or off&quot;)</div></div>
-<div class="ttc" id="ftrace_8cpp_html_adbe4be1e4159009fd53b456996d35a4b"><div class="ttname"><a href="ftrace_8cpp.html#adbe4be1e4159009fd53b456996d35a4b">KnobOutputFile</a></div><div class="ttdeci">KNOB&lt; string &gt; KnobOutputFile(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;o&quot;,&quot;ftrace.out&quot;,&quot;specify file name for ftrace output&quot;)</div></div>
 <div class="ttc" id="ftrace_8cpp_html_af945b1d7772138bfdb2ce2b724e5d571"><div class="ttname"><a href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a></div><div class="ttdeci">VOID docount(UINT64 *counter)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00085">ftrace.cpp:85</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_a2b849c8c8f4d790ee7cdb37aa4c98c9f"><div class="ttname"><a href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a></div><div class="ttdeci">VOID print_fresult(REG operand1, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00162">ftrace.cpp:162</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_a530ae3d178fff7ea0bbcf84cddda9f03"><div class="ttname"><a href="ftrace_8cpp.html#a530ae3d178fff7ea0bbcf84cddda9f03">print_reg_fargs</a></div><div class="ttdeci">VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00101">ftrace.cpp:101</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_aa5953dcb8b2676b7343942e31fc25a0f"><div class="ttname"><a href="ftrace_8cpp.html#aa5953dcb8b2676b7343942e31fc25a0f">print_mem_fargs</a></div><div class="ttdeci">VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00134">ftrace.cpp:134</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a2b849c8c8f4d790ee7cdb37aa4c98c9f"><div class="ttname"><a href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a></div><div class="ttdeci">VOID print_fresult(REG operand1, CONTEXT *ctxt)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00170">ftrace.cpp:170</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a672f83b526de3bb39a160ec2f49b682a"><div class="ttname"><a href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a></div><div class="ttdeci">static UINT64 ins_count</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00029">ftrace.cpp:29</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_af18a2ad231dcc8a092812db11fa06c12"><div class="ttname"><a href="ftrace_8cpp.html#af18a2ad231dcc8a092812db11fa06c12">print_reg_fargs</a></div><div class="ttdeci">VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt, BOOL output)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00102">ftrace.cpp:102</a></div></div>
 <div class="ttc" id="namespaceINSTLIB_html"><div class="ttname"><a href="namespaceINSTLIB.html">INSTLIB</a></div></div>
 <div class="ttc" id="ftrace_8cpp_html_a4f1d652654648d584fd9bf089c64828c"><div class="ttname"><a href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a></div><div class="ttdeci">KNOB&lt; BOOL &gt; KnobReplaceFPIns(KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;fp-replace&quot;,&quot;1&quot;,&quot;turn floating-point instruction replacing on or off&quot;)</div></div>
 <div class="ttc" id="ftrace_8cpp_html_a4ad05dfe70dfabe25a3d2cd618345be5"><div class="ttname"><a href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a></div><div class="ttdeci">FILTER_RTN filter</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00025">ftrace.cpp:25</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_a798126743c6c51a4d7387e4def63f45e"><div class="ttname"><a href="ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e">Routine</a></div><div class="ttdeci">VOID Routine(RTN rtn, VOID *v)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00211">ftrace.cpp:211</a></div></div>
-<div class="ttc" id="ftrace_8cpp_html_a0ddf1224851353fc92bfbff6f499fa97"><div class="ttname"><a href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a></div><div class="ttdeci">int main(int argc, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00336">ftrace.cpp:336</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a3ebfedad8c105c65529a7b9604622147"><div class="ttname"><a href="ftrace_8cpp.html#a3ebfedad8c105c65529a7b9604622147">print_mem_fargs</a></div><div class="ttdeci">VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt, BOOL output)</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00139">ftrace.cpp:139</a></div></div>
+<div class="ttc" id="ftrace_8cpp_html_a0ddf1224851353fc92bfbff6f499fa97"><div class="ttname"><a href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a></div><div class="ttdeci">int main(int argc, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00355">ftrace.cpp:355</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Thu Feb 5 2015 16:25:02 for ftrace by
+    <li class="footer">Generated on Sun Feb 15 2015 18:12:51 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
