@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+/*! Print the hex value of a 32-bit value to stdout */
 #define PRINT_HEX(fp) printf("%08x\n", *(uint32_t *)&(fp))
 
 /*!
