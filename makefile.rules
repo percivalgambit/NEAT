@@ -78,8 +78,10 @@ ftrace.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFI
 	$(RM) $(OBJDIR)ftrace.out
 
 ftrace_no_specified_output_file.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(RM) -f ftrace.out
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(DIFF) -I "Total number of instructions: [0-9]*" ftrace.out ftrace.reference
+	$(TOUCH) ftrace.out
+	$(DIFF) ftrace.out ftrace_no_instrument.reference
 	$(RM) ftrace.out
 
 ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)

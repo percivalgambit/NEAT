@@ -42,7 +42,7 @@ static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumente
  *  Specify the file name for the ftrace output file.
  */
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,  "pintool",
-    "o", "ftrace.out", "specify file name for ftrace output");
+    "o", "", "specify file name for ftrace output");
 
 /*!
  *  Turn instrumentation on or off for the program.
@@ -87,7 +87,7 @@ VOID docount(UINT64 *counter) {
 }
 
 /*!
- * Print the name of a floating-point instruction and its operands. Replace
+ * Record the name of a floating-point instruction and its operands. Replace
  * floating-point instructions with a user-specified function, if specified during
  * compilation.
  * This function is called for every floating-point arithmetic instruction that
@@ -97,17 +97,21 @@ VOID docount(UINT64 *counter) {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
+ * @param[in]   output      whether to print output to the output file
  */
-VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
+VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
+                     BOOL output) {
     PIN_REGISTER reg1, reg2;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    OutFile << OPCODE_StringShort(op)
-            << " " << StringHex(*reg1.dword, 8, FALSE)
-            << " " << StringHex(*reg2.dword, 8, FALSE)
-            << "\n";
+    if (output) {
+        OutFile << OPCODE_StringShort(op)
+                << " " << StringHex(*reg1.dword, 8, FALSE)
+                << " " << StringHex(*reg2.dword, 8, FALSE)
+                << "\n";
+    }
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -120,7 +124,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
 }
 
 /*!
- * Print the name of a floating-point instruction and its operands. Replace
+ * Record the name of a floating-point instruction and its operands. Replace
  * floating-point instructions with a user-specified function, if specified during
  * compilation.
  * This function is called for every floating-point arithmetic instruction that
@@ -130,16 +134,20 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
  * @param[in]   operand2    the second operand of the instruction
  * @param[in]   ctxt        the context of the instrumented application immediately
  *                          before the instruction is executed
+ * @param[in]   output      whether to print output to the output file
  */
-VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
+VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,
+                     BOOL output) {
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    OutFile << OPCODE_StringShort(op)
-            << " " << StringHex(*reg1.dword, 8, FALSE)
-            << " " << StringHex(*operand2, 8, FALSE)
-            << "\n";
+    if (output) {
+        OutFile << OPCODE_StringShort(op)
+                << " " << StringHex(*reg1.dword, 8, FALSE)
+                << " " << StringHex(*operand2, 8, FALSE)
+                << "\n";
+    }
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -203,34 +211,38 @@ BOOL isFpInstruction(INS ins) {
  * instruction of the instrumented application in selected routines.
  * This function is called every time a new instruction is encountered.
  * @param[in]   rtn     routine to be instrumented
- * @param[in]   v       value specified by the tool in the INS_AddInstrumentFunction
- *                      function call
+ * @param[in]   output  pointer to a bool value that determines whether any
+ *                      output should be produced by the instrumentation
  * @note To select which routines to instument, specify each routine as the
  *       argument to a -filter_rtn flag on the command line
  */
-VOID Routine(RTN rtn, VOID *v) {
+VOID Routine(RTN rtn, VOID *output) {
     RTN_Open(rtn);
 
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
 
-        // Increment the count of the total number of instructions
-        INS_InsertCall(ins,
-                       IPOINT_BEFORE,
-                       (AFUNPTR)docount,
-                       IARG_PTR,
-                       &ins_count,
-                       IARG_END);
-
-        if (isFpInstruction(ins)) {
-
-            // Increment the count of floating point instructions
+        if (*(BOOL *)output) {
+            // Increment the count of the total number of instructions
             INS_InsertCall(ins,
                            IPOINT_BEFORE,
                            (AFUNPTR)docount,
                            IARG_PTR,
-                           &fp_count,
+                           &ins_count,
                            IARG_END);
+        }
+
+        if (isFpInstruction(ins)) {
+
+            if (*(BOOL *)output) {
+                // Increment the count of floating point instructions
+                INS_InsertCall(ins,
+                               IPOINT_BEFORE,
+                               (AFUNPTR)docount,
+                               IARG_PTR,
+                               &fp_count,
+                               IARG_END);
+            }
 
             // If we are in a routine that we have not chosen to instrument, just
             // record the count of instructions and floating point instructions
@@ -248,13 +260,15 @@ VOID Routine(RTN rtn, VOID *v) {
             REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
             REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
 
-            // Increment the count of instrumented floating point instructions
-            INS_InsertCall(ins,
-                           IPOINT_BEFORE,
-                           (AFUNPTR)docount,
-                           IARG_PTR,
-                           &instrumented_fp_count,
-                           IARG_END);
+            if (*(BOOL *)output) {
+                // Increment the count of instrumented floating point instructions
+                INS_InsertCall(ins,
+                               IPOINT_BEFORE,
+                               (AFUNPTR)docount,
+                               IARG_PTR,
+                               &instrumented_fp_count,
+                               IARG_END);
+            }
 
             if (INS_OperandIsReg(ins, 1)) {
                 REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
@@ -273,6 +287,8 @@ VOID Routine(RTN rtn, VOID *v) {
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
+                               IARG_BOOL,
+                               *(BOOL *)output,
                                IARG_END);
             }
             else {
@@ -290,19 +306,22 @@ VOID Routine(RTN rtn, VOID *v) {
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
+                               IARG_BOOL,
+                               *(BOOL *)output,
                                IARG_END);
             }
 
-
-            // Call print_fresult after every floating-point instruction, and pass it the
-            // result of the instruction
-            INS_InsertCall(ins,
-                           IPOINT_AFTER,
-                           (AFUNPTR)print_fresult,
-                           IARG_UINT32,
-                           INS_OperandReg(ins, 0),
-                           IARG_CONST_CONTEXT,
-                           IARG_END);
+            if (*(BOOL *)output) {
+                // Call print_fresult after every floating-point instruction, and pass it the
+                // result of the instruction
+                INS_InsertCall(ins,
+                               IPOINT_AFTER,
+                               (AFUNPTR)print_fresult,
+                               IARG_UINT32,
+                               INS_OperandReg(ins, 0),
+                               IARG_CONST_CONTEXT,
+                               IARG_END);
+            }
         }
     }
 
@@ -341,19 +360,36 @@ int main(int argc, char *argv[]) {
     }
 
     if (KnobInstrument) {
-        OutFile.open(KnobOutputFile.Value().c_str());
+        BOOL output;
 
-        // Register Trace to be called to instrument instructions
-        RTN_AddInstrumentFunction(Routine, 0);
+        // If an output file was specified on the command line, instrument the
+        // program for output, otherwise instrument the program for no output if
+        // a floating point replacement function was specified during compilation
+        if (!KnobOutputFile.Value().empty()) {
+            output = TRUE;
 
-        // Register Fini to be called when the application exits
-        PIN_AddFiniFunction(Fini, 0);
+            OutFile.open(KnobOutputFile.Value().c_str());
+
+            // Register Routine to be called to instrument instructions
+            RTN_AddInstrumentFunction(Routine, &output);
+
+            // Register Fini to be called when the application exits
+            PIN_AddFiniFunction(Fini, 0);
+
+            cerr <<  "===============================================" << endl;
+            cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
+            cerr <<  "===============================================" << endl;
+        }
+        else {
+#ifdef REPLACE_FP_FN
+            output = FALSE;
+
+            // Register Routine to be called to instrument instructions
+            RTN_AddInstrumentFunction(Routine, &output);
+#endif
+        }
 
         filter.Activate();
-
-        cerr <<  "===============================================" << endl;
-        cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
-        cerr <<  "===============================================" << endl;
     }
     else {
         PIN_Detach();
