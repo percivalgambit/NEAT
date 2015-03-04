@@ -370,9 +370,6 @@ int main(int argc, char *argv[]) {
 
             OutFile.open(KnobOutputFile.Value().c_str());
 
-            // Register Routine to be called to instrument instructions
-            RTN_AddInstrumentFunction(Routine, &output);
-
             // Register Fini to be called when the application exits
             PIN_AddFiniFunction(Fini, 0);
 
@@ -383,11 +380,11 @@ int main(int argc, char *argv[]) {
         else {
 #ifdef REPLACE_FP_FN
             output = FALSE;
-
-            // Register Routine to be called to instrument instructions
-            RTN_AddInstrumentFunction(Routine, &output);
 #endif
         }
+
+        // Register Routine to be called to instrument instructions
+        RTN_AddInstrumentFunction(Routine, &output);
 
         filter.Activate();
     }
