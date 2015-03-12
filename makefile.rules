@@ -142,10 +142,21 @@ ifndef REPLACE_FP_FILE
 REPLACE_FP_FILE := $(REPLACE_FP_FN).cpp
 endif
 
-REPLACE_FP_FILE_OBJ := $(OBJDIR)$(notdir $(REPLACE_FP_FILE))$(OBJ_SUFFIX)
+REPLACE_FP_DEPS := $(OBJDIR)$(notdir $(REPLACE_FP_FILE))$(OBJ_SUFFIX) $(OBJDIR)replacement_type_enum$(OBJ_SUFFIX)
 
-$(REPLACE_FP_FILE_OBJ): $(REPLACE_FP_FILE)
+$(OBJDIR)$(notdir $(REPLACE_FP_FILE))$(OBJ_SUFFIX): $(REPLACE_FP_FILE)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+$(OBJDIR)replacement_type_enum$(OBJ_SUFFIX): $(OBJDIR)replacement_type_enum.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+ifdef REPLACE_TYPE_MAPPING
+GENERATE_REPLACEMENT_TYPE_INPUT := -i $(REPLACE_TYPE_MAPPING)
+endif
+
+.PHONY: $(OBJDIR)replacement_type_enum.cpp
+$(OBJDIR)replacement_type_enum.cpp: generate_replacement_type_enum.py $(REPLACE_TYPE_MAPPING)
+	$(PYTHON) $< -o $@ $(GENERATE_REPLACEMENT_TYPE_INPUT)
 
 endif
 
@@ -153,7 +164,7 @@ endif
 $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp
 	$(CXX) $(REPLACE_FP_FN_FLAG) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(REPLACE_FP_FILE_OBJ)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(REPLACE_FP_DEPS)
 	$(LINKER) $(LDFLAGS) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(LDLIBS) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
