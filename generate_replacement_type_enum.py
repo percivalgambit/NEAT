@@ -78,6 +78,7 @@ def main():
                               % (func_name, replacement_type))
     output_file.write('    {NULL, default_replacement}\n')
     output_file.write('};\n')
+    output_file.write('\n')
 
     output_file.write('replacement_type get_replacement_type(string func_name)'
                       ' {\n')

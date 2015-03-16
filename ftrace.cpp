@@ -10,19 +10,14 @@
 #include <iostream>
 
 #include "pin.H"
-#include "instlib.H"
-
-using namespace INSTLIB;
 
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
 
 #ifdef REPLACE_FP_FN
-FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
+FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 #endif
-
-FILTER_RTN filter; /*!< Contains knobs to choose which files to instrument */
 
 ofstream OutFile; /*!<  Output file for the pintool */
 
@@ -99,8 +94,8 @@ VOID docount(UINT64 *counter) {
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
-                     BOOL output) {
+VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, UINT32 replace_type,
+                     CONTEXT *ctxt, BOOL output) {
     PIN_REGISTER reg1, reg2;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
@@ -117,7 +112,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -136,8 +131,8 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,
-                     BOOL output) {
+VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, UINT32 replace_type,
+                     CONTEXT *ctxt, BOOL output) {
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
@@ -153,7 +148,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -243,11 +238,6 @@ VOID Routine(RTN rtn, VOID *output) {
                                &fp_count,
                                IARG_END);
             }
-
-            // If we are in a routine that we have not chosen to instrument, just
-            // record the count of instructions and floating point instructions
-            if (!filter.SelectRtn(rtn))
-                continue;
 
 #ifdef REPLACE_FP_FN
             if (KnobReplaceFPIns)
@@ -388,8 +378,6 @@ int main(int argc, char *argv[]) {
             RTN_AddInstrumentFunction(Routine, &output);
 #endif
         }
-
-        filter.Activate();
     }
     else {
         PIN_Detach();
