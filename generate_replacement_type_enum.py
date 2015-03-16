@@ -56,7 +56,7 @@ def main():
     output_file.write('\n')
 
     output_file.write('typedef enum replacement_type {\n')
-    output_file.write('    default_replacement,\n')
+    output_file.write('    _no_replacement,\n')
     for replacement_type in replacement_type_mapping.keys():
         output_file.write('    %s,\n' % replacement_type)
     output_file.write('} replacement_type;\n')
@@ -76,7 +76,7 @@ def main():
         for func_name in mapping_entry[1]:
             output_file.write('    {"%s", %s},\n'
                               % (func_name, replacement_type))
-    output_file.write('    {NULL, default_replacement}\n')
+    output_file.write('    {NULL, _no_replacement}\n')
     output_file.write('};\n')
     output_file.write('\n')
 
@@ -91,7 +91,7 @@ def main():
     output_file.write('        }\n')
     output_file.write('    }\n')
     output_file.write('\n')
-    output_file.write('    return default_replacement;\n')
+    output_file.write('    return _no_replacement;\n')
     output_file.write('}\n')
 
     output_file.close()

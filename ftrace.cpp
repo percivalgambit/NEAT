@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 
 #include "pin.H"
 
@@ -20,6 +21,8 @@ FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 #endif
 
 ofstream OutFile; /*!<  Output file for the pintool */
+
+stack<UINT32> replacement_type_stack;
 
 static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
                                   instrumented program */
@@ -214,6 +217,12 @@ BOOL isFpInstruction(INS ins) {
 VOID Routine(RTN rtn, VOID *output) {
     RTN_Open(rtn);
 
+#ifdef REPLACE_FP_FN
+    if (get_replacement_type(RTN_Name(rtn)) != _no_replacement) {
+        replacement_type_stack.push(get_replacement_type(RTN_Name(rtn)));
+    }
+#endif
+
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
 
@@ -274,6 +283,13 @@ VOID Routine(RTN rtn, VOID *output) {
                                INS_OperandReg(ins, 0),
                                IARG_UINT32,
                                INS_OperandReg(ins, 1),
+                               IARG_UINT32,
+#ifdef REPLACE_FP_FN
+                               replacement_type_stack.empty() ? _no_replacement
+                                                              : replacement_type_stack.top(),
+#else
+                               0,
+#endif
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -293,6 +309,13 @@ VOID Routine(RTN rtn, VOID *output) {
                                IARG_UINT32,
                                INS_OperandReg(ins, 0),
                                IARG_MEMORYREAD_EA,
+                               IARG_UINT32,
+#ifdef REPLACE_FP_FN
+                               replacement_type_stack.empty() ? _no_replacement
+                                                              : replacement_type_stack.top(),
+#else
+                               0,
+#endif
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -314,6 +337,12 @@ VOID Routine(RTN rtn, VOID *output) {
             }
         }
     }
+
+#ifdef REPLACE_FP_FN
+    if (get_replacement_type(RTN_Name(rtn)) != _no_replacement) {
+        replacement_type_stack.pop();
+    }
+#endif
 
     RTN_Close(rtn);
 }
