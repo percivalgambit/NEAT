@@ -84,6 +84,20 @@ VOID docount(UINT64 *counter) {
     (*counter)++;
 }
 
+#ifdef REPLACE_FP_FN
+VOID push_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement) {
+        replacement_type_stack.push(replace_type);
+    }
+}
+
+VOID pop_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement) {
+        replacement_type_stack.pop();
+    }
+}
+#endif
+
 /*!
  * Record the name of a floating-point instruction and its operands. Replace
  * floating-point instructions with a user-specified function, if specified during
@@ -218,9 +232,12 @@ VOID Routine(RTN rtn, VOID *output) {
     RTN_Open(rtn);
 
 #ifdef REPLACE_FP_FN
-    if (get_replacement_type(RTN_Name(rtn)) != _no_replacement) {
-        replacement_type_stack.push(get_replacement_type(RTN_Name(rtn)));
-    }
+    RTN_InsertCall(rtn,
+                   IPOINT_BEFORE,
+                   (AFUNPTR)push_replacement_type,
+                   IARG_UINT32,
+                   get_replacement_type(RTN_Name(rtn)),
+                   IARG_END);
 #endif
 
     // Forward pass over all instructions in routine
@@ -339,9 +356,12 @@ VOID Routine(RTN rtn, VOID *output) {
     }
 
 #ifdef REPLACE_FP_FN
-    if (get_replacement_type(RTN_Name(rtn)) != _no_replacement) {
-        replacement_type_stack.pop();
-    }
+    RTN_InsertCall(rtn,
+                   IPOINT_AFTER,
+                   (AFUNPTR)pop_replacement_type,
+                   IARG_UINT32,
+                   get_replacement_type(RTN_Name(rtn)),
+                   IARG_END);
 #endif
 
     RTN_Close(rtn);
