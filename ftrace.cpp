@@ -409,9 +409,6 @@ int main(int argc, char *argv[]) {
 
             OutFile.open(KnobOutputFile.Value().c_str());
 
-            // Register Fini to be called when the application exits
-            PIN_AddFiniFunction(Fini, 0);
-
             cerr <<  "===============================================" << endl;
             cerr << "See file " << KnobOutputFile.Value() << " for analysis results" << endl;
             cerr <<  "===============================================" << endl;
@@ -424,12 +421,19 @@ int main(int argc, char *argv[]) {
 
         // Register Routine to be called to instrument instructions
         RTN_AddInstrumentFunction(Routine, &output);
-
-        filter.Activate();
     }
     else {
         PIN_Detach();
     }
+
+#ifdef START_CALLBACK
+    PIN_AddApplicationStartFunction(START_CALLBACK, 0);
+#endif
+
+#ifdef EXIT_CALLBACK
+    // Register Fini to be called when the application exits
+    PIN_AddFiniFunction(EXIT_CALLBACK, 0);
+#endif
 
     // Start the program, never returns
     PIN_StartProgram();
