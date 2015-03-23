@@ -20,7 +20,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_no_specified_output_file ftrace_no_instrument ftrace_filter ftrace_bad_filter ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
+TEST_ROOTS := ftrace_no_specified_output_file ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -90,18 +90,6 @@ ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_
 	$(DIFF) $(OBJDIR)ftrace_no_instrument_stderr.out ftrace_no_instrument.reference
 	$(RM) $(OBJDIR)ftrace_no_instrument_stderr.out $(OBJDIR)ftrace_no_instrument_stdout.out
 
-ftrace_filter.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_filter.out -filter_rtn main -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_filter_stdout.out
-	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace_filter.out ftrace.reference
-	$(DIFF) $(OBJDIR)ftrace_filter_stdout.out ftrace_stdout.reference
-	$(RM) $(OBJDIR)ftrace_filter.out $(OBJDIR)ftrace_filter_stdout.out
-
-ftrace_bad_filter.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_bad_filter.out -filter_rtn foo -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_bad_filter_stdout.out
-	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace_bad_filter.out ftrace_bad_filter.reference
-	$(DIFF) $(OBJDIR)ftrace_bad_filter_stdout.out ftrace_stdout.reference
-	$(RM) $(OBJDIR)ftrace_bad_filter.out $(OBJDIR)ftrace_bad_filter_stdout.out
-
 ftrace_replace_fp_ins_simple.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_replace_fp_ins_simple.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_simple_stdout.out
@@ -136,21 +124,34 @@ ftrace_no_replace.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 
 ifdef REPLACE_FP_FN
 
+REPLACE_FP_FN_FLAG := -DREPLACE_FP_FN=$(REPLACE_FP_FN)
+
 ifndef REPLACE_FP_FILE
 REPLACE_FP_FILE := $(REPLACE_FP_FN).cpp
 endif
 
-.PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
-$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp
-	$(CXX) -DREPLACE_FP_FN=$(REPLACE_FP_FN) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+REPLACE_FP_TOOL_DEPS := $(OBJDIR)$(basename $(notdir $(REPLACE_FP_FILE)))$(OBJ_SUFFIX)
+REPLACE_FP_OBJ_DEPS := $(OBJDIR)replacement_type_enum.h
 
-$(OBJDIR)$(notdir $(REPLACE_FP_FILE))$(OBJ_SUFFIX): $(REPLACE_FP_FILE)
+$(OBJDIR)$(basename $(notdir $(REPLACE_FP_FILE)))$(OBJ_SUFFIX): $(REPLACE_FP_FILE)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(OBJDIR)$(notdir $(REPLACE_FP_FILE))$(OBJ_SUFFIX)
-	$(LINKER) $(LDFLAGS) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(LDLIBS) $(TOOL_LPATHS) $(TOOL_LIBS)
+ifdef REPLACE_TYPE_MAPPING
+GENERATE_REPLACEMENT_TYPE_INPUT := -i $(REPLACE_TYPE_MAPPING)
+endif
+
+.PHONY: $(OBJDIR)replacement_type_enum.h
+$(OBJDIR)replacement_type_enum.h: generate_replacement_type_enum.py $(REPLACE_TYPE_MAPPING)
+	$(PYTHON) $< -o $@ $(GENERATE_REPLACEMENT_TYPE_INPUT)
 
 endif
+
+.PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
+$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp $(REPLACE_FP_OBJ_DEPS)
+	$(CXX) $(REPLACE_FP_FN_FLAG) $(addprefix -include ,$(filter %.h, $^)) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(REPLACE_FP_TOOL_DEPS)
+	$(LINKER) $(LDFLAGS) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(LDLIBS) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
 

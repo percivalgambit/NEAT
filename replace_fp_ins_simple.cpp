@@ -13,6 +13,7 @@
  * @param[in]   operation   type of floating-point instruction
  * @return the new result of the floating-point instruction
  */
-FLT32 replace_fp_ins_simple(FLT32 operand1, FLT32 operand2, OPCODE operation) {
+FLT32 replace_fp_ins_simple(FLT32 operand1, FLT32 operand2, OPCODE operation,
+                            UINT32 replace_type) {
     return 1.0;
 }

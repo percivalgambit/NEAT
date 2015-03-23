@@ -8,23 +8,21 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 
 #include "pin.H"
-#include "instlib.H"
-
-using namespace INSTLIB;
 
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
 
 #ifdef REPLACE_FP_FN
-FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE);
+FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 #endif
 
-FILTER_RTN filter; /*!< Contains knobs to choose which files to instrument */
-
 ofstream OutFile; /*!<  Output file for the pintool */
+
+stack<UINT32> replacement_type_stack;
 
 static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
                                   instrumented program */
@@ -86,6 +84,20 @@ VOID docount(UINT64 *counter) {
     (*counter)++;
 }
 
+#ifdef REPLACE_FP_FN
+VOID push_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement) {
+        replacement_type_stack.push(replace_type);
+    }
+}
+
+VOID pop_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement) {
+        replacement_type_stack.pop();
+    }
+}
+#endif
+
 /*!
  * Record the name of a floating-point instruction and its operands. Replace
  * floating-point instructions with a user-specified function, if specified during
@@ -99,8 +111,8 @@ VOID docount(UINT64 *counter) {
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
-                     BOOL output) {
+VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, UINT32 replace_type,
+                     CONTEXT *ctxt, BOOL output) {
     PIN_REGISTER reg1, reg2;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
@@ -117,7 +129,7 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -136,8 +148,8 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt,
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,
-                     BOOL output) {
+VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, UINT32 replace_type,
+                     CONTEXT *ctxt, BOOL output) {
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
@@ -153,7 +165,7 @@ VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt,
     if (KnobReplaceFPIns) {
         PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op);
+        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
         PIN_SetContextRegval(ctxt, operand1, result.byte);
     }
 #endif
@@ -219,6 +231,15 @@ BOOL isFpInstruction(INS ins) {
 VOID Routine(RTN rtn, VOID *output) {
     RTN_Open(rtn);
 
+#ifdef REPLACE_FP_FN
+    RTN_InsertCall(rtn,
+                   IPOINT_BEFORE,
+                   (AFUNPTR)push_replacement_type,
+                   IARG_UINT32,
+                   get_replacement_type(RTN_Name(rtn)),
+                   IARG_END);
+#endif
+
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
 
@@ -243,11 +264,6 @@ VOID Routine(RTN rtn, VOID *output) {
                                &fp_count,
                                IARG_END);
             }
-
-            // If we are in a routine that we have not chosen to instrument, just
-            // record the count of instructions and floating point instructions
-            if (!filter.SelectRtn(rtn))
-                continue;
 
 #ifdef REPLACE_FP_FN
             if (KnobReplaceFPIns)
@@ -284,6 +300,13 @@ VOID Routine(RTN rtn, VOID *output) {
                                INS_OperandReg(ins, 0),
                                IARG_UINT32,
                                INS_OperandReg(ins, 1),
+                               IARG_UINT32,
+#ifdef REPLACE_FP_FN
+                               replacement_type_stack.empty() ? _no_replacement
+                                                              : replacement_type_stack.top(),
+#else
+                               0,
+#endif
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -303,6 +326,13 @@ VOID Routine(RTN rtn, VOID *output) {
                                IARG_UINT32,
                                INS_OperandReg(ins, 0),
                                IARG_MEMORYREAD_EA,
+                               IARG_UINT32,
+#ifdef REPLACE_FP_FN
+                               replacement_type_stack.empty() ? _no_replacement
+                                                              : replacement_type_stack.top(),
+#else
+                               0,
+#endif
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -324,6 +354,15 @@ VOID Routine(RTN rtn, VOID *output) {
             }
         }
     }
+
+#ifdef REPLACE_FP_FN
+    RTN_InsertCall(rtn,
+                   IPOINT_AFTER,
+                   (AFUNPTR)pop_replacement_type,
+                   IARG_UINT32,
+                   get_replacement_type(RTN_Name(rtn)),
+                   IARG_END);
+#endif
 
     RTN_Close(rtn);
 }
