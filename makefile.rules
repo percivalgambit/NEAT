@@ -148,7 +148,7 @@ endif
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
 $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h $(REPLACE_FP_OBJ_DEPS)
-	$(CXX) $(REPLACE_FP_FN_FLAG) $(addprefix -include ,$(filter %.h, $^)) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) $(REPLACE_FP_FN_FLAG) -I$(OBJDIR) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(REPLACE_FP_TOOL_DEPS)
 	$(LINKER) $(LDFLAGS) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(LDLIBS) $(TOOL_LPATHS) $(TOOL_LIBS)

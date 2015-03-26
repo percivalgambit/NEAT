@@ -13,12 +13,22 @@
 #include "ftrace.h"
 #include "pin.H"
 
+#ifdef REPLACE_FP_FN
+#include "replacement_type_enum.h"
+#endif
+
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
 
 #ifdef REPLACE_FP_FN
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
+#endif
+
+#ifdef REPLACEMENT_TYPE_FN
+UINT32 REPLACEMENT_TYPE_FN(INS, RTN);
+#else
+#define REPLACEMENT_TYPE_FN(ins, rtn) 0
 #endif
 
 #ifdef START_CALLBACK
@@ -28,8 +38,6 @@ VOID START_CALLBACK(VOID *);
 #ifdef EXIT_CALLBACK
 VOID EXIT_CALLBACK(INT32, VOID *);
 #endif
-
-stack<UINT32> replacement_type_stack;
 
 /* ===================================================================== */
 // Command line switches
@@ -82,20 +90,6 @@ INT32 Usage() {
 VOID docount(UINT64 *counter) {
     (*counter)++;
 }
-
-#ifdef REPLACE_FP_FN
-VOID push_replacement_type(UINT32 replace_type) {
-    if (replace_type != _no_replacement) {
-        replacement_type_stack.push(replace_type);
-    }
-}
-
-VOID pop_replacement_type(UINT32 replace_type) {
-    if (replace_type != _no_replacement) {
-        replacement_type_stack.pop();
-    }
-}
-#endif
 
 /*!
  * Record the name of a floating-point instruction and its operands. Replace
@@ -156,22 +150,6 @@ VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
 #endif
 }
 
-/*!
- * Print the result of a floating-point instruction.
- * This function is called for every floating-point arithmetic instruction after it
- * has finished executing.
- * @param[in]   operand1    the register where the result of the instruction is stored
- * @param[in]   ctxt        the context of the instrumented application immediately
- *                          after the instruction is executed
- */
-VOID print_fresult(REG operand1, CONTEXT *ctxt) {
-    if (OutFile.is_open()) {
-        PIN_REGISTER result;
-
-        PIN_GetContextRegval(ctxt, operand1, result.byte);
-    }
-}
-
 /* ===================================================================== */
 // Instrumentation callbacks
 /* ===================================================================== */
@@ -216,15 +194,6 @@ BOOL isFpInstruction(INS ins) {
 VOID Routine(RTN rtn, VOID *v) {
     RTN_Open(rtn);
 
-#ifdef REPLACE_FP_FN
-    RTN_InsertCall(rtn,
-                   IPOINT_BEFORE,
-                   (AFUNPTR)push_replacement_type,
-                   IARG_UINT32,
-                   get_replacement_type(RTN_Name(rtn)),
-                   IARG_END);
-#endif
-
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
 
@@ -264,12 +233,7 @@ VOID Routine(RTN rtn, VOID *v) {
                                IARG_UINT32,
                                INS_OperandReg(ins, 1),
                                IARG_UINT32,
-#ifdef REPLACE_FP_FN
-                               replacement_type_stack.empty() ? _no_replacement
-                                                              : replacement_type_stack.top(),
-#else
-                               0,
-#endif
+                               REPLACEMENT_TYPE_FN(ins, rtn),
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -288,12 +252,7 @@ VOID Routine(RTN rtn, VOID *v) {
                                INS_OperandReg(ins, 0),
                                IARG_MEMORYREAD_EA,
                                IARG_UINT32,
-#ifdef REPLACE_FP_FN
-                               replacement_type_stack.empty() ? _no_replacement
-                                                              : replacement_type_stack.top(),
-#else
-                               0,
-#endif
+                               REPLACEMENT_TYPE_FN(ins, rtn),
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -301,15 +260,6 @@ VOID Routine(RTN rtn, VOID *v) {
             }
         }
     }
-
-#ifdef REPLACE_FP_FN
-    RTN_InsertCall(rtn,
-                   IPOINT_AFTER,
-                   (AFUNPTR)pop_replacement_type,
-                   IARG_UINT32,
-                   get_replacement_type(RTN_Name(rtn)),
-                   IARG_END);
-#endif
 
     RTN_Close(rtn);
 }
