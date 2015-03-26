@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stack>
 
+#include "ftrace.h"
 #include "pin.H"
 
 /* ================================================================== */
@@ -20,17 +21,15 @@
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 #endif
 
-ofstream OutFile; /*!<  Output file for the pintool */
+#ifdef START_CALLBACK
+VOID START_CALLBACK(VOID *);
+#endif
+
+#ifdef EXIT_CALLBACK
+VOID EXIT_CALLBACK(INT32, VOID *);
+#endif
 
 stack<UINT32> replacement_type_stack;
-
-static UINT64 ins_count = 0; /*!< count of the total number of instructions in the
-                                  instrumented program */
-static UINT64 fp_count = 0; /*!< count of the total number of floating point
-                                 instructions in the instrumented program */
-static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
-                                              floating point instructions in the
-                                              instrumented program */
 
 /* ===================================================================== */
 // Command line switches
@@ -111,19 +110,12 @@ VOID pop_replacement_type(UINT32 replace_type) {
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, UINT32 replace_type,
-                     CONTEXT *ctxt) {
+VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
+                         UINT32 replace_type, CONTEXT *ctxt) {
     PIN_REGISTER reg1, reg2;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
-
-    if (OutFile.is_open()) {
-        OutFile << OPCODE_StringShort(op)
-                << " " << StringHex(*reg1.dword, 8, FALSE)
-                << " " << StringHex(*reg2.dword, 8, FALSE)
-                << "\n";
-    }
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -148,18 +140,11 @@ VOID print_reg_fargs(OPCODE op, REG operand1, REG operand2, UINT32 replace_type,
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID print_mem_fargs(OPCODE op, REG operand1, ADDRINT *operand2, UINT32 replace_type,
-                     CONTEXT *ctxt) {
+VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
+                        UINT32 replace_type, CONTEXT *ctxt) {
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
-
-    if (OutFile.is_open()) {
-        OutFile << OPCODE_StringShort(op)
-                << " " << StringHex(*reg1.dword, 8, FALSE)
-                << " " << StringHex(*operand2, 8, FALSE)
-                << "\n";
-    }
 
 #ifdef REPLACE_FP_FN
     if (KnobReplaceFPIns) {
@@ -184,8 +169,6 @@ VOID print_fresult(REG operand1, CONTEXT *ctxt) {
         PIN_REGISTER result;
 
         PIN_GetContextRegval(ctxt, operand1, result.byte);
-
-        OutFile << "  " << StringHex(*result.dword, 8, FALSE) << "\n";
     }
 }
 
@@ -255,14 +238,6 @@ VOID Routine(RTN rtn, VOID *v) {
 
         if (isFpInstruction(ins)) {
 
-            // Increment the count of floating point instructions
-            INS_InsertCall(ins,
-                           IPOINT_BEFORE,
-                           (AFUNPTR)docount,
-                           IARG_PTR,
-                           &fp_count,
-                           IARG_END);
-
 #ifdef REPLACE_FP_FN
             if (KnobReplaceFPIns)
                 INS_Delete(ins);
@@ -274,14 +249,6 @@ VOID Routine(RTN rtn, VOID *v) {
             REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 0)));
             REGSET_Insert(regsOut, REG(INS_OperandReg(ins, 0)));
 
-            // Increment the count of instrumented floating point instructions
-            INS_InsertCall(ins,
-                           IPOINT_BEFORE,
-                           (AFUNPTR)docount,
-                           IARG_PTR,
-                           &instrumented_fp_count,
-                           IARG_END);
-
             if (INS_OperandIsReg(ins, 1)) {
                 REGSET_Insert(regsIn, REG(INS_OperandReg(ins, 1)));
 
@@ -289,7 +256,7 @@ VOID Routine(RTN rtn, VOID *v) {
                 // registers, call print_reg_fargs and pass it the two operands
                 INS_InsertCall(ins,
                                IPOINT_BEFORE,
-                               (AFUNPTR)print_reg_fargs,
+                               (AFUNPTR)replacce_reg_fp_ins,
                                IARG_UINT32,
                                INS_Opcode(ins),
                                IARG_UINT32,
@@ -314,7 +281,7 @@ VOID Routine(RTN rtn, VOID *v) {
                 // two operands
                 INS_InsertCall(ins,
                                IPOINT_BEFORE,
-                               (AFUNPTR)print_mem_fargs,
+                               (AFUNPTR)replace_mem_fp_ins,
                                IARG_UINT32,
                                INS_Opcode(ins),
                                IARG_UINT32,
@@ -332,16 +299,6 @@ VOID Routine(RTN rtn, VOID *v) {
                                &regsOut,
                                IARG_END);
             }
-
-            // Call print_fresult after every floating-point instruction, and pass it the
-            // result of the instruction
-            INS_InsertCall(ins,
-                           IPOINT_AFTER,
-                           (AFUNPTR)print_fresult,
-                           IARG_UINT32,
-                           INS_OperandReg(ins, 0),
-                           IARG_CONST_CONTEXT,
-                           IARG_END);
         }
     }
 
@@ -358,23 +315,6 @@ VOID Routine(RTN rtn, VOID *v) {
 }
 
 /*!
- * This function is called when the application exits.
- * @param[in]   code            exit code of the application
- * @param[in]   v               value specified by the tool in the
- *                              PIN_AddFiniFunction function call
- */
-VOID Fini(INT32 code, VOID *v) {
-    // Write to a file since cout and cerr maybe closed by the application
-    OutFile.setf(ios::showbase);
-    OutFile << "-----------------------" << endl;
-    OutFile << "Total number of instructions: " << ins_count << endl;
-    OutFile << "Number of floating point instructions: " << fp_count << endl;
-    OutFile << "Number of instrumented floating point instructions: "
-            << instrumented_fp_count << endl;
-    OutFile.close();
-}
-
-/*!
  * The main procedure of the tool.
  * This function is called when the application image is loaded but not yet started.
  * @param[in]   argc            total number of elements in the argv array
@@ -387,6 +327,8 @@ int main(int argc, char *argv[]) {
     if( PIN_Init(argc,argv) ) {
         return Usage();
     }
+
+    ins_count = 0;
 
     if (KnobInstrument) {
         if (!KnobOutputFile.Value().empty()) {
