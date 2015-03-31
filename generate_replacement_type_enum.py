@@ -56,7 +56,7 @@ def main():
     output_file.write('\n')
 
     output_file.write('typedef enum replacement_type {\n')
-    output_file.write('    _no_replacement,\n')
+    output_file.write('    _no_replacement_type,\n')
     for replacement_type in replacement_type_mapping.keys():
         output_file.write('    %s,\n' % replacement_type)
     output_file.write('} replacement_type;\n')
@@ -76,23 +76,9 @@ def main():
         for func_name in mapping_entry[1]:
             output_file.write('    {"%s", %s},\n'
                               % (func_name, replacement_type))
-    output_file.write('    {NULL, _no_replacement}\n')
+    output_file.write('    {NULL, _no_replacement_type}\n')
     output_file.write('};\n')
     output_file.write('\n')
-
-    output_file.write('replacement_type get_replacement_type(string func_name)'
-                      ' {\n')
-    output_file.write('    for (int i=0;'
-                      ' func_mapping_table[i].func_name != NULL; i++) {\n')
-    output_file.write('        '
-                      'if (!func_name.compare(func_mapping_table[i].func_name))'
-                      ' {\n')
-    output_file.write('            return func_mapping_table[i].type;\n')
-    output_file.write('        }\n')
-    output_file.write('    }\n')
-    output_file.write('\n')
-    output_file.write('    return _no_replacement;\n')
-    output_file.write('}\n')
 
     output_file.close()
 

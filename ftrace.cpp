@@ -8,6 +8,13 @@
 
 #include "ftrace.h"
 #include "pin.H"
+#include <stack>
+
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+#include "function_level_replacement_type_enum.h"
+#else
+#define _no_replacement_type 0
+#endif
 
 /* ================================================================== */
 // Global variables
@@ -19,7 +26,13 @@ FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 
 #ifdef REPLACEMENT_TYPE_FN
 UINT32 REPLACEMENT_TYPE_FN(INS, RTN);
-#else
+#endif
+
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+#define REPLACEMENT_TYPE_FN(ins rtn) _get_replacement_type(ins, rtn)
+#endif
+
+#ifndef REPLACEMENT_TYPE_FN
 #define REPLACEMENT_TYPE_FN(ins, rtn) 0
 #endif
 
@@ -34,6 +47,8 @@ VOID EXIT_CALLBACK(INT32, VOID *);
 UINT64 ins_count;
 
 ofstream OutFile;
+
+static stack<UINT32> function_level_replacement_type_stack;
 
 /* ===================================================================== */
 // Command line switches
@@ -93,12 +108,12 @@ VOID docount(UINT64 *counter) {
  */
 VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
                          UINT32 replace_type, CONTEXT *ctxt) {
+#ifdef REPLACE_FP_FN
     PIN_REGISTER reg1, reg2;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-#ifdef REPLACE_FP_FN
     PIN_REGISTER result;
 
     *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
@@ -121,16 +136,28 @@ VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
  */
 VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
                         UINT32 replace_type, CONTEXT *ctxt) {
+#ifdef REPLACE_FP_FN
     PIN_REGISTER reg1;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-#ifdef REPLACE_FP_FN
     PIN_REGISTER result;
 
     *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
     PIN_SetContextRegval(ctxt, operand1, result.byte);
 #endif
+}
+
+VOID push_function_level_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement_type) {
+        function_level_replacement_type_stack.push(replace_type);
+    }
+}
+
+VOID pop_function_level_replacement_type(UINT32 replace_type) {
+    if (replace_type != _no_replacement_type) {
+        function_level_replacement_type_stack.pop();
+    }
 }
 
 /* ===================================================================== */
@@ -164,6 +191,24 @@ BOOL isFpInstruction(INS ins) {
     }
 }
 
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+UINT32 function_replacement_type_map(string func_name) {
+    for (i=0; func_mapping_table[i].func_name != NULL; i++) {
+        if (!func_name.compare(func_mapping_table[i].func_name)) {
+            return func_mapping_table[i].type;
+        }
+    }
+    return _no_replacement_type;
+}
+#endif
+
+UINT32 _get_replacement_type(INS ins, RTN rtn) {
+    if (function_level_replacement_type_stack.empty())
+        return _no_replacement_type;
+    else
+        return function_level_replacement_type_stack.top();
+}
+
 /*!
  * Insert calls to the analysis routines before and after every floating-point
  * instruction of the instrumented application in selected routines.
@@ -176,6 +221,15 @@ BOOL isFpInstruction(INS ins) {
  */
 VOID Routine(RTN rtn, VOID *v) {
     RTN_Open(rtn);
+
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+    RTN_InsertCall(rtn,
+                   IPOINT_BEFORE,
+                   (AFUNPTR)push_function_level_replacement_type,
+                   IARG_UINT32,
+                   function_replacement_type_map(RTN_Name(rtn)),
+                   IARG_END);
+#endif
 
     // Forward pass over all instructions in routine
     for(INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
@@ -242,6 +296,15 @@ VOID Routine(RTN rtn, VOID *v) {
             }
         }
     }
+
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+    RTN_InsertCall(rtn,
+                   IPOINT_AFTER,
+                   (AFUNPTR)pop_function_level_replacement_type,
+                   IARG_UINT32,
+                   function_replacement_type_map(RTN_Name(rtn)),
+                   IARG_END);
+#endif
 
     RTN_Close(rtn);
 }

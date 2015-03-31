@@ -132,6 +132,14 @@ ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := replace_fp_ins_complex.cp
 FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(var)) )
 FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,$(FTRACE_FILTERED_TOOL_SOURCE_DEPS),$(patsubst %.cpp,$(OBJDIR)$(notdir %)$(OBJ_SUFFIX),$($(var))) ))
 
+ifdef $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
+FTRACE_CPP_FLAGS += -DFUNCTION_LEVEL_REPLACEMENT_TYPE
+FTRACE_TOOL_OBJ_DEPS += function_level_replacement_type_enum.h
+endif
+
+function_level_replacement_type_enum.h: generate_replacement_type_enum.py
+	$< -o $@ -i $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
+
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
 $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
 	$(CXX) $(FTRACE_CPP_FLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
