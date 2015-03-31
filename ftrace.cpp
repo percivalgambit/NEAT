@@ -13,10 +13,6 @@
 #include "ftrace.h"
 #include "pin.H"
 
-#ifdef REPLACE_FP_FN
-#include "replacement_type_enum.h"
-#endif
-
 /* ================================================================== */
 // Global variables
 /* ================================================================== */
