@@ -5,6 +5,7 @@
 #
 ##############################################################
 
+
 ##############################################################
 #
 # Test targets
@@ -52,13 +53,8 @@ DLL_ROOTS :=
 LIB_ROOTS :=
 
 ###### User-defined make variables ######
-include ftrace.vars
-#########################################
 
-# function that takes in a list of variables and produces a filtered list of only
-# variables that have a non-empty expansion
-filter-defined = $(foreach var,$(1),$(if $($(var)),$(var) ))
-
+<<<<<<< HEAD
 # list of variables that are also flags to the C++ preprocessor for ftrace, if defined
 FTRACE_CPP_MACRO_VARS = REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
 
@@ -70,6 +66,15 @@ FTRACE_FILTERED_CPP_MACRO_VARS = $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
 FTRACE_FILTERED_TOOL_SOURCE_DEPS = $(call filter-defined,$(FTRACE_TOOL_SOURCE_DEPS))
 
 FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTERED_TOOL_SOURCE_DEPS),$(var)=$($(var)) )
+=======
+# This defines the name of the function that will be used to replace all floating-point
+# operations in the instrumented program
+REPLACE_FP_FN :=
+
+# This defines the file containing the function that will replace the floating-point
+# operations in the instrumented program
+REPLACE_FP_FILE :=
+>>>>>>> master
 
 ##############################################################
 #
@@ -81,6 +86,7 @@ FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTE
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
+<<<<<<< HEAD
 # default test rule
 %.test: REPLACE_FP_FN := fp_replacement_callback
 %.test: REPLACE_FP_FILE := default_callbacks.cpp
@@ -133,12 +139,11 @@ FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(
 FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,$(FTRACE_FILTERED_TOOL_SOURCE_DEPS),$(patsubst %.cpp,$(OBJDIR)$(notdir %)$(OBJ_SUFFIX),$($(var))) ))
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
-$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
-	$(CXX) $(FTRACE_CPP_FLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp $(REPLACE_FP_OBJ_DEPS)
+	$(CXX) $(REPLACE_FP_FN_FLAG) $(addprefix -include ,$(filter %.h, $^)) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS)
 	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
-
 
 ###### Special applications' build rules ######
 
