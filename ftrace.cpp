@@ -10,10 +10,8 @@
 #include "pin.H"
 #include <stack>
 
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
-#include "function_level_replacement_type_enum.h"
-#else
-#define _no_replacement_type 0
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
+#include "function_level_replacement_type_mapping.h"
 #endif
 
 /* ================================================================== */
@@ -28,8 +26,8 @@ FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 UINT32 REPLACEMENT_TYPE_FN(INS, RTN);
 #endif
 
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
-#define REPLACEMENT_TYPE_FN(ins rtn) _get_replacement_type(ins, rtn)
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
+#define REPLACEMENT_TYPE_FN(ins, rtn) _get_replacement_type(ins, rtn)
 #endif
 
 #ifndef REPLACEMENT_TYPE_FN
@@ -191,9 +189,9 @@ BOOL isFpInstruction(INS ins) {
     }
 }
 
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
 UINT32 function_replacement_type_map(string func_name) {
-    for (i=0; func_mapping_table[i].func_name != NULL; i++) {
+    for (int i=0; func_mapping_table[i].func_name != NULL; i++) {
         if (!func_name.compare(func_mapping_table[i].func_name)) {
             return func_mapping_table[i].type;
         }
@@ -222,7 +220,7 @@ UINT32 _get_replacement_type(INS ins, RTN rtn) {
 VOID Routine(RTN rtn, VOID *v) {
     RTN_Open(rtn);
 
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
     RTN_InsertCall(rtn,
                    IPOINT_BEFORE,
                    (AFUNPTR)push_function_level_replacement_type,
@@ -297,7 +295,7 @@ VOID Routine(RTN rtn, VOID *v) {
         }
     }
 
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_FN
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
     RTN_InsertCall(rtn,
                    IPOINT_AFTER,
                    (AFUNPTR)pop_function_level_replacement_type,
