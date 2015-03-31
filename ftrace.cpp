@@ -6,10 +6,6 @@
  * @note All floating-point values are printed as 8 digit hex numbers padded with 0's.
  */
 
-#include <fstream>
-#include <iostream>
-#include <stack>
-
 #include "ftrace.h"
 #include "pin.H"
 
@@ -34,6 +30,10 @@ VOID START_CALLBACK(VOID *);
 #ifdef EXIT_CALLBACK
 VOID EXIT_CALLBACK(INT32, VOID *);
 #endif
+
+UINT64 ins_count;
+
+ofstream OutFile;
 
 /* ===================================================================== */
 // Command line switches

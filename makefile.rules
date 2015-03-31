@@ -60,14 +60,16 @@ include ftrace.vars
 filter-defined = $(foreach var,$(1),$(if $($(var)),$(var) ))
 
 # list of variables that are also flags to the C++ preprocessor for ftrace, if defined
-FTRACE_CPP_MACRO_VARS := REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
+FTRACE_CPP_MACRO_VARS = REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
 
 # list of variables that are dependencies for the ftrace tool, if defined
-FTRACE_TOOL_DEPS := REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE EXIT_CALLBACK_FILE
+FTRACE_TOOL_SOURCE_DEPS = REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE EXIT_CALLBACK_FILE
 
 # filter out undefined variables from FTRACE_CPP_MACRO_VARS and FTRACE_TOOL_DEPS
-FTRACE_CPP_MACRO_VARS := $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
-FTRACE_TOOL_DEPS := $(call filter-defined,$(FTRACE_TOOL_DEPS))
+FTRACE_FILTERED_CPP_MACRO_VARS = $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
+FTRACE_FILTERED_TOOL_SOURCE_DEPS = $(call filter-defined,$(FTRACE_TOOL_SOURCE_DEPS))
+
+FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTERED_TOOL_SOURCE_DEPS),$(var)=$($(var)) )
 
 ##############################################################
 #
@@ -79,6 +81,23 @@ FTRACE_TOOL_DEPS := $(call filter-defined,$(FTRACE_TOOL_DEPS))
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
+# default test rule
+%.test: REPLACE_FP_FN := fp_replacement_callback
+%.test: REPLACE_FP_FILE := default_callbacks.cpp
+%.test: START_CALLBACK := start_callback
+%.test: START_CALLBACK_FILE := default_callbacks.cpp
+%.test: EXIT_CALLBACK := exit_callback
+%.test: EXIT_CALLBACK_FILE := default_callbacks.cpp
+%.test: EXPECTED_OUTPUT ?= tests/$(@:.test=.reference)
+%.test: EXPECTED_STDOUT ?= tests/$(@:.test=.stdout.reference)
+%.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) $(FTRACE_CMD_VARS) $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(FTRACE_CMDLINE_FLAGS) -o $(OBJDIR)$(@:.test=.out) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)$(@:.test=.stdout.out)
+	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)$(@:.test=.out) $(EXPECTED_OUTPUT)
+	$(DIFF) $(OBJDIR)$(@:.test=.stdout.out) $(EXPECTED_STDOUT)
+	-$(RM) $(OBJDIR)$(@:.test=.out) $(OBJDIR)$(@:.test=.stdout.out)
+
+# specific tests for different aspects of the tool
 include tests/*.mk
 
 ##############################################################
@@ -92,15 +111,21 @@ include tests/*.mk
 
 ###### Special tools' build rules ######
 
-FTRACE_CPP_FLAGS := $(foreach var,$(FTRACE_CPP_MACRO_VARS),-D$(var)=$($(var)) )
+FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(var)) )
+FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,$(FTRACE_FILTERED_TOOL_SOURCE_DEPS),$(patsubst %.cpp,$(OBJDIR)$(notdir %)$(OBJ_SUFFIX),$($(var))) ))
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
 $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
 	$(CXX) $(FTRACE_CPP_FLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_DEPS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
+
 
 ###### Special applications' build rules ######
+
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): sse_sample_app.c
+	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special target rules ######
 

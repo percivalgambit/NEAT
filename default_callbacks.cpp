@@ -1,11 +1,11 @@
 #include "ftrace.h"
 #include "pin.H"
 
-static UINT64 fp_count = 0; /*!< count of the total number of floating point
-                                 instructions in the instrumented program */
-static UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
-                                              floating point instructions in the
-                                              instrumented program */
+UINT64 fp_count = 0; /*!< count of the total number of floating point
+                          instructions in the instrumented program */
+UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
+                                       floating point instructions in the
+                                       instrumented program */
 
 VOID start_callback(VOID *v) {
     return;
@@ -19,13 +19,15 @@ VOID start_callback(VOID *v) {
  */
 VOID exit_callback(INT32 code, VOID *v) {
     // Write to a file since cout and cerr maybe closed by the application
-    OutFile.setf(ios::showbase);
-    OutFile << "-----------------------" << endl;
-    OutFile << "Total number of instructions: " << ins_count << endl;
-    OutFile << "Number of floating point instructions: " << fp_count << endl;
-    OutFile << "Number of instrumented floating point instructions: "
-            << instrumented_fp_count << endl;
-    OutFile.close();
+    if (OutFile.is_open()) {
+        OutFile.setf(ios::showbase);
+        OutFile << "-----------------------" << endl;
+        OutFile << "Total number of instructions: " << ins_count << endl;
+        OutFile << "Number of floating point instructions: " << fp_count << endl;
+        OutFile << "Number of instrumented floating point instructions: "
+                << instrumented_fp_count << endl;
+        OutFile.close();
+    }
 }
 
 FLT32 fp_replacement_callback(FLT32 operand1, FLT32 operand2, OPCODE operation,
