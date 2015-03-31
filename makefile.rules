@@ -5,6 +5,7 @@
 #
 ##############################################################
 
+
 ##############################################################
 #
 # Test targets
@@ -52,22 +53,14 @@ DLL_ROOTS :=
 LIB_ROOTS :=
 
 ###### User-defined make variables ######
-include ftrace.vars
-#########################################
 
-# function that takes in a list of variables and produces a filtered list of only
-# variables that have a non-empty expansion
-filter-defined = $(foreach var,$(1),$(if $($(var)),$(var) ))
+# This defines the name of the function that will be used to replace all floating-point
+# operations in the instrumented program
+REPLACE_FP_FN :=
 
-# list of variables that are also flags to the C++ preprocessor for ftrace, if defined
-FTRACE_CPP_MACRO_VARS := REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
-
-# list of variables that are dependencies for the ftrace tool, if defined
-FTRACE_TOOL_DEPS := REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE EXIT_CALLBACK_FILE
-
-# filter out undefined variables from FTRACE_CPP_MACRO_VARS and FTRACE_TOOL_DEPS
-FTRACE_CPP_MACRO_VARS := $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
-FTRACE_TOOL_DEPS := $(call filter-defined,$(FTRACE_TOOL_DEPS))
+# This defines the file containing the function that will replace the floating-point
+# operations in the instrumented program
+REPLACE_FP_FILE :=
 
 ##############################################################
 #
@@ -79,7 +72,44 @@ FTRACE_TOOL_DEPS := $(call filter-defined,$(FTRACE_TOOL_DEPS))
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
-include tests/*.mk
+ftrace.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_stdout.out
+	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace.out ftrace.reference
+	$(DIFF) $(OBJDIR)ftrace_stdout.out ftrace_stdout.reference
+	$(RM) $(OBJDIR)ftrace.out $(OBJDIR)ftrace_stdout.out
+
+ftrace_no_specified_output_file.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_output_file_stdout.out 2> $(OBJDIR)ftrace_no_output_file_stderr.out
+	$(DIFF) $(OBJDIR)ftrace_no_output_file_stdout.out ftrace_stdout.reference
+	$(DIFF) $(OBJDIR)ftrace_no_output_file_stderr.out ftrace_no_instrument.reference
+	$(RM) $(OBJDIR)ftrace_no_output_file_stdout.out $(OBJDIR)ftrace_no_output_file_stderr.out
+
+ftrace_no_instrument.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -instrument 0 -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_instrument_stdout.out 2> $(OBJDIR)ftrace_no_instrument_stderr.out
+	$(DIFF) $(OBJDIR)ftrace_no_instrument_stdout.out ftrace_stdout.reference
+	$(DIFF) $(OBJDIR)ftrace_no_instrument_stderr.out ftrace_no_instrument.reference
+	$(RM) $(OBJDIR)ftrace_no_instrument_stderr.out $(OBJDIR)ftrace_no_instrument_stdout.out
+
+ftrace_replace_fp_ins_simple.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_replace_fp_ins_simple.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_simple_stdout.out
+	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace_replace_fp_ins_simple.out ftrace_replace_fp_ins_simple.reference
+	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_simple_stdout.out ftrace_replace_fp_ins_simple_stdout.reference
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_simple.out $(OBJDIR)ftrace_replace_fp_ins_simple_stdout.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
+
+ftrace_replace_fp_ins_complex.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_complex REPLACE_FP_FILE=replace_fp_ins_complex.cpp $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -o $(OBJDIR)ftrace_replace_fp_ins_complex.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_replace_fp_ins_complex_stdout.out
+	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace_replace_fp_ins_complex.out ftrace_replace_fp_ins_complex.reference
+	$(DIFF) $(OBJDIR)ftrace_replace_fp_ins_complex_stdout.out ftrace_replace_fp_ins_complex_stdout.reference
+	$(RM) $(OBJDIR)ftrace_replace_fp_ins_complex.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX) $(OBJDIR)ftrace_replace_fp_ins_complex_stdout.out
+
+ftrace_no_replace.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) REPLACE_FP_FN=replace_fp_ins_simple $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -fp-replace 0 -o $(OBJDIR)ftrace_no_replace.out -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)ftrace_no_replace_stdout.out
+	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)ftrace_no_replace.out ftrace.reference
+	$(DIFF) $(OBJDIR)ftrace_no_replace_stdout.out ftrace_stdout.reference
+	$(RM) $(OBJDIR)ftrace_no_replace.out $(OBJDIR)ftrace_no_replace_stdout.out $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
 
 ##############################################################
 #
@@ -92,15 +122,41 @@ include tests/*.mk
 
 ###### Special tools' build rules ######
 
-FTRACE_CPP_FLAGS := $(foreach var,$(FTRACE_CPP_MACRO_VARS),-D$(var)=$($(var)) )
+ifdef REPLACE_FP_FN
+
+REPLACE_FP_FN_FLAG := -DREPLACE_FP_FN=$(REPLACE_FP_FN)
+
+ifndef REPLACE_FP_FILE
+REPLACE_FP_FILE := $(REPLACE_FP_FN).cpp
+endif
+
+REPLACE_FP_TOOL_DEPS := $(OBJDIR)$(basename $(notdir $(REPLACE_FP_FILE)))$(OBJ_SUFFIX)
+REPLACE_FP_OBJ_DEPS := $(OBJDIR)replacement_type_enum.h
+
+$(OBJDIR)$(basename $(notdir $(REPLACE_FP_FILE)))$(OBJ_SUFFIX): $(REPLACE_FP_FILE)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+ifdef REPLACE_TYPE_MAPPING
+GENERATE_REPLACEMENT_TYPE_INPUT := -i $(REPLACE_TYPE_MAPPING)
+endif
+
+.PHONY: $(OBJDIR)replacement_type_enum.h
+$(OBJDIR)replacement_type_enum.h: generate_replacement_type_enum.py $(REPLACE_TYPE_MAPPING)
+	$(PYTHON) $< -o $@ $(GENERATE_REPLACEMENT_TYPE_INPUT)
+
+endif
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
-$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
-	$(CXX) $(FTRACE_CPP_FLAGS) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp $(REPLACE_FP_OBJ_DEPS)
+	$(CXX) $(REPLACE_FP_FN_FLAG) $(addprefix -include ,$(filter %.h, $^)) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_DEPS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(REPLACE_FP_TOOL_DEPS)
+	$(LINKER) $(LDFLAGS) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $^ $(LDLIBS) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
+
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): sse_sample_app.c
+	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special target rules ######
 
