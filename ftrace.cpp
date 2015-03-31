@@ -51,15 +51,6 @@ KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,  "pintool",
 KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
                           "turn floating-point instruction tracing on or off");
 
-/*!
- *  Turn floating-point instruction replacing on or off for the program.
- *  @note Has no effect unless the pintool is compiled with the instruction
- *  replacing code.  The best way to do this is to define REPLACE_FP_FN in the
- *  makefile.
- */
-KNOB<BOOL> KnobReplaceFPIns(KNOB_MODE_WRITEONCE, "pintool", "fp-replace", "1",
-                          "turn floating-point instruction replacing on or off");
-
 /* ===================================================================== */
 // Utilities
 /* ===================================================================== */
@@ -108,12 +99,10 @@ VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
 #ifdef REPLACE_FP_FN
-    if (KnobReplaceFPIns) {
-        PIN_REGISTER result;
+    PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
-        PIN_SetContextRegval(ctxt, operand1, result.byte);
-    }
+    *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
+    PIN_SetContextRegval(ctxt, operand1, result.byte);
 #endif
 }
 
@@ -137,12 +126,10 @@ VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
 #ifdef REPLACE_FP_FN
-    if (KnobReplaceFPIns) {
-        PIN_REGISTER result;
+    PIN_REGISTER result;
 
-        *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
-        PIN_SetContextRegval(ctxt, operand1, result.byte);
-    }
+    *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
+    PIN_SetContextRegval(ctxt, operand1, result.byte);
 #endif
 }
 
@@ -204,8 +191,7 @@ VOID Routine(RTN rtn, VOID *v) {
         if (isFpInstruction(ins)) {
 
 #ifdef REPLACE_FP_FN
-            if (KnobReplaceFPIns)
-                INS_Delete(ins);
+            INS_Delete(ins);
 #endif
 
             REGSET regsIn, regsOut;

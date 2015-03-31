@@ -19,7 +19,7 @@
 TEST_TOOL_ROOTS := ftrace
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_no_specified_output_file ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_no_replace
+TEST_ROOTS := ftrace_no_specified_output_file ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -98,7 +98,25 @@ FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTE
 	-$(RM) $(OBJDIR)$(@:.test=.out) $(OBJDIR)$(@:.test=.stdout.out)
 
 # specific tests for different aspects of the tool
-include tests/*.mk
+ftrace_no_specified_output_file.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) $(FTRACE_CMD_VARS) $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) &> $(OBJDIR)$(@:.test=.out)
+	$(DIFF) $(OBJDIR)$(@:.test=.out) tests/ftrace.stdout.reference
+	$(RM) $(OBJDIR)$(@:.test=.out)
+
+ftrace_no_instrument.test: FTRACE_CMDLINE_FLAGS := -instrument 0
+ftrace_no_instrument.test: EXPECTED_OUTPUT := tests/ftrace_no_output.reference
+ftrace_no_instrument.test: EXPECTED_STDOUT := tests/ftrace.stdout.reference
+ftrace_no_instrument.test: $(OBJDIR)ftrace_no_instrument.out
+
+$(OBJDIR)ftrace_no_instrument.out: $(OBJDIR)
+	touch $@
+
+ftrace_replace_fp_ins_simple.test: REPLACE_FP_FN := replace_fp_ins_simple
+ftrace_replace_fp_ins_simple.test: REPLACE_FP_FILE := replace_fp_ins_simple.cpp
+
+ftrace_replace_fp_ins_complex.test: REPLACE_FP_FN := replace_fp_ins_complex
+ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := replace_fp_ins_complex.cpp
 
 ##############################################################
 #
