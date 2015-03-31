@@ -54,7 +54,6 @@ FLT32 fp_replacement_callback(FLT32 operand1, FLT32 operand2, OPCODE operation,
             std::cerr << "Unexpected opcode " << operation << " encountered "
                          "when replacing floating-point instructions" << endl;
 
-            WRITE_FLT_RESULT(operand1, OutFile);
             return operand1;
     }
 
