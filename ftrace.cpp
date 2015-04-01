@@ -9,6 +9,7 @@
 #include "ftrace.h"
 #include "pin.H"
 #include <stack>
+#include <string>
 
 #ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
 #include "function_level_replacement_type_mapping.h"
@@ -23,15 +24,15 @@ FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
 #endif
 
 #ifdef REPLACEMENT_TYPE_FN
-UINT32 REPLACEMENT_TYPE_FN(INS, RTN);
+UINT32 REPLACEMENT_TYPE_FN();
 #endif
 
 #ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
-#define REPLACEMENT_TYPE_FN(ins, rtn) _get_replacement_type(ins, rtn)
+#define REPLACEMENT_TYPE_FN() _get_replacement_type()
 #endif
 
 #ifndef REPLACEMENT_TYPE_FN
-#define REPLACEMENT_TYPE_FN(ins, rtn) 0
+#define REPLACEMENT_TYPE_FN() 0
 #endif
 
 #ifdef START_CALLBACK
@@ -78,6 +79,13 @@ INT32 Usage() {
     return -1;
 }
 
+UINT32 _get_replacement_type() {
+    if (function_level_replacement_type_stack.empty())
+        return _no_replacement_type;
+    else
+        return function_level_replacement_type_stack.top();
+}
+
 /* ===================================================================== */
 // Analysis routines
 /* ===================================================================== */
@@ -104,8 +112,7 @@ VOID docount(UINT64 *counter) {
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
-                         UINT32 replace_type, CONTEXT *ctxt) {
+VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
 #ifdef REPLACE_FP_FN
     PIN_REGISTER reg1, reg2;
 
@@ -114,7 +121,7 @@ VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
 
     PIN_REGISTER result;
 
-    *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, replace_type);
+    *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, REPLACEMENT_TYPE_FN());
     PIN_SetContextRegval(ctxt, operand1, result.byte);
 #endif
 }
@@ -132,8 +139,7 @@ VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2,
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
-                        UINT32 replace_type, CONTEXT *ctxt) {
+VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
 #ifdef REPLACE_FP_FN
     PIN_REGISTER reg1;
 
@@ -141,7 +147,7 @@ VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2,
 
     PIN_REGISTER result;
 
-    *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, replace_type);
+    *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, REPLACEMENT_TYPE_FN());
     PIN_SetContextRegval(ctxt, operand1, result.byte);
 #endif
 }
@@ -199,13 +205,6 @@ UINT32 function_replacement_type_map(string func_name) {
     return _no_replacement_type;
 }
 #endif
-
-UINT32 _get_replacement_type(INS ins, RTN rtn) {
-    if (function_level_replacement_type_stack.empty())
-        return _no_replacement_type;
-    else
-        return function_level_replacement_type_stack.top();
-}
 
 /*!
  * Insert calls to the analysis routines before and after every floating-point
@@ -266,8 +265,6 @@ VOID Routine(RTN rtn, VOID *v) {
                                INS_OperandReg(ins, 0),
                                IARG_UINT32,
                                INS_OperandReg(ins, 1),
-                               IARG_UINT32,
-                               REPLACEMENT_TYPE_FN(ins, rtn),
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -285,8 +282,6 @@ VOID Routine(RTN rtn, VOID *v) {
                                IARG_UINT32,
                                INS_OperandReg(ins, 0),
                                IARG_MEMORYREAD_EA,
-                               IARG_UINT32,
-                               REPLACEMENT_TYPE_FN(ins, rtn),
                                IARG_PARTIAL_CONTEXT,
                                &regsIn,
                                &regsOut,
@@ -315,6 +310,9 @@ VOID Routine(RTN rtn, VOID *v) {
  *                              including pin -t <toolname> -- ...
  */
 int main(int argc, char *argv[]) {
+    // Initialize  symbol manager
+    PIN_InitSymbols();
+
     // Initialize PIN library. Print help message if -h(elp) is specified
     // in the command line or the command line is invalid
     if( PIN_Init(argc,argv) ) {
