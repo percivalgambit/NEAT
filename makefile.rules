@@ -96,6 +96,7 @@ FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTE
 	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)$(@:.test=.out) $(EXPECTED_OUTPUT)
 	$(DIFF) $(OBJDIR)$(@:.test=.stdout.out) $(EXPECTED_STDOUT)
 	-$(RM) $(OBJDIR)$(@:.test=.out) $(OBJDIR)$(@:.test=.stdout.out)
+	-$(RM) $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
 
 # specific tests for different aspects of the tool
 ftrace_no_specified_output_file.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
@@ -157,7 +158,7 @@ FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,$(FTRACE_FILTERED_TOOL_SOURCE_DEPS),
 
 ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE
 FTRACE_CPP_FLAGS += -DFUNCTION_LEVEL_REPLACEMENT_TYPE
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
+$(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS): $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
 endif
 
 $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h: generate_replacement_type_enum.py $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
