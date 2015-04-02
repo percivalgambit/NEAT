@@ -1,7 +1,16 @@
+#ifndef FTRACE_H
+#define FTRACE_H
+
 #include "pin.H"
 
 #include <fstream>
 #include <iostream>
+
+#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
+#include "function_level_replacement_type_enum.h"
+#else
+#define _no_replacement_type 0
+#endif
 
 #define FLT_TO_HEX(fp)                                                         \
     StringHex(*(UINT32 *)&fp, 8, FALSE)                                        \
@@ -27,3 +36,5 @@ extern UINT64 ins_count; /*!< count of the total number of instructions in the
                        instrumented program */
 
 extern ofstream OutFile; /*!<  Output file for the pintool */
+
+#endif
