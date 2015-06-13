@@ -15,7 +15,7 @@ def read_replacement_type_mapping(input_file_name):
         raise
 
     for line in input_file:
-        replacement_type, functions_str = line.split(maxsplit=1)
+        replacement_type, functions_str = line.split(None, 1)
         functions_list = [func_name.strip()
                           for func_name
                           in functions_str.split(',')]
