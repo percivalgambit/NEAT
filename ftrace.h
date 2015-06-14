@@ -37,4 +37,7 @@ extern UINT64 ins_count; /*!< count of the total number of instructions in the
 
 extern ofstream OutFile; /*!<  Output file for the pintool */
 
+FLT32 _normal_fp_implementation(FLT32 operand1, FLT32 operand2, OPCODE operation,
+                                UINT32 replace_type);
+
 #endif

@@ -1,13 +1,12 @@
 
 /*! @file
  *  This is a PIN tool that traces every floating-point arithmetic operation and
- * displays the arguments and results.  This tool can also replace floating-point
+ * displays its arguments and results.  This tool can also replace floating-point
  * instructions with arbitrary code to test different floating-point implementations.
  * @note All floating-point values are printed as 8 digit hex numbers padded with 0's.
  */
 
 #include "ftrace.h"
-#include "pin.H"
 #include <stack>
 #include <string>
 
@@ -21,17 +20,16 @@
 
 #ifdef REPLACE_FP_FN
 FLT32 REPLACE_FP_FN(FLT32, FLT32, OPCODE, UINT32);
+#else
+#include "normal_fp_implementation.cpp"
+#define REPLACE_FP_FN _normal_fp_implementation
 #endif
 
 #ifdef REPLACEMENT_TYPE_FN
 UINT32 REPLACEMENT_TYPE_FN();
-#endif
-
-#ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE
+#elif defined FUNCTION_LEVEL_REPLACEMENT_TYPE
 #define REPLACEMENT_TYPE_FN() _get_replacement_type()
-#endif
-
-#ifndef REPLACEMENT_TYPE_FN
+#else
 #define REPLACEMENT_TYPE_FN() 0
 #endif
 
@@ -43,7 +41,7 @@ VOID START_CALLBACK(VOID *);
 VOID EXIT_CALLBACK(INT32, VOID *);
 #endif
 
-UINT64 ins_count;
+UINT64 ins_count = 0;
 
 ofstream OutFile;
 
@@ -73,9 +71,10 @@ KNOB<BOOL> KnobInstrument(KNOB_MODE_WRITEONCE, "pintool", "instrument", "1",
  *  Print out help message.
  */
 INT32 Usage() {
-    cerr << "This tool produces a trace of floating point "
-            "arithmetic and comparison instruction calls." << endl;
-    cerr << endl << KNOB_BASE::StringKnobSummary() << endl;
+    cerr << "This tool produces a trace of floating point arithmetic instruction "
+            "calls and allows those instructions to be replaced with arbitrary "
+            "user code to test different floating-point implementations." << endl;
+    cerr << KNOB_BASE::StringKnobSummary() << endl;
     return -1;
 }
 
@@ -112,18 +111,15 @@ VOID docount(UINT64 *counter) {
  *                          before the instruction is executed
  * @param[in]   output      whether to print output to the output file
  */
-VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
-#ifdef REPLACE_FP_FN
-    PIN_REGISTER reg1, reg2;
+VOID replace_reg_fp_ins(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
+    PIN_REGISTER reg1, reg2, result;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
     PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-    PIN_REGISTER result;
-
     *result.flt = REPLACE_FP_FN(*reg1.flt, *reg2.flt, op, REPLACEMENT_TYPE_FN());
+
     PIN_SetContextRegval(ctxt, operand1, result.byte);
-#endif
 }
 
 /*!
@@ -140,16 +136,13 @@ VOID replacce_reg_fp_ins(OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt) {
  * @param[in]   output      whether to print output to the output file
  */
 VOID replace_mem_fp_ins(OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt) {
-#ifdef REPLACE_FP_FN
-    PIN_REGISTER reg1;
+    PIN_REGISTER reg1, result;
 
     PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
-    PIN_REGISTER result;
-
     *result.flt = REPLACE_FP_FN(*reg1.flt, *(FLT32 *)operand2, op, REPLACEMENT_TYPE_FN());
+
     PIN_SetContextRegval(ctxt, operand1, result.byte);
-#endif
 }
 
 VOID push_function_level_replacement_type(UINT32 replace_type) {
@@ -241,9 +234,7 @@ VOID Routine(RTN rtn, VOID *v) {
 
         if (isFpInstruction(ins)) {
 
-#ifdef REPLACE_FP_FN
             INS_Delete(ins);
-#endif
 
             REGSET regsIn, regsOut;
             REGSET_Clear(regsIn);
@@ -258,7 +249,7 @@ VOID Routine(RTN rtn, VOID *v) {
                 // registers, call print_reg_fargs and pass it the two operands
                 INS_InsertCall(ins,
                                IPOINT_BEFORE,
-                               (AFUNPTR)replacce_reg_fp_ins,
+                               (AFUNPTR)replace_reg_fp_ins,
                                IARG_UINT32,
                                INS_Opcode(ins),
                                IARG_UINT32,
@@ -310,16 +301,13 @@ VOID Routine(RTN rtn, VOID *v) {
  *                              including pin -t <toolname> -- ...
  */
 int main(int argc, char *argv[]) {
-    // Initialize  symbol manager
-    PIN_InitSymbols();
+    PIN_InitSymbols(); // Initialize  symbol manager
 
     // Initialize PIN library. Print help message if -h(elp) is specified
     // in the command line or the command line is invalid
-    if( PIN_Init(argc,argv) ) {
+    if(PIN_Init(argc,argv)) {
         return Usage();
     }
-
-    ins_count = 0;
 
     if (KnobInstrument) {
         if (!KnobOutputFile.Value().empty()) {

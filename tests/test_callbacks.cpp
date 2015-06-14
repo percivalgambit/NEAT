@@ -1,5 +1,4 @@
-#include "ftrace.h"
-#include "pin.H"
+#include "../ftrace.h"
 
 UINT64 fp_count = 0; /*!< count of the total number of floating point
                           instructions in the instrumented program */
