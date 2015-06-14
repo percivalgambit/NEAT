@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['normal_5ffp_5fimplementation',['normal_fp_implementation',['../normal__fp__implementation_8cpp.html#a1ef8589e7bb51c42d9683d17fc910b7a',1,'normal_fp_implementation.cpp']]],
-  ['normal_5ffp_5fimplementation_2ecpp',['normal_fp_implementation.cpp',['../normal__fp__implementation_8cpp.html',1,'']]]
+  ['main',['main',['../ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;ftrace.cpp'],['../sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;sse_sample_app.c']]]
 ];

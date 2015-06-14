@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['main',['main',['../ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;ftrace.cpp'],['../sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;sse_sample_app.c']]]
+  ['knobinstrument',['KnobInstrument',['../ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be',1,'ftrace.cpp']]],
+  ['knoboutputfile',['KnobOutputFile',['../ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98',1,'ftrace.cpp']]]
 ];

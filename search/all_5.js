@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['knobinstrument',['KnobInstrument',['../ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be',1,'ftrace.cpp']]],
-  ['knoboutputfile',['KnobOutputFile',['../ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98',1,'ftrace.cpp']]]
+  ['ins_5fcount',['ins_count',['../ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a',1,'ftrace.cpp']]],
+  ['instrumented_5ffp_5fcount',['instrumented_fp_count',['../replace__fp__ins__complex_8cpp.html#a93408c88ca87a4338dd70191d80d1328',1,'instrumented_fp_count():&#160;test_callbacks.cpp'],['../replace__fp__ins__simple_8cpp.html#a93408c88ca87a4338dd70191d80d1328',1,'instrumented_fp_count():&#160;test_callbacks.cpp'],['../test__callbacks_8cpp.html#a93408c88ca87a4338dd70191d80d1328',1,'instrumented_fp_count():&#160;test_callbacks.cpp']]],
+  ['isfpinstruction',['isFpInstruction',['../ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c',1,'ftrace.cpp']]]
 ];
