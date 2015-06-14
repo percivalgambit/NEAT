@@ -1,24 +1,36 @@
+
+/*! @file
+ * This file contains examples of user-defined functions that are inserted into
+ * the code for tests.
+ */
+
 #include "ftrace.h"
-#include "pin.H"
 
 UINT64 fp_count = 0; /*!< count of the total number of floating point
                           instructions in the instrumented program */
+
 UINT64 instrumented_fp_count = 0; /*!< count of the number of instrumented
                                        floating point instructions in the
                                        instrumented program */
 
+/*!
+ * Empty start callback to be used in tests.
+ * This function is called before the application starts.
+ * @param[in]   v   value specified by the tool in the
+ *                  PIN_AddApplicationStartFunction call
+ */
 VOID start_callback(VOID *v) {
     return;
 }
 
 /*!
+ * Empty start callback to be used in tests.
  * This function is called when the application exits.
  * @param[in]   code            exit code of the application
  * @param[in]   v               value specified by the tool in the
  *                              PIN_AddFiniFunction function call
  */
 VOID exit_callback(INT32 code, VOID *v) {
-    // Write to a file since cout and cerr maybe closed by the application
     if (OutFile.is_open()) {
         OutFile.setf(ios::showbase);
         OutFile << "-----------------------" << endl;
@@ -30,6 +42,17 @@ VOID exit_callback(INT32 code, VOID *v) {
     }
 }
 
+/*!
+ * Standard implementation of floating-point arithmetic operations to be used in
+ * tests. The result obtained from this function should equal the result of
+ * performing an arithmetic operation with no instrumentation.
+ * @param[in]   operand1        the first operand of the arithmetic operation
+ * @param[in]   operand2        the second operand of the arithmetic operation
+ * @param[in]   operation       the arithmetic operation to perform
+ * @param[in]   replace_type    extra variable to provide information on which
+ *                              replacement strategy to use for this operation
+ * @return  the value of the computed operation
+ */
 FLT32 fp_replacement_callback(FLT32 operand1, FLT32 operand2, OPCODE operation,
                               UINT32 replace_type) {
     FLT32 result;

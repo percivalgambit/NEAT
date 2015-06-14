@@ -11,11 +11,13 @@ extern UINT64 fp_count;
 extern UINT64 instrumented_fp_count;
 
 /*!
- * The floating-point replacement function.
- * @param[in]   operand1    first operand of the floating-point instruction
- * @param[in]   operand2    second operand of the floating-point instruction
- * @param[in]   operation   type of floating-point instruction
- * @return the new result of the floating-point instruction
+ * A simple implementation of floating-point arithmetic operations.
+ * @param[in]   operand1        the first operand of the arithmetic operation
+ * @param[in]   operand2        the second operand of the arithmetic operation
+ * @param[in]   operation       the arithmetic operation to perform
+ * @param[in]   replace_type    extra variable to provide information on which
+ *                              replacement strategy to use for this operation
+ * @return  the value of the computed operation
  */
 FLT32 replace_fp_ins_simple(FLT32 operand1, FLT32 operand2, OPCODE operation,
                             UINT32 replace_type) {
