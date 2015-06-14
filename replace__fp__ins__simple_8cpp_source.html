@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>ftrace: replace_fp_ins_simple.cpp Source File</title>
+<title>ftrace: replacement_examples/replace_fp_ins_simple.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,19 +93,35 @@ $(document).ready(function(){initNavTree('replace__fp__ins__simple_8cpp_source.h
 </div><!--header-->
 <div class="contents">
 <a href="replace__fp__ins__simple_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;pin.H&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="replace__fp__ins__simple_8cpp.html#a0227e7feea8e2a3368c6a39738d62248">   16</a></span>&#160;FLT32 <a class="code" href="replace__fp__ins__simple_8cpp.html#a0227e7feea8e2a3368c6a39738d62248">replace_fp_ins_simple</a>(FLT32 operand1, FLT32 operand2, OPCODE operation) {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordflow">return</span> 1.0;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;}</div>
-<div class="ttc" id="replace__fp__ins__simple_8cpp_html_a0227e7feea8e2a3368c6a39738d62248"><div class="ttname"><a href="replace__fp__ins__simple_8cpp.html#a0227e7feea8e2a3368c6a39738d62248">replace_fp_ins_simple</a></div><div class="ttdeci">FLT32 replace_fp_ins_simple(FLT32 operand1, FLT32 operand2, OPCODE operation)</div><div class="ttdef"><b>Definition:</b> <a href="replace__fp__ins__simple_8cpp_source.html#l00016">replace_fp_ins_simple.cpp:16</a></div></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;ftrace.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;pin.H&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">extern</span> UINT64 <a class="code" href="replace__fp__ins__simple_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">extern</span> UINT64 <a class="code" href="replace__fp__ins__simple_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="replace__fp__ins__simple_8cpp.html#afbb6e82a2bc32c6f42958c4d57ec66a8">   22</a></span>&#160;FLT32 <a class="code" href="replace__fp__ins__simple_8cpp.html#afbb6e82a2bc32c6f42958c4d57ec66a8">replace_fp_ins_simple</a>(FLT32 operand1, FLT32 operand2, OPCODE operation,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                            UINT32 replace_type) {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    FLT32 result = 1.0;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="replace__fp__ins__simple_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a>++;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="replace__fp__ins__simple_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a>++;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    WRITE_FLT_OPERANDS(operation, operand1, operand2, <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    WRITE_FLT_RESULT(result, <a class="code" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;}</div>
+<div class="ttc" id="ftrace_8cpp_html_ad115a0fe29ea602faf1908a1ce024c99"><div class="ttname"><a href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a></div><div class="ttdeci">ofstream OutFile</div><div class="ttdef"><b>Definition:</b> <a href="ftrace_8cpp_source.html#l00046">ftrace.cpp:46</a></div></div>
+<div class="ttc" id="replace__fp__ins__simple_8cpp_html_a93408c88ca87a4338dd70191d80d1328"><div class="ttname"><a href="replace__fp__ins__simple_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a></div><div class="ttdeci">UINT64 instrumented_fp_count</div><div class="ttdef"><b>Definition:</b> <a href="test__callbacks_8cpp_source.html#l00012">test_callbacks.cpp:12</a></div></div>
+<div class="ttc" id="replace__fp__ins__simple_8cpp_html_afbb6e82a2bc32c6f42958c4d57ec66a8"><div class="ttname"><a href="replace__fp__ins__simple_8cpp.html#afbb6e82a2bc32c6f42958c4d57ec66a8">replace_fp_ins_simple</a></div><div class="ttdeci">FLT32 replace_fp_ins_simple(FLT32 operand1, FLT32 operand2, OPCODE operation, UINT32 replace_type)</div><div class="ttdef"><b>Definition:</b> <a href="replace__fp__ins__simple_8cpp_source.html#l00022">replace_fp_ins_simple.cpp:22</a></div></div>
+<div class="ttc" id="replace__fp__ins__simple_8cpp_html_a7c2aec7c5d253eec1b4a7425ffe7cb4b"><div class="ttname"><a href="replace__fp__ins__simple_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a></div><div class="ttdeci">UINT64 fp_count</div><div class="ttdef"><b>Definition:</b> <a href="test__callbacks_8cpp_source.html#l00009">test_callbacks.cpp:9</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="replace__fp__ins__simple_8cpp.html">replace_fp_ins_simple.cpp</a></li>
-    <li class="footer">Generated on Sun Feb 15 2015 20:04:34 for ftrace by
+    <li class="navelem"><a class="el" href="dir_627ce6d611af48431f7ffde3805e6b35.html">replacement_examples</a></li><li class="navelem"><a class="el" href="replace__fp__ins__simple_8cpp.html">replace_fp_ins_simple.cpp</a></li>
+    <li class="footer">Generated on Sun Jun 14 2015 02:03:57 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

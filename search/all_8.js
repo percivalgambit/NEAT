@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sse_5fsample_5fapp_2ec',['sse_sample_app.c',['../sse__sample__app_8c.html',1,'']]]
+  ['outfile',['OutFile',['../ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99',1,'ftrace.cpp']]]
 ];

@@ -89,64 +89,88 @@ $(document).ready(function(){initNavTree('ftrace_8cpp.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">ftrace.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;fstream&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
-<code>#include &quot;pin.H&quot;</code><br />
-<code>#include &quot;instlib.H&quot;</code><br />
+<div class="textblock"><code>#include &quot;ftrace.h&quot;</code><br />
+<code>#include &lt;stack&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &quot;<a class="el" href="normal__fp__implementation_8cpp_source.html">normal_fp_implementation.cpp</a>&quot;</code><br />
 </div>
 <p><a href="ftrace_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:af035c4dba8e53e4e79c467b81dbd8d4b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af035c4dba8e53e4e79c467b81dbd8d4b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>REPLACE_FP_FN</b>&#160;&#160;&#160;<a class="el" href="normal__fp__implementation_8cpp.html#a1ef8589e7bb51c42d9683d17fc910b7a">normal_fp_implementation</a></td></tr>
+<tr class="separator:af035c4dba8e53e4e79c467b81dbd8d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21a7111b89e76d155ed93e11b39f46a1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21a7111b89e76d155ed93e11b39f46a1"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>REPLACEMENT_TYPE_FN</b>()&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a21a7111b89e76d155ed93e11b39f46a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4bfdd0956e5f2dfdd462ff5bea6ffe98"><td class="memItemLeft" align="right" valign="top">KNOB&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4bfdd0956e5f2dfdd462ff5bea6ffe98">KnobOutputFile</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;o&quot;,&quot;&quot;,&quot;specify file name for ftrace output&quot;)</td></tr>
 <tr class="separator:a4bfdd0956e5f2dfdd462ff5bea6ffe98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38affe937715aa065d87b2c29e7e58be"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a38affe937715aa065d87b2c29e7e58be">KnobInstrument</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;instrument&quot;,&quot;1&quot;,&quot;turn floating-point instruction tracing on or off&quot;)</td></tr>
 <tr class="separator:a38affe937715aa065d87b2c29e7e58be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f1d652654648d584fd9bf089c64828c"><td class="memItemLeft" align="right" valign="top">KNOB&lt; BOOL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4f1d652654648d584fd9bf089c64828c">KnobReplaceFPIns</a> (KNOB_MODE_WRITEONCE,&quot;pintool&quot;,&quot;fp-replace&quot;,&quot;1&quot;,&quot;turn floating-point instruction replacing on or off&quot;)</td></tr>
-<tr class="separator:a4f1d652654648d584fd9bf089c64828c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c89b15666dec97b4af91ba247b6a230"><td class="memItemLeft" align="right" valign="top">INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a9c89b15666dec97b4af91ba247b6a230">Usage</a> ()</td></tr>
 <tr class="separator:a9c89b15666dec97b4af91ba247b6a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cc289327a342e05cc758b04b10aac96"><td class="memItemLeft" align="right" valign="top">UINT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a7cc289327a342e05cc758b04b10aac96">_get_replacement_type</a> ()</td></tr>
+<tr class="separator:a7cc289327a342e05cc758b04b10aac96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af945b1d7772138bfdb2ce2b724e5d571"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571">docount</a> (UINT64 *counter)</td></tr>
 <tr class="separator:af945b1d7772138bfdb2ce2b724e5d571"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af18a2ad231dcc8a092812db11fa06c12"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#af18a2ad231dcc8a092812db11fa06c12">print_reg_fargs</a> (OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt, BOOL output)</td></tr>
-<tr class="separator:af18a2ad231dcc8a092812db11fa06c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ebfedad8c105c65529a7b9604622147"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a3ebfedad8c105c65529a7b9604622147">print_mem_fargs</a> (OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt, BOOL output)</td></tr>
-<tr class="separator:a3ebfedad8c105c65529a7b9604622147"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b849c8c8f4d790ee7cdb37aa4c98c9f"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a2b849c8c8f4d790ee7cdb37aa4c98c9f">print_fresult</a> (REG operand1, CONTEXT *ctxt)</td></tr>
-<tr class="separator:a2b849c8c8f4d790ee7cdb37aa4c98c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70f3aee9e63920558c208b2a610570d6"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a70f3aee9e63920558c208b2a610570d6">replace_reg_fp_ins</a> (OPCODE op, REG operand1, REG operand2, CONTEXT *ctxt)</td></tr>
+<tr class="separator:a70f3aee9e63920558c208b2a610570d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44293473cdcde9663eee7f4d6fe428cf"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a44293473cdcde9663eee7f4d6fe428cf">replace_mem_fp_ins</a> (OPCODE op, REG operand1, ADDRINT *operand2, CONTEXT *ctxt)</td></tr>
+<tr class="separator:a44293473cdcde9663eee7f4d6fe428cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae13773ef0f7bdac47bbe391a079fa406"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#ae13773ef0f7bdac47bbe391a079fa406">push_function_level_replacement_type</a> (UINT32 replace_type)</td></tr>
+<tr class="separator:ae13773ef0f7bdac47bbe391a079fa406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add5656a83a53c3544dca23327a110d03"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#add5656a83a53c3544dca23327a110d03">pop_function_level_replacement_type</a> (UINT32 replace_type)</td></tr>
+<tr class="separator:add5656a83a53c3544dca23327a110d03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memItemLeft" align="right" valign="top">BOOL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c">isFpInstruction</a> (INS ins)</td></tr>
 <tr class="separator:a10df4774fb7bc1bae29770f4cd973d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabd534eab1f3ff92a2cf8be192a4f013"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#aabd534eab1f3ff92a2cf8be192a4f013">Routine</a> (RTN rtn, VOID *output)</td></tr>
-<tr class="separator:aabd534eab1f3ff92a2cf8be192a4f013"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa61669c70de306a0ba47bf5878b9f806"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#aa61669c70de306a0ba47bf5878b9f806">Fini</a> (INT32 code, VOID *v)</td></tr>
-<tr class="separator:aa61669c70de306a0ba47bf5878b9f806"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a798126743c6c51a4d7387e4def63f45e"><td class="memItemLeft" align="right" valign="top">VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a798126743c6c51a4d7387e4def63f45e">Routine</a> (RTN rtn, VOID *v)</td></tr>
+<tr class="separator:a798126743c6c51a4d7387e4def63f45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
 <tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a4ad05dfe70dfabe25a3d2cd618345be5"><td class="memItemLeft" align="right" valign="top">FILTER_RTN&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a4ad05dfe70dfabe25a3d2cd618345be5">filter</a></td></tr>
-<tr class="separator:a4ad05dfe70dfabe25a3d2cd618345be5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a672f83b526de3bb39a160ec2f49b682a"><td class="memItemLeft" align="right" valign="top">UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> = 0</td></tr>
+<tr class="separator:a672f83b526de3bb39a160ec2f49b682a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad115a0fe29ea602faf1908a1ce024c99"><td class="memItemLeft" align="right" valign="top">ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99">OutFile</a></td></tr>
 <tr class="separator:ad115a0fe29ea602faf1908a1ce024c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a672f83b526de3bb39a160ec2f49b682a"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a672f83b526de3bb39a160ec2f49b682a">ins_count</a> = 0</td></tr>
-<tr class="separator:a672f83b526de3bb39a160ec2f49b682a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a> = 0</td></tr>
-<tr class="separator:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93408c88ca87a4338dd70191d80d1328"><td class="memItemLeft" align="right" valign="top">static UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a> = 0</td></tr>
-<tr class="separator:a93408c88ca87a4338dd70191d80d1328"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e0d695e6268d8f1c6bb473a8a6b19dd"><td class="memItemLeft" align="right" valign="top">static stack&lt; UINT32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ftrace_8cpp.html#a1e0d695e6268d8f1c6bb473a8a6b19dd">function_level_replacement_type_stack</a></td></tr>
+<tr class="separator:a1e0d695e6268d8f1c6bb473a8a6b19dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays the arguments and results. This tool can also replace floating-point instructions with arbitrary code to test different floating-point implementations. </p><dl class="section note"><dt>Note</dt><dd>All floating-point values are printed as 8 digit hex numbers padded with 0's. </dd></dl>
+<div class="textblock"><p>This is a PIN tool that traces every floating-point arithmetic operation and displays its arguments and results. This tool can also replace floating-point instructions with arbitrary code to test different floating-point implementations. </p><dl class="section note"><dt>Note</dt><dd>All floating-point values are printed as 8 digit hex numbers padded with 0's. </dd></dl>
 
 <p>Definition in file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a7cc289327a342e05cc758b04b10aac96"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT32 _get_replacement_type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the current function-level replacement type from the stack. If there is no current function-level replacement type, a default replacement type is returned. </p><dl class="section return"><dt>Returns</dt><dd>the current function-level replacement type </dd></dl>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00094">94</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="af945b1d7772138bfdb2ce2b724e5d571"></a>
 <div class="memitem">
 <div class="memproto">
@@ -167,42 +191,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00085">85</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa61669c70de306a0ba47bf5878b9f806"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">VOID Fini </td>
-          <td>(</td>
-          <td class="paramtype">INT32&#160;</td>
-          <td class="paramname"><em>code</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VOID *&#160;</td>
-          <td class="paramname"><em>v</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>This function is called when the application exits. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">code</td><td>exit code of the application </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">v</td><td>value specified by the tool in the PIN_AddFiniFunction function call </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00337">337</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00110">110</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -234,7 +223,7 @@ Variables</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00195">195</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00200">200</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -324,52 +313,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Specify the file name for the ftrace output file. </p>
-
-</div>
-</div>
-<a class="anchor" id="a4f1d652654648d584fd9bf089c64828c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">KNOB&lt;BOOL&gt; KnobReplaceFPIns </td>
-          <td>(</td>
-          <td class="paramtype">KNOB_MODE_WRITEONCE&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;pintool&quot;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;fp-replace&quot;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;1&quot;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;turn floating-point instruction replacing on or off&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Turn floating-point instruction replacing on or off for the program. </p><dl class="section note"><dt>Note</dt><dd>Has no effect unless the pintool is compiled with the instruction replacing code. The best way to do this is to define REPLACE_FP_FN in the makefile. </dd></dl>
+<p>Specify the filename for the ftrace output file. </p>
 
 </div>
 </div>
@@ -404,51 +348,64 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00355">355</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00339">339</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a2b849c8c8f4d790ee7cdb37aa4c98c9f"></a>
+<a class="anchor" id="add5656a83a53c3544dca23327a110d03"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">VOID print_fresult </td>
+          <td class="memname">VOID pop_function_level_replacement_type </td>
           <td>(</td>
-          <td class="paramtype">REG&#160;</td>
-          <td class="paramname"><em>operand1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">UINT32&#160;</td>
+          <td class="paramname"><em>replace_type</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">CONTEXT *&#160;</td>
-          <td class="paramname"><em>ctxt</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Print the result of a floating-point instruction. This function is called for every floating-point arithmetic instruction after it has finished executing. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Pop a function-level replacement type from the replacement type stack. A single parameter is supplied, which is the expected replacement type to pop. If the replacement type to pop is the default replacement type, then nothing will happen </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>the register where the result of the instruction is stored </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ctxt</td><td>the context of the instrumented application immediately after the instruction is executed </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">replace_type</td><td>expected replacement type to pop </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00170">170</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00177">177</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a3ebfedad8c105c65529a7b9604622147"></a>
+<a class="anchor" id="ae13773ef0f7bdac47bbe391a079fa406"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">VOID print_mem_fargs </td>
+          <td class="memname">VOID push_function_level_replacement_type </td>
+          <td>(</td>
+          <td class="paramtype">UINT32&#160;</td>
+          <td class="paramname"><em>replace_type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Push a function-level replacement type on the replacement type stack. If the replacement type to push is the default replacement type, then nothing will happen </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">replace_type</td><td>replacement type to push </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00164">164</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a44293473cdcde9663eee7f4d6fe428cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VOID replace_mem_fp_ins </td>
           <td>(</td>
           <td class="paramtype">OPCODE&#160;</td>
           <td class="paramname"><em>op</em>, </td>
@@ -469,13 +426,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">CONTEXT *&#160;</td>
-          <td class="paramname"><em>ctxt</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BOOL&#160;</td>
-          <td class="paramname"><em>output</em>&#160;</td>
+          <td class="paramname"><em>ctxt</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -484,27 +435,26 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Record the name of a floating-point instruction and its operands. Replace floating-point instructions with a user-specified function, if specified during compilation. This function is called for every floating-point arithmetic instruction that operates on a register and a memory location, when it is about to be executed. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Run a user-specified function as a replacement for a floating-point arithmetic operation. This function is called for every floating-point arithmetic instruction that operates on a register and a memory location, instead of executing the instruction itself. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">op</td><td>the opcode of the floating-point instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>the first operand of the instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">operand2</td><td>the second operand of the instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ctxt</td><td>the context of the instrumented application immediately before the instruction is executed </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">output</td><td>whether to print output to the output file </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00139">139</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00148">148</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="af18a2ad231dcc8a092812db11fa06c12"></a>
+<a class="anchor" id="a70f3aee9e63920558c208b2a610570d6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">VOID print_reg_fargs </td>
+          <td class="memname">VOID replace_reg_fp_ins </td>
           <td>(</td>
           <td class="paramtype">OPCODE&#160;</td>
           <td class="paramname"><em>op</em>, </td>
@@ -525,13 +475,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">CONTEXT *&#160;</td>
-          <td class="paramname"><em>ctxt</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BOOL&#160;</td>
-          <td class="paramname"><em>output</em>&#160;</td>
+          <td class="paramname"><em>ctxt</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -540,22 +484,21 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Record the name of a floating-point instruction and its operands. Replace floating-point instructions with a user-specified function, if specified during compilation. This function is called for every floating-point arithmetic instruction that operates on two registers, when it is about to be executed. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Run a user-specified function as a replacement for a floating-point arithmetic operation. This function is called for every floating-point arithmetic instruction that operates on two registers, instead of executing the instruction itself. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">op</td><td>the opcode of the floating-point instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>the first operand of the instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">operand2</td><td>the second operand of the instruction </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ctxt</td><td>the context of the instrumented application immediately before the instruction is executed </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">output</td><td>whether to print output to the output file </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00102">102</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00125">125</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="aabd534eab1f3ff92a2cf8be192a4f013"></a>
+<a class="anchor" id="a798126743c6c51a4d7387e4def63f45e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -569,7 +512,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">VOID *&#160;</td>
-          <td class="paramname"><em>output</em>&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -578,16 +521,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Insert calls to the analysis routines before and after every floating-point instruction of the instrumented application in selected routines. This function is called every time a new instruction is encountered. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Insert calls to the analysis routines before and after every floating-point instruction of the instrumented application. If function-level replacement types are enabled, then every routine will also be instrumented with functions to push and pop its replacement type from the stack hen it is entered and exited. This function is called every time a new routine is encountered. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">rtn</td><td>routine to be instrumented </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">output</td><td>pointer to a bool value that determines whether any output should be produced by the instrumentation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">v</td><td>value specified by the tool in the RTN_AddInstrumentFunction function call </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>To select which routines to instument, specify each routine as the argument to a -filter_rtn flag on the command line </dd></dl>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00219">219</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00243">243</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -603,29 +545,14 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Print out help message. </p>
+<p>Print out a help message. </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00069">69</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00080">80</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="a4ad05dfe70dfabe25a3d2cd618345be5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">FILTER_RTN filter</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Contains knobs to choose which files to instrument </p>
-
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00025">25</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a7c2aec7c5d253eec1b4a7425ffe7cb4b"></a>
+<a class="anchor" id="a1e0d695e6268d8f1c6bb473a8a6b19dd"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -633,7 +560,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">UINT64 fp_count = 0</td>
+          <td class="memname">stack&lt;UINT32&gt; function_level_replacement_type_stack</td>
         </tr>
       </table>
   </td>
@@ -642,55 +569,24 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>count of the total number of floating point instructions in the instrumented program </p>
+<p>A stack used to keep track of the current replacement type when function-level replacement types are enabled. Whenever a function which has an associated replacement type is entered, the replacement type will be pushed onto the stack, and when the function exits, the replacement type will be poped from the stack. </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00031">31</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00055">55</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
 <a class="anchor" id="a672f83b526de3bb39a160ec2f49b682a"></a>
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">UINT64 ins_count = 0</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>count of the total number of instructions in the instrumented program </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00029">29</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a93408c88ca87a4338dd70191d80d1328"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">UINT64 instrumented_fp_count = 0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>count of the number of instrumented floating point instructions in the instrumented program </p>
-
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00033">33</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00044">44</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -705,7 +601,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Output file for the pintool </p>
 
-<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00027">27</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
+<p>Definition at line <a class="el" href="ftrace_8cpp_source.html#l00046">46</a> of file <a class="el" href="ftrace_8cpp_source.html">ftrace.cpp</a>.</p>
 
 </div>
 </div>
@@ -715,7 +611,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="ftrace_8cpp.html">ftrace.cpp</a></li>
-    <li class="footer">Generated on Sun Feb 15 2015 20:04:34 for ftrace by
+    <li class="footer">Generated on Sun Jun 14 2015 02:03:57 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

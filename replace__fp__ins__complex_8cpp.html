@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>ftrace: replace_fp_ins_complex.cpp File Reference</title>
+<title>ftrace: replacement_examples/replace_fp_ins_complex.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,27 +89,36 @@ $(document).ready(function(){initNavTree('replace__fp__ins__complex_8cpp.html','
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">replace_fp_ins_complex.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;pin.H&quot;</code><br />
+<div class="textblock"><code>#include &quot;ftrace.h&quot;</code><br />
+<code>#include &quot;pin.H&quot;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 </div>
 <p><a href="replace__fp__ins__complex_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af8c4d3783ae36d193ad83e67287fbcff"><td class="memItemLeft" align="right" valign="top">FLT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="replace__fp__ins__complex_8cpp.html#af8c4d3783ae36d193ad83e67287fbcff">replace_fp_ins_complex</a> (FLT32 operand1, FLT32 operand2, OPCODE operation)</td></tr>
-<tr class="separator:af8c4d3783ae36d193ad83e67287fbcff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55fc0a8165f5a82bae14d46219b28bcf"><td class="memItemLeft" align="right" valign="top">FLT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="replace__fp__ins__complex_8cpp.html#a55fc0a8165f5a82bae14d46219b28bcf">replace_fp_ins_complex</a> (FLT32 operand1, FLT32 operand2, OPCODE operation, UINT32 replace_type)</td></tr>
+<tr class="separator:a55fc0a8165f5a82bae14d46219b28bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memItemLeft" align="right" valign="top">UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="replace__fp__ins__complex_8cpp.html#a7c2aec7c5d253eec1b4a7425ffe7cb4b">fp_count</a></td></tr>
+<tr class="separator:a7c2aec7c5d253eec1b4a7425ffe7cb4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93408c88ca87a4338dd70191d80d1328"><td class="memItemLeft" align="right" valign="top">UINT64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="replace__fp__ins__complex_8cpp.html#a93408c88ca87a4338dd70191d80d1328">instrumented_fp_count</a></td></tr>
+<tr class="separator:a93408c88ca87a4338dd70191d80d1328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This is a more complex replacement function for arithmetic floating-point instructions in the ftrace tool. </p>
 
 <p>Definition in file <a class="el" href="replace__fp__ins__complex_8cpp_source.html">replace_fp_ins_complex.cpp</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="af8c4d3783ae36d193ad83e67287fbcff"></a>
+<a class="anchor" id="a55fc0a8165f5a82bae14d46219b28bcf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -129,7 +138,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">OPCODE&#160;</td>
-          <td class="paramname"><em>operation</em>&#160;</td>
+          <td class="paramname"><em>operation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">UINT32&#160;</td>
+          <td class="paramname"><em>replace_type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -138,17 +153,49 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The floating-point replacement function. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>A more complex implementation of floating-point arithmetic operations. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>first operand of the floating-point instruction </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">operand2</td><td>second operand of the floating-point instruction </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">operation</td><td>type of floating-point instruction </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">operand1</td><td>the first operand of the arithmetic operation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">operand2</td><td>the second operand of the arithmetic operation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">operation</td><td>the arithmetic operation to perform </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">replace_type</td><td>extra variable to provide information on which replacement strategy to use for this operation </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the new result of the floating-point instruction </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of the computed operation </dd></dl>
 
-<p>Definition at line <a class="el" href="replace__fp__ins__complex_8cpp_source.html#l00017">17</a> of file <a class="el" href="replace__fp__ins__complex_8cpp_source.html">replace_fp_ins_complex.cpp</a>.</p>
+<p>Definition at line <a class="el" href="replace__fp__ins__complex_8cpp_source.html#l00023">23</a> of file <a class="el" href="replace__fp__ins__complex_8cpp_source.html">replace_fp_ins_complex.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="a7c2aec7c5d253eec1b4a7425ffe7cb4b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT64 fp_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>count of the total number of floating point instructions in the instrumented program </p>
+
+<p>Definition at line <a class="el" href="test__callbacks_8cpp_source.html#l00009">9</a> of file <a class="el" href="test__callbacks_8cpp_source.html">test_callbacks.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a93408c88ca87a4338dd70191d80d1328"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UINT64 instrumented_fp_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>count of the number of instrumented floating point instructions in the instrumented program </p>
+
+<p>Definition at line <a class="el" href="test__callbacks_8cpp_source.html#l00012">12</a> of file <a class="el" href="test__callbacks_8cpp_source.html">test_callbacks.cpp</a>.</p>
 
 </div>
 </div>
@@ -157,8 +204,8 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="replace__fp__ins__complex_8cpp.html">replace_fp_ins_complex.cpp</a></li>
-    <li class="footer">Generated on Sun Feb 15 2015 20:04:34 for ftrace by
+    <li class="navelem"><a class="el" href="dir_627ce6d611af48431f7ffde3805e6b35.html">replacement_examples</a></li><li class="navelem"><a class="el" href="replace__fp__ins__complex_8cpp.html">replace_fp_ins_complex.cpp</a></li>
+    <li class="footer">Generated on Sun Jun 14 2015 02:03:57 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

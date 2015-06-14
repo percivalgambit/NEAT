@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['docount',['docount',['../ftrace_8cpp.html#af945b1d7772138bfdb2ce2b724e5d571',1,'ftrace.cpp']]]
+  ['_5fget_5freplacement_5ftype',['_get_replacement_type',['../ftrace_8cpp.html#a7cc289327a342e05cc758b04b10aac96',1,'ftrace.cpp']]]
 ];

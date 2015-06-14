@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main',['main',['../ftrace_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;ftrace.cpp'],['../sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;sse_sample_app.c']]]
+  ['isfpinstruction',['isFpInstruction',['../ftrace_8cpp.html#a10df4774fb7bc1bae29770f4cd973d4c',1,'ftrace.cpp']]]
 ];
