@@ -54,6 +54,14 @@ LIB_ROOTS :=
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
+# create space separated list of the make variables that will be passed to the
+# recursive invocation of make to build the ftrace program for each test
+FTRACE_CMD_VARS = $(foreach var,\
+                            $(FTRACE_FILTERED_CPP_MACRO_VARS) \
+                                $(FTRACE_FILTERED_TOOL_SOURCE_VARS) \
+                                FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE,\
+                            $(var)="$($(var))" )
+
 # default test rule
 %.test: REPLACE_FP_FN       := fp_replacement_callback
 %.test: REPLACE_FP_FILE     := tests/test_callbacks.cpp
@@ -65,11 +73,17 @@ LIB_ROOTS :=
 %.test: EXPECTED_STDOUT     ?= tests/$(@:.test=.stdout.reference)
 %.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) $(FTRACE_CMD_VARS) $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
-	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(FTRACE_CMDLINE_FLAGS) -o $(OBJDIR)$(@:.test=.out) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) > $(OBJDIR)$(@:.test=.stdout.out)
-	$(DIFF) -I "Total number of instructions: [0-9]*" $(OBJDIR)$(@:.test=.out) $(EXPECTED_OUTPUT)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(FTRACE_CMDLINE_FLAGS) \
+	       -o $(OBJDIR)$(@:.test=.out) \
+	       -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) \
+	          > $(OBJDIR)$(@:.test=.stdout.out)
+	$(DIFF) -I "Total number of instructions: [0-9]*" \
+	        $(OBJDIR)$(@:.test=.out) \
+	        $(EXPECTED_OUTPUT)
 	$(DIFF) $(OBJDIR)$(@:.test=.stdout.out) $(EXPECTED_STDOUT)
 	-$(RM) $(OBJDIR)$(@:.test=.out) $(OBJDIR)$(@:.test=.stdout.out)
-	-$(RM) $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
+	-$(RM) $(OBJDIR)function_level_replacement_type_enum.h \
+	       $(OBJDIR)function_level_replacement_type_mapping.h
 
 # specific tests for different aspects of the tool
 ftrace_normal_fp_implementation.test: REPLACE_FP_FN      :=
@@ -81,7 +95,8 @@ ftrace_normal_fp_implementation.test: EXPECTED_STDOUT    := tests/ftrace.stdout.
 
 ftrace_no_specified_output_file.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) $(FTRACE_CMD_VARS) $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
-	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) &> $(OBJDIR)$(@:.test=.out)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) \
+	       -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) &> $(OBJDIR)$(@:.test=.out)
 	$(DIFF) $(OBJDIR)$(@:.test=.out) tests/ftrace.stdout.reference
 	$(RM) $(OBJDIR)$(@:.test=.out)
 
@@ -94,29 +109,43 @@ $(OBJDIR)ftrace_no_instrument.out: $(OBJDIR)
 	touch $@
 
 ftrace_replace_fp_ins_simple.test: REPLACE_FP_FN   := replace_fp_ins_simple
-ftrace_replace_fp_ins_simple.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_simple.cpp
+ftrace_replace_fp_ins_simple.test: REPLACE_FP_FILE := \
+    replacement_examples/replace_fp_ins_simple.cpp
 
 ftrace_replace_fp_ins_complex.test: REPLACE_FP_FN   := replace_fp_ins_complex
-ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_complex.cpp
+ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := \
+    replacement_examples/replace_fp_ins_complex.cpp
 
-ftrace_replacement_type_simple.test: REPLACE_FP_FN := replace_fp_ins_different_types
-ftrace_replacement_type_simple.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_different_types.cpp
-ftrace_replacement_type_simple.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := $(OBJDIR)simple_replacement_type_mapping.txt
-ftrace_replacement_type_simple.test: EXTRA_SOURCE_FILES := replacement_examples/replace_fp_ins_complex.cpp replacement_examples/replace_fp_ins_simple.cpp
+ftrace_replacement_type_simple.test: REPLACE_FP_FN   := replace_fp_ins_different_types
+ftrace_replacement_type_simple.test: REPLACE_FP_FILE := \
+    replacement_examples/replace_fp_ins_different_types.cpp
+ftrace_replacement_type_simple.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := \
+    $(OBJDIR)simple_replacement_type_mapping.txt
+ftrace_replacement_type_simple.test: EXTRA_SOURCE_FILES := \
+    replacement_examples/replace_fp_ins_complex.cpp \
+    replacement_examples/replace_fp_ins_simple.cpp
 ftrace_replacement_type_simple.test: $(OBJDIR)simple_replacement_type_mapping.txt
-ftrace_replacement_type_simple.test: $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
+ftrace_replacement_type_simple.test: \
+    $(OBJDIR)function_level_replacement_type_enum.h \
+    $(OBJDIR)function_level_replacement_type_mapping.h
 
 $(OBJDIR)simple_replacement_type_mapping.txt: $(OBJDIR)
 	@printf "replacement_simple helper2\n" > $@
 	@printf "replacement_complex     \t  helper1\n" >> $@
 	@printf "foo   bar\n" >> $@
 
-ftrace_replacement_type_nested.test: REPLACE_FP_FN := replace_fp_ins_different_types
-ftrace_replacement_type_nested.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_different_types.cpp
-ftrace_replacement_type_nested.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := $(OBJDIR)nested_replacement_type_mapping.txt
-ftrace_replacement_type_nested.test: EXTRA_SOURCE_FILES := replacement_examples/replace_fp_ins_complex.cpp replacement_examples/replace_fp_ins_simple.cpp
+ftrace_replacement_type_nested.test: REPLACE_FP_FN   := replace_fp_ins_different_types
+ftrace_replacement_type_nested.test: REPLACE_FP_FILE := \
+    replacement_examples/replace_fp_ins_different_types.cpp
+ftrace_replacement_type_nested.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := \
+    $(OBJDIR)nested_replacement_type_mapping.txt
+ftrace_replacement_type_nested.test: EXTRA_SOURCE_FILES := \
+    replacement_examples/replace_fp_ins_complex.cpp \
+    replacement_examples/replace_fp_ins_simple.cpp
 ftrace_replacement_type_nested.test: $(OBJDIR)nested_replacement_type_mapping.txt
-ftrace_replacement_type_nested.test: $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
+ftrace_replacement_type_nested.test: \
+    $(OBJDIR)function_level_replacement_type_enum.h \
+    $(OBJDIR)function_level_replacement_type_mapping.h
 
 $(OBJDIR)nested_replacement_type_mapping.txt: $(OBJDIR)
 	@printf "replacement_simple helper1, helper2\n" > $@

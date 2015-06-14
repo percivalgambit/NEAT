@@ -17,14 +17,26 @@ filter-defined = $(foreach var,$(1),$(if $($(var)),$(var) ))
 FTRACE_CPP_MACRO_VARS = REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
 
 # list of variables that are dependencies for the ftrace tool, if defined
-FTRACE_TOOL_SOURCE_VARS = REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE EXIT_CALLBACK_FILE EXTRA_SOURCE_FILES
+FTRACE_TOOL_SOURCE_VARS = REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE \
+                          EXIT_CALLBACK_FILE EXTRA_SOURCE_FILES
 
 # filter out undefined variables from FTRACE_CPP_MACRO_VARS and FTRACE_TOOL_DEPS
 FTRACE_FILTERED_CPP_MACRO_VARS = $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
 FTRACE_FILTERED_TOOL_SOURCE_VARS = $(call filter-defined,$(FTRACE_TOOL_SOURCE_VARS))
+
 FTRACE_TOOL_SOURCE_DEPS = $(sort $(foreach var,$(FTRACE_TOOL_SOURCE_VARS),$($(var))))
 
-FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTERED_TOOL_SOURCE_VARS) FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE,$(var)="$($(var))" )
+# create a list of space-separated flags to pass to the C++ preprocessor that will
+# define macros to be used in the ftrace source files
+FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(var)) )
+
+# create a list of the object files that will be compiled into the ftrace tool
+# and that the rule to build the tool will depend on
+FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,\
+                                       $(FTRACE_FILTERED_TOOL_SOURCE_VARS),\
+                                       $(patsubst %.cpp,\
+                                                  $(OBJDIR)%$(OBJ_SUFFIX),\
+                                                  $(notdir $($(var)))) ))
 
 ##############################################################
 #
@@ -37,16 +49,21 @@ FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTE
 
 ###### Special tools' build rules ######
 
-FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(var)) )
-FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,$(FTRACE_FILTERED_TOOL_SOURCE_VARS),$(patsubst %.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(notdir $($(var)))) ))
-
+# function-level replacement type specific logic
 ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE
 FTRACE_CPP_FLAGS += -DFUNCTION_LEVEL_REPLACEMENT_TYPE
-$(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS): $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
+
+$(OBJDIR)ftrace$(OBJ_SUFFIX) \
+$(FTRACE_TOOL_OBJ_DEPS): $(OBJDIR)function_level_replacement_type_enum.h \
+                         $(OBJDIR)function_level_replacement_type_mapping.h
 endif
 
-$(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h: generate_replacement_type_enum.py $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
-	$(PYTHON) $< -e $(OBJDIR)function_level_replacement_type_enum.h -m $(OBJDIR)function_level_replacement_type_mapping.h -i $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
+$(OBJDIR)function_level_replacement_type_enum.h \
+$(OBJDIR)function_level_replacement_type_mapping.h: generate_replacement_type_enum.py \
+                                                    $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
+	$(PYTHON) $< -e $(OBJDIR)function_level_replacement_type_enum.h \
+	             -m $(OBJDIR)function_level_replacement_type_mapping.h \
+	             -i $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
 
 .PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
 $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
@@ -55,15 +72,20 @@ $(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
 $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS)
 	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $(filter %.o,$^) $(TOOL_LPATHS) $(TOOL_LIBS)
 
+# since all object files are built in the same directory, but source files can
+# come from anywhere, we need to programmatically generate rules for every
+# user-specified object that we need to build
 define make-ftrace-obj-dep
 $$(patsubst %.cpp,$$(OBJDIR)%$$(OBJ_SUFFIX),$$(notdir $(1))): $(1)
 	$$(CXX) $$(FTRACE_CPP_FLAGS) $$(TOOL_CXXFLAGS) -I. -I$$(OBJDIR) $$(COMP_OBJ)$$@ $$<
 endef
 
+# generate a rule to build an object from every user-specified source file
 $(foreach src,$(FTRACE_TOOL_SOURCE_DEPS),$(eval $(call make-ftrace-obj-dep,$(src))))
 
 ###### Special applications' build rules ######
 
+# sample sse application for testing
 $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
