@@ -5,52 +5,6 @@
 #
 ##############################################################
 
-##############################################################
-#
-# Test targets
-#
-##############################################################
-
-###### Place all generic definitions here ######
-
-# This defines tests which run tools of the same name.  This is simply for convenience to avoid
-# defining the test name twice (once in TOOL_ROOTS and again in TEST_ROOTS).
-# Tests defined here should not be defined in TOOL_ROOTS and TEST_ROOTS.
-TEST_TOOL_ROOTS := ftrace
-
-# This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_normal_fp_implementation ftrace_no_specified_output_file ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_replacement_type_simple ftrace_replacement_type_nested
-
-# This defines a list of tests that should run in the "short" sanity. Tests in this list must also
-# appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
-# If the entire directory should be tested in sanity, assign TEST_TOOL_ROOTS and TEST_ROOTS to the
-# SANITY_SUBSET variable in the tests section below (see example in makefile.rules.tmpl).
-SANITY_SUBSET :=
-
-# This defines the tools which will be run during the the tests, and were not already defined in
-# TEST_TOOL_ROOTS.
-TOOL_ROOTS :=
-
-# This defines the static analysis tools which will be run during the the tests. They should not
-# be defined in TEST_TOOL_ROOTS. If a test with the same name exists, it should be defined in
-# TEST_ROOTS.
-# Note: Static analysis tools are in fact executables linked with the Pin Static Analysis Library.
-# This library provides a subset of the Pin APIs which allows the tool to perform static analysis
-# of an application or dll. Pin itself is not used when this tool runs.
-SA_TOOL_ROOTS :=
-
-# This defines all the applications that will be run during the tests.
-APP_ROOTS := sse_sample_app
-
-# This defines any additional object files that need to be compiled.
-OBJECT_ROOTS :=
-
-# This defines any additional dlls (shared objects), other than the pintools, that need to be compiled.
-DLL_ROOTS :=
-
-# This defines any static libraries (archives), that need to be built.
-LIB_ROOTS :=
-
 ###### User-defined make variables ######
 include ftrace.vars
 #########################################
@@ -68,20 +22,9 @@ FTRACE_TOOL_SOURCE_VARS = REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_F
 # filter out undefined variables from FTRACE_CPP_MACRO_VARS and FTRACE_TOOL_DEPS
 FTRACE_FILTERED_CPP_MACRO_VARS = $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
 FTRACE_FILTERED_TOOL_SOURCE_VARS = $(call filter-defined,$(FTRACE_TOOL_SOURCE_VARS))
+FTRACE_TOOL_SOURCE_DEPS = $(sort $(foreach var,$(FTRACE_TOOL_SOURCE_VARS),$($(var))))
 
 FTRACE_CMD_VARS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS) $(FTRACE_FILTERED_TOOL_SOURCE_VARS) FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE,$(var)="$($(var))" )
-
-##############################################################
-#
-# Test recipes
-#
-##############################################################
-
-# This section contains recipes for tests other than the default.
-# See makefile.default.rules for the default test rules.
-# All tests in this section should adhere to the naming convention: <testname>.test
-
-include tests/test.mk
 
 ##############################################################
 #
@@ -114,15 +57,14 @@ $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ
 
 define make-ftrace-obj-dep
 $$(patsubst %.cpp,$$(OBJDIR)%$$(OBJ_SUFFIX),$$(notdir $(1))): $(1)
-	$$(CXX) $$(FTRACE_CPP_FLAGS) $$(TOOL_CXXFLAGS) -I$$(OBJDIR) $$(COMP_OBJ)$$@ $$<
+	$$(CXX) $$(FTRACE_CPP_FLAGS) $$(TOOL_CXXFLAGS) -I. -I$$(OBJDIR) $$(COMP_OBJ)$$@ $$<
 endef
 
-FTRACE_TOOL_SOURCE_DEPS = $(sort $(foreach var,$(FTRACE_TOOL_SOURCE_VARS),$($(var))))
 $(foreach src,$(FTRACE_TOOL_SOURCE_DEPS),$(eval $(call make-ftrace-obj-dep,$(src))))
 
 ###### Special applications' build rules ######
 
-$(OBJDIR)sse_sample_app$(EXE_SUFFIX): sse_sample_app.c
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special target rules ######
@@ -141,3 +83,6 @@ endif
 .PHONY: html
 html: Doxyfile
 	doxygen $^
+
+###### Test rules ######
+include tests/test.mk

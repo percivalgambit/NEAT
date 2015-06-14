@@ -44,6 +44,16 @@ DLL_ROOTS :=
 # This defines any static libraries (archives), that need to be built.
 LIB_ROOTS :=
 
+##############################################################
+#
+# Test recipes
+#
+##############################################################
+
+# This section contains recipes for tests other than the default.
+# See makefile.default.rules for the default test rules.
+# All tests in this section should adhere to the naming convention: <testname>.test
+
 # default test rule
 %.test: REPLACE_FP_FN       := fp_replacement_callback
 %.test: REPLACE_FP_FILE     := tests/test_callbacks.cpp
@@ -84,15 +94,15 @@ $(OBJDIR)ftrace_no_instrument.out: $(OBJDIR)
 	touch $@
 
 ftrace_replace_fp_ins_simple.test: REPLACE_FP_FN   := replace_fp_ins_simple
-ftrace_replace_fp_ins_simple.test: REPLACE_FP_FILE := replace_fp_ins_simple.cpp
+ftrace_replace_fp_ins_simple.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_simple.cpp
 
 ftrace_replace_fp_ins_complex.test: REPLACE_FP_FN   := replace_fp_ins_complex
-ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := replace_fp_ins_complex.cpp
+ftrace_replace_fp_ins_complex.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_complex.cpp
 
 ftrace_replacement_type_simple.test: REPLACE_FP_FN := replace_fp_ins_different_types
-ftrace_replacement_type_simple.test: REPLACE_FP_FILE := replace_fp_ins_different_types.cpp
+ftrace_replacement_type_simple.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_different_types.cpp
 ftrace_replacement_type_simple.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := $(OBJDIR)simple_replacement_type_mapping.txt
-ftrace_replacement_type_simple.test: EXTRA_SOURCE_FILES := replace_fp_ins_complex.cpp replace_fp_ins_simple.cpp
+ftrace_replacement_type_simple.test: EXTRA_SOURCE_FILES := replacement_examples/replace_fp_ins_complex.cpp replacement_examples/replace_fp_ins_simple.cpp
 ftrace_replacement_type_simple.test: $(OBJDIR)simple_replacement_type_mapping.txt
 ftrace_replacement_type_simple.test: $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
 
@@ -102,9 +112,9 @@ $(OBJDIR)simple_replacement_type_mapping.txt: $(OBJDIR)
 	@printf "foo   bar\n" >> $@
 
 ftrace_replacement_type_nested.test: REPLACE_FP_FN := replace_fp_ins_different_types
-ftrace_replacement_type_nested.test: REPLACE_FP_FILE := replace_fp_ins_different_types.cpp
+ftrace_replacement_type_nested.test: REPLACE_FP_FILE := replacement_examples/replace_fp_ins_different_types.cpp
 ftrace_replacement_type_nested.test: FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE := $(OBJDIR)nested_replacement_type_mapping.txt
-ftrace_replacement_type_nested.test: EXTRA_SOURCE_FILES := replace_fp_ins_complex.cpp replace_fp_ins_simple.cpp
+ftrace_replacement_type_nested.test: EXTRA_SOURCE_FILES := replacement_examples/replace_fp_ins_complex.cpp replacement_examples/replace_fp_ins_simple.cpp
 ftrace_replacement_type_nested.test: $(OBJDIR)nested_replacement_type_mapping.txt
 ftrace_replacement_type_nested.test: $(OBJDIR)function_level_replacement_type_enum.h $(OBJDIR)function_level_replacement_type_mapping.h
 
