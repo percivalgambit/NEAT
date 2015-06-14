@@ -1,21 +1,23 @@
-## @package
-#  Generate an enum and mapping for function-level replacement types.
-#  If no mapping output file or enum output file is specified with the -m or -e
-#  flags, then stdout will be used instead.
+"""
+Generate an enum and mapping for function-level replacement types.
+If no mapping output file or enum output file is specified with the -m or -e
+flags, then stdout will be used instead.
+"""
 
 import argparse
 import os.path
 import sys
 
-##
-#  Take in the name of a file containing a mapping of function names to
-#  replacement type enums, represented by lines of replacement type enums and
-#  comma-separated function names that correspond to those enums, separated by
-#  whitespace.
-#  @param   input_file_name     the name of the file containing the mapping of
-#                               replacement type enums to function names
-#  @return  A list whose keys are replacement types, and whose values are lists
-#           of function names that use that replacement type
+"""
+Take in the name of a file containing a mapping of function names to
+replacement type enums, represented by lines of replacement type enums and
+comma-separated function names that correspond to those enums, separated by
+whitespace.
+@param   input_file_name     the name of the file containing the mapping of
+                             replacement type enums to function names
+@return  A list whose keys are replacement types, and whose values are lists
+         of function names that use that replacement type
+"""
 def read_replacement_type_mapping(input_file_name):
     replacement_type_mapping = {}
 
@@ -44,10 +46,11 @@ def read_replacement_type_mapping(input_file_name):
 
     return replacement_type_mapping
 
-##
-#  Main function of the program.  Generates a header file containing an enum for
-#  the different replacement types and a second header file containing a mapping
-#  from function names to the replacement type enum
+"""
+Main function of the program.  Generates a header file containing an enum for
+the different replacement types and a second header file containing a mapping
+from function names to the replacement type enum
+"""
 def main():
     parser = argparse.ArgumentParser(
         description='''Generate an enum for each replacement type and a
