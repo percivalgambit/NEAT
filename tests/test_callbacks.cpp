@@ -31,6 +31,8 @@ VOID start_callback(VOID *v) {
  *                              PIN_AddFiniFunction function call
  */
 VOID exit_callback(INT32 code, VOID *v) {
+    // We need to check if the user actually specified an output file when
+    // invoking ftrace
     if (OutFile.is_open()) {
         OutFile.setf(ios::showbase);
         OutFile << "-----------------------" << endl;
