@@ -190,9 +190,9 @@ $(document).ready(function(){initNavTree('makefile_8rules_source.html','');});
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;   @echo &quot;Please specify a PROG to instrument&quot;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;else</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;ifeq ($(shell cat /proc/sys/kernel/yama/ptrace_scope),1)</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;   $(PIN) -injection child -t $&lt; -- $(PROG)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;   $(PIN) -injection child -t $&lt; -o ftrace.out -- $(PROG)</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;else</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;   $(PIN) -t $&lt; -- $(PROG)</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;   $(PIN) -t $&lt; -o ftrace.out -- $(PROG)</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;endif</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;endif</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
@@ -208,7 +208,7 @@ $(document).ready(function(){initNavTree('makefile_8rules_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>makefile.rules</b></li>
-    <li class="footer">Generated on Sun Jun 14 2015 04:04:45 for ftrace by
+    <li class="footer">Generated on Sun Jun 14 2015 20:55:06 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
