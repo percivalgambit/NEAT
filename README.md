@@ -19,20 +19,42 @@ After cloning the repository, run the following commands:
     make
     make PROG=<your_program> run
 
-Alternatively, after making the pintool, to invoke it from the commandline run the following command:
+Alternatively, after making the pintool, to invoke it from the command line run
+the following command:
 
     pin -t obj-intel64/ftrace.so -- <your_program>
 
 For the IA-32 architecture, use `obj-ia32` instead of `obj-intel64`
 
-To compile with floating-point instruction replacement code, either specify `REPLACE_FP_FN` and `REPLACE_FP_FILE` in `makefile.rules` or run the following command:
+To see output from the pintool, you must specify an output file with the `-o`
+flag after you have specified the `ftrace` tool with the `-t` flag.
 
-    make REPLACE_FP_FN=<replacement_fn> REPLACE_FP_FILE=<replacement_fn_file>
+Floating-point Instruction Replacement
+--------------------------------------
 
-If the file containing the replacement function is named `<fp_replacement_function>.cpp`, `REPLACE_FP_FILE` can be omitted. Currently only C++ replacement code is supported. See `REPLACE_FP_CODE.md` for more information on the replacement code.
+To compile with floating-point instruction replacement code, create one or more
+files containing the code you want to compile into the pintool, then add the
+correct function and file names to the definitions of the variables in `ftrace.vars`.
+
+See `ftrace.vars` for the different possible insertion points of user-defined
+code in the pintool, and see `tests/test_callbacks.cpp` and the files in
+`replacement_examples/` for examples of user-defined code that can be compiled
+into the pintool.
+
+Testing
+-------
 
 To run the tests for this pintool, run the following command:
 
     make test
 
+Documentation
+-------------
+
 Full documentation can be found here: [http://percivalgambit.github.io/ftrace/] (http://percivalgambit.github.io/ftrace/)
+
+Contact
+-------
+
+If you have any questions or comments, or find a bug in the code, please contact
+[percivalgambit@gmail.com] (mailto:percivalgambit@gmail.com).

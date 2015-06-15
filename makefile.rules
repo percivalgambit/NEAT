@@ -96,9 +96,9 @@ ifndef PROG
 	@echo "Please specify a PROG to instrument"
 else
 ifeq ($(shell cat /proc/sys/kernel/yama/ptrace_scope),1)
-	$(PIN) -injection child -t $< -- $(PROG)
+	$(PIN) -injection child -t $< -o ftrace.out -- $(PROG)
 else
-	$(PIN) -t $< -- $(PROG)
+	$(PIN) -t $< -o ftrace.out -- $(PROG)
 endif
 endif
 
