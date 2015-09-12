@@ -5,38 +5,80 @@
 #
 ##############################################################
 
-###### User-defined make variables ######
-include ftrace.vars
-#########################################
 
-# function that takes in a list of variables and produces a filtered list of only
-# variables that have a non-empty expansion
-filter-defined = $(foreach var,$(1),$(if $($(var)),$(var) ))
+##############################################################
+#
+# Test targets
+#
+##############################################################
 
-# list of variables that are also flags to the C++ preprocessor for ftrace, if defined
-FTRACE_CPP_MACRO_VARS = REPLACE_FP_FN REPLACEMENT_TYPE_FN START_CALLBACK EXIT_CALLBACK
+###### Place all generic definitions here ######
 
-# list of variables that are dependencies for the ftrace tool, if defined
-FTRACE_TOOL_SOURCE_VARS = REPLACE_FP_FILE REPLACEMENT_TYPE_FILE START_CALLBACK_FILE \
-                          EXIT_CALLBACK_FILE EXTRA_SOURCE_FILES
+# This defines tests which run tools of the same name.  This is simply for convenience to avoid
+# defining the test name twice (once in TOOL_ROOTS and again in TEST_ROOTS).
+# Tests defined here should not be defined in TOOL_ROOTS and TEST_ROOTS.
+TEST_TOOL_ROOTS := ftrace
 
-# filter out undefined variables from FTRACE_CPP_MACRO_VARS and FTRACE_TOOL_DEPS
-FTRACE_FILTERED_CPP_MACRO_VARS = $(call filter-defined,$(FTRACE_CPP_MACRO_VARS))
-FTRACE_FILTERED_TOOL_SOURCE_VARS = $(call filter-defined,$(FTRACE_TOOL_SOURCE_VARS))
+# This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
+TEST_ROOTS := ftrace_normal_fp_implementation ftrace_no_specified_output_file ftrace_no_instrument ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_replacement_type_simple ftrace_replacement_type_nested
 
-FTRACE_TOOL_SOURCE_DEPS = $(sort $(foreach var,$(FTRACE_TOOL_SOURCE_VARS),$($(var))))
+# This defines a list of tests that should run in the "short" sanity. Tests in this list must also
+# appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
+# If the entire directory should be tested in sanity, assign TEST_TOOL_ROOTS and TEST_ROOTS to the
+# SANITY_SUBSET variable in the tests section below (see example in makefile.rules.tmpl).
+SANITY_SUBSET :=
 
-# create a list of space-separated flags to pass to the C++ preprocessor that will
-# define macros to be used in the ftrace source files
-FTRACE_CPP_FLAGS = $(foreach var,$(FTRACE_FILTERED_CPP_MACRO_VARS),-D$(var)=$($(var)) )
+# This defines the tools which will be run during the the tests, and were not already defined in
+# TEST_TOOL_ROOTS.
+TOOL_ROOTS :=
 
-# create a list of the object files that will be compiled into the ftrace tool
-# and that the rule to build the tool will depend on
-FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,\
-                                       $(FTRACE_FILTERED_TOOL_SOURCE_VARS),\
-                                       $(patsubst %.cpp,\
-                                                  $(OBJDIR)%$(OBJ_SUFFIX),\
-                                                  $(notdir $($(var)))) ))
+# This defines the static analysis tools which will be run during the the tests. They should not
+# be defined in TEST_TOOL_ROOTS. If a test with the same name exists, it should be defined in
+# TEST_ROOTS.
+# Note: Static analysis tools are in fact executables linked with the Pin Static Analysis Library.
+# This library provides a subset of the Pin APIs which allows the tool to perform static analysis
+# of an application or dll. Pin itself is not used when this tool runs.
+SA_TOOL_ROOTS :=
+
+# This defines all the applications that will be run during the tests.
+APP_ROOTS := sse_sample_app
+
+# This defines any additional object files that need to be compiled.
+OBJECT_ROOTS :=
+
+# This defines any additional dlls (shared objects), other than the pintools, that need to be compiled.
+DLL_ROOTS :=
+
+# This defines any static libraries (archives), that need to be built.
+LIB_ROOTS :=
+
+
+##############################################################
+#
+# Test recipes
+#
+##############################################################
+
+# This section contains recipes for tests other than the default.
+# See makefile.default.rules for the default test rules.
+# All tests in this section should adhere to the naming convention: <testname>.test
+
+%.test: EXPECTED_OUTPUT ?= tests/$(@:.test=.reference)
+%.test: EXPECTED_STDOUT ?= tests/$(@:.test=.stdout.reference)
+%.test: $(OBJDIR) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) $(FTRACE_CMD_VARS) $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+	$(PIN) -t $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(FTRACE_CMDLINE_FLAGS) \
+	       -o $(OBJDIR)$(@:.test=.out) \
+	       -- $(OBJDIR)sse_sample_app$(EXE_SUFFIX) \
+	          > $(OBJDIR)$(@:.test=.stdout.out)
+	$(DIFF) -I "Total number of instructions: [0-9]*" \
+	        $(OBJDIR)$(@:.test=.out) \
+	        $(EXPECTED_OUTPUT)
+	$(DIFF) $(OBJDIR)$(@:.test=.stdout.out) $(EXPECTED_STDOUT)
+	-$(RM) $(OBJDIR)$(@:.test=.out) $(OBJDIR)$(@:.test=.stdout.out)
+	-$(RM) $(OBJDIR)function_level_replacement_type_enum.h \
+	       $(OBJDIR)function_level_replacement_type_mapping.h
+
 
 ##############################################################
 #
@@ -49,45 +91,31 @@ FTRACE_TOOL_OBJ_DEPS = $(sort $(foreach var,\
 
 ###### Special tools' build rules ######
 
-# function-level replacement type specific logic
-ifdef FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE
-FTRACE_CPP_FLAGS += -DFUNCTION_LEVEL_REPLACEMENT_TYPE
+$(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp | $(OBJDIR)
+	$(CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(OBJ_SUFFIX) \
-$(FTRACE_TOOL_OBJ_DEPS): $(OBJDIR)function_level_replacement_type_enum.h \
-                         $(OBJDIR)function_level_replacement_type_mapping.h
-endif
-
-$(OBJDIR)function_level_replacement_type_enum.h \
-$(OBJDIR)function_level_replacement_type_mapping.h: generate_replacement_type_enum.py \
-                                                    $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
-	$(PYTHON) $< -e $(OBJDIR)function_level_replacement_type_enum.h \
-	             -m $(OBJDIR)function_level_replacement_type_mapping.h \
-	             -i $(FUNCTION_LEVEL_REPLACEMENT_TYPE_MAPPING_FILE)
-
-.PHONY: $(OBJDIR)ftrace$(OBJ_SUFFIX)
-$(OBJDIR)ftrace$(OBJ_SUFFIX): ftrace.cpp ftrace.h
-	$(CXX) $(FTRACE_CPP_FLAGS) $(TOOL_CXXFLAGS) -I$(OBJDIR) $(COMP_OBJ)$@ $<
-
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace$(OBJ_SUFFIX) $(FTRACE_TOOL_OBJ_DEPS)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $(filter %.o,$^) $(TOOL_LPATHS) $(TOOL_LIBS)
-
-# since all object files are built in the same directory, but source files can
-# come from anywhere, we need to programmatically generate rules for every
-# user-specified object that we need to build
-define make-ftrace-obj-dep
-$$(patsubst %.cpp,$$(OBJDIR)%$$(OBJ_SUFFIX),$$(notdir $(1))): $(1)
-	$$(CXX) $$(FTRACE_CPP_FLAGS) $$(TOOL_CXXFLAGS) -I. -I$$(OBJDIR) $$(COMP_OBJ)$$@ $$<
-endef
-
-# generate a rule to build an object from every user-specified source file
-$(foreach src,$(FTRACE_TOOL_SOURCE_DEPS),$(eval $(call make-ftrace-obj-dep,$(src))))
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace_main$(OBJ_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
+	 $(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
 
-# sample sse application for testing
 $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
+
+###### Special libraries' build rules ######
+
+ifdef FLOATING_POINT_IMPL_LIB_SRCS
+
+$(OBJDIR)$(DLL_PREFIX)%$(DLL_SUFFIX): $(FLOATING_POINT_IMPL_LIB_SRCS)
+	$(APP_CXX) $(APP_CXXFLAGS) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
+
+else
+
+$(OBJDIR)$(DLL_PREFIX)%$(DLL_SUFFIX):
+	@echo "Please specify the space-separated list of sources used to build" \
+	        "$@ in FLOATING_POINT_IMPL_LIB_SRCS"
+
+endif
 
 ###### Special target rules ######
 
@@ -105,6 +133,3 @@ endif
 .PHONY: html
 html: Doxyfile
 	doxygen $^
-
-###### Test rules ######
-include tests/test.mk
