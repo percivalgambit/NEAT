@@ -44,6 +44,7 @@ VOID InstrumentRoutine(const RTN rtn,
   RTN_InsertCall(rtn, IPOINT_BEFORE,
                  reinterpret_cast<AFUNPTR>(FunctionStackPush),
                  IARG_PTR, &function_name,
+                 IARG_PTR, &function_stack,
                  IARG_END);
 
   // Forward pass over all instructions in routine
