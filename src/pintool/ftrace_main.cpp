@@ -12,34 +12,34 @@
 
 #include <dlfcn.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 #include "client/floating_point_implementation.h"
-#include "pintool/ftrace.h"
+#include "pintool/common_macros.h"
+#include "pintool/instrument_routine.h"
+#include "pintool/instrumentation_args.h"
+#include "pintool/normal_floating_point_implementation.h"
 
 using ftrace::FloatingPointImplementation;
+using ftrace::InstrumentationArgs;
 
-/* ===================================================================== */
-// Command line switches
-/* ===================================================================== */
+KNOB<BOOL> KnobPrintFloatingPointOperations(
+    KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "1",
+    "print the value of every floating point operation in the instrumented "
+    "program");
 
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "",
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "ftrace.out",
                             "specify file name for ftrace output");
 
 KNOB<string> KnobFloatingPointImplementationLibrary(
     KNOB_MODE_OVERWRITE, "pintool", "floating_point_implementation_lib", "",
     "specify library from which to load the floating point implementation");
 
-KNOB<BOOL> KnobPrintFloatingPointOperations(
-    KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "0",
-    "print the value of every floating point operation in the instrumented "
-    "program");
-
-static void *floating_point_impl_lib;
-
 namespace ftrace {
+
+static NormalFloatingPointImplementation normal_floating_point_impl;
 
 /**
  *  Print out a help message.
@@ -55,7 +55,7 @@ INT32 Usage() {
 
 FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     const string &floating_point_impl_lib_name) {
-  floating_point_impl_lib =
+  VOID *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
   if (floating_point_impl_lib == nullptr) {
     ERROR("No shared library " << floating_point_impl_lib_name << " found");
@@ -68,37 +68,26 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
           << "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
           << floating_point_impl_lib_name);
   }
-  return reinterpret_cast<FloatingPointImplementation *>(floating_point_impl);
+  return static_cast<FloatingPointImplementation *>(floating_point_impl);
 }
 
-VOID StartCallback(VOID *floating_point_impl) {
-  reinterpret_cast<FloatingPointImplementation *>(
-      floating_point_impl)->StartCallback();
+VOID StartCallback(VOID *args) {
+  const InstrumentationArgs *instrumentation_args =
+      static_cast<InstrumentationArgs *>(args);
+  instrumentation_args->floating_point_impl_->StartCallback();
 }
 
-VOID ExitCallback(const INT32 code, VOID *floating_point_impl) {
-  reinterpret_cast<FloatingPointImplementation *>(
-      floating_point_impl)->ExitCallback(code);
-  if (floating_point_impl_lib != nullptr && dlclose(floating_point_impl_lib)) {
-    ERROR("Error closing " << KnobFloatingPointImplementationLibrary.Value());
-  }
+VOID ExitCallback(const INT32 code, VOID *args) {
+  const InstrumentationArgs *instrumentation_args =
+      static_cast<InstrumentationArgs *>(args);
+  instrumentation_args->floating_point_impl_->ExitCallback(code);
+  delete instrumentation_args;
 }
 
-VOID InstrumentProgram(
-    FloatingPointImplementation *floating_point_impl) {
-  if (floating_point_impl != nullptr) {
-    PIN_AddApplicationStartFunction(
-        StartCallback, reinterpret_cast<VOID *>(floating_point_impl));
-    PIN_AddFiniFunction(
-        ExitCallback, reinterpret_cast<VOID *>(floating_point_impl));
-  }
-  BOOL print_floating_point_ops = KnobPrintFloatingPointOperations.Value();
-  if (floating_point_impl != nullptr || print_floating_point_ops) {
-    RoutineInstrumentationArgs *instrumentation_args =
-        new RoutineInstrumentationArgs(floating_point_impl,
-                                       print_floating_point_ops);
-    RTN_AddInstrumentFunction(Routine, instrumentation_args);
-  }
+VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
+  PIN_AddApplicationStartFunction(StartCallback, instrumentation_args);
+  PIN_AddFiniFunction(ExitCallback, instrumentation_args);
+  RTN_AddInstrumentFunction(Routine, instrumentation_args);
 }
 
 }  // namespace ftrace
@@ -119,32 +108,25 @@ int main(int argc, char *argv[]) {
     return ftrace::Usage();
   }
 
-  if (!KnobOutputFile.Value().empty()) {
-    // Redirect cout to the output file specified.
-    const ofstream out(KnobOutputFile.Value());
-    cout.rdbuf(out.rdbuf());
-
-    cerr <<  "===============================================" << endl;
-    cerr << "See file " << KnobOutputFile.Value() << " for analysis results"
-         << endl;
-    cerr <<  "===============================================" << endl;
-  }
-
+  const BOOL print_floating_point_ops =
+      KnobPrintFloatingPointOperations.Value();
+  const string &output_file_name = KnobOutputFile.Value();
+  ofstream *output_stream = new ofstream(output_file_name);
+  cerr << "===============================================" << endl;
+  cerr << "See file " << KnobOutputFile.Value() << " for analysis results"
+       << endl;
+  cerr << "===============================================" << endl;
   const string &floating_point_impl_lib_name =
       KnobFloatingPointImplementationLibrary.Value();
-  FloatingPointImplementation *floating_point_impl = nullptr;
-  if (!floating_point_impl_lib_name.empty()) {
-    floating_point_impl = ftrace::GetFloatingPointImplementationOrDie(
-        floating_point_impl_lib_name);
-  }
+  FloatingPointImplementation *floating_point_impl =
+      floating_point_impl_lib_name.empty()
+          ? &ftrace::normal_floating_point_impl
+          : ftrace::GetFloatingPointImplementationOrDie(
+                floating_point_impl_lib_name);
 
-  ftrace::InstrumentProgram(floating_point_impl);
+  InstrumentationArgs *instrumentation_args = new InstrumentationArgs(
+      print_floating_point_ops, output_stream, floating_point_impl);
+  ftrace::InstrumentProgram(instrumentation_args);
   // Start the program, never returns.
   PIN_StartProgram();
-
-  return 0;
 }
-
-/* ===================================================================== */
-/* eof */
-/* ===================================================================== */

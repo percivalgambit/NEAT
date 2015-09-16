@@ -47,7 +47,7 @@ APP_ROOTS := sse_sample_app
 OBJECT_ROOTS :=
 
 # This defines any additional dlls (shared objects), other than the pintools, that need to be compiled.
-DLL_ROOTS :=
+DLL_ROOTS := $(FLOATING_POINT_IMPL_LIB)
 
 # This defines any static libraries (archives), that need to be built.
 LIB_ROOTS :=
@@ -91,10 +91,13 @@ LIB_ROOTS :=
 
 ###### Special tools' build rules ######
 
+FTRACE_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
+FTRACE_OBJS := $(addprefix $(OBJDIR),$(FTRACE_SRCS:.cpp=$(OBJ_SUFFIX)))
+
 $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp | $(OBJDIR)
 	$(CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(OBJDIR)ftrace_main$(OBJ_SUFFIX) $(OBJDIR)ftrace$(OBJ_SUFFIX)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS)
 	 $(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
@@ -103,17 +106,17 @@ $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special libraries' build rules ######
-
 ifdef FLOATING_POINT_IMPL_LIB_SRCS
 
-$(OBJDIR)$(DLL_PREFIX)%$(DLL_SUFFIX): $(FLOATING_POINT_IMPL_LIB_SRCS)
-	$(APP_CXX) $(APP_CXXFLAGS) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
+$(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX): $(FLOATING_POINT_IMPL_LIB_SRCS)
+	$(APP_CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
 
 else
 
-$(OBJDIR)$(DLL_PREFIX)%$(DLL_SUFFIX):
-	@echo "Please specify the space-separated list of sources used to build" \
-	        "$@ in FLOATING_POINT_IMPL_LIB_SRCS"
+$(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX):
+	@echo "Please define FLOATING_POINT_IMPL_LIB_SRCS as the space-separated " \
+	      "list of sources needed to build $(FLOATING_POINT_IMPL_LIB)"
+	@false
 
 endif
 
