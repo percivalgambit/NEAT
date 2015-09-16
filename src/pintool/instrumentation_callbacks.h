@@ -10,6 +10,11 @@
 
 namespace ftrace {
 
+VOID StartCallback(const InstrumentationArgs *instrumentation_args);
+
+VOID ExitCallback(const INT32 code,
+                  const InstrumentationArgs *instrumentation_args);
+
 /**
  * Run a user-specified function as a replacement for a floating-point
  * arithmetic

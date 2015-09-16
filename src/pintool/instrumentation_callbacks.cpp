@@ -13,13 +13,23 @@
 
 namespace ftrace {
 
+VOID StartCallback(const InstrumentationArgs *instrumentation_args) {
+  instrumentation_args->floating_point_impl_->StartCallback();
+}
+
+VOID ExitCallback(const INT32 code,
+                  const InstrumentationArgs *instrumentation_args) {
+  instrumentation_args->floating_point_impl_->ExitCallback(code);
+  delete instrumentation_args;
+}
+
 VOID PrintFloatingPointOperation(const OPCODE operation, const FLT32 operand1,
                                  const FLT32 operand2, const FLT32 result,
                                  ofstream *output_stream) {
   *output_stream << OPCODE_StringShort(operation) << " "
                 << FLT32_TO_HEX(operand1) << " " << FLT32_TO_HEX(operand2)
-                << endl;
-  *output_stream << "  " << FLT32_TO_HEX(result) << endl;
+                << "\n";
+  *output_stream << "  " << FLT32_TO_HEX(result) << "\n";
 }
 
 VOID ReplaceRegisterFloatingPointInstruction(

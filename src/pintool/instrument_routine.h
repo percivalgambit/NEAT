@@ -3,6 +3,8 @@
 
 #include <pin.H>
 
+#include "pintool/instrumentation_args.h"
+
 namespace ftrace {
 
 /**
@@ -17,7 +19,8 @@ namespace ftrace {
  * @param[in]   v        value specified by the tool in the
  *                       RTN_AddInstrumentFunction function call
  */
-VOID Routine(const RTN rtn, VOID *routine_instrumentation_args);
+VOID InstrumentRoutine(const RTN rtn,
+                       const InstrumentationArgs *instrumentation_args);
 
 }  // namespace ftrace
 

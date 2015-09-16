@@ -20,13 +20,14 @@
 #include "pintool/common_macros.h"
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_args.h"
+#include "pintool/instrumentation_callbacks.h"
 #include "pintool/normal_floating_point_implementation.h"
 
 using ftrace::FloatingPointImplementation;
 using ftrace::InstrumentationArgs;
 
 KNOB<BOOL> KnobPrintFloatingPointOperations(
-    KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "1",
+    KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "0",
     "print the value of every floating point operation in the instrumented "
     "program");
 
@@ -71,23 +72,15 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
   return static_cast<FloatingPointImplementation *>(floating_point_impl);
 }
 
-VOID StartCallback(VOID *args) {
-  const InstrumentationArgs *instrumentation_args =
-      static_cast<InstrumentationArgs *>(args);
-  instrumentation_args->floating_point_impl_->StartCallback();
-}
-
-VOID ExitCallback(const INT32 code, VOID *args) {
-  const InstrumentationArgs *instrumentation_args =
-      static_cast<InstrumentationArgs *>(args);
-  instrumentation_args->floating_point_impl_->ExitCallback(code);
-  delete instrumentation_args;
-}
-
 VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
-  PIN_AddApplicationStartFunction(StartCallback, instrumentation_args);
-  PIN_AddFiniFunction(ExitCallback, instrumentation_args);
-  RTN_AddInstrumentFunction(Routine, instrumentation_args);
+  PIN_AddApplicationStartFunction(
+      reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
+      instrumentation_args);
+  PIN_AddFiniFunction(
+      reinterpret_cast<FINI_CALLBACK>(ExitCallback), instrumentation_args);
+  RTN_AddInstrumentFunction(
+      reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentRoutine),
+      instrumentation_args);
 }
 
 }  // namespace ftrace

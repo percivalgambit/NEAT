@@ -94,8 +94,12 @@ LIB_ROOTS :=
 FTRACE_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
 FTRACE_OBJS := $(addprefix $(OBJDIR),$(FTRACE_SRCS:.cpp=$(OBJ_SUFFIX)))
 
-$(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp | $(OBJDIR)
-	$(CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+$(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+	$(CXX) $(TOOL_CXXFLAGS) -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+
+%.d: %.cpp
+
+-include $(OBJDIR)*.d
 
 $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS)
 	 $(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
