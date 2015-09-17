@@ -1,5 +1,9 @@
 #include "pintool/normal_floating_point_implementation.h"
 
+#include <pin.H>
+
+#include <iostream>
+
 #include "client/floating_point_implementation.h"
 
 namespace ftrace {

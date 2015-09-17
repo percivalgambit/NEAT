@@ -63,21 +63,33 @@ LIB_ROOTS :=
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
-%.test: EXPECTED_TOOL_OUTPUT = tests/$(@:.test=.reference)
-%.test: EXPECTED_STDOUT      = tests/$(@:.test=.stdout.reference)
-%.test: ACTUAL_TOOL_OUTPUT   = $(OBJDIR)$(@:.test=.out)
-%.test: ACTUAL_STDOUT        = $(OBJDIR)$(@:.test=.stdout.out)
+%.test: EXPECTED_TOOL_OUTPUT = tests/integration/$(@:.test=.reference)
+%.test: EXPECTED_STDOUT      = tests/integration/$(@:.test=.stdout.reference)
+%.test: ACTUAL_TOOL_OUTPUT   = $(@:.test=.out)
+%.test: ACTUAL_STDOUT        = $(@:.test=.stdout.out)
 %.test: FTRACE_TEST_FLAGS    = -print_floating_point_operations \
                                -o $(ACTUAL_TOOL_OUTPUT)
 %.test: FTRACE_TOOL          = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP             = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE) dlls
 	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	-$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 
+ftrace_no_output.test: FTRACE_TEST_FLAGS = -o $(ACTUAL_TOOL_OUTPUT)
 
+ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
+ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
+
+ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
+ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/simple_test_floating_point_implementation.cpp
+ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+
+ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
+ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/complex_test_floating_point_implementation.cpp
+ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
 ##############################################################
 #
@@ -88,53 +100,47 @@ LIB_ROOTS :=
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 
-###### Special tools' build rules ######
+###### Special objects' build rules ######
 
 FTRACE_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
 FTRACE_OBJS := $(addprefix $(OBJDIR),$(FTRACE_SRCS:.cpp=$(OBJ_SUFFIX)))
 
-$(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+$(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
 
 %.d: %.cpp
 
 -include $(OBJDIR)*.d
 
+###### Special tools' build rules ######
+
 $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS)
 	 $(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
 
-$(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/test_app/sse_sample_app.c
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special libraries' build rules ######
+
+FLOATING_POINT_IMPL_LIB_NAME = $(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX)
+.PHONY: $(FLOATING_POINT_IMPL_LIB_NAME)
+
 ifdef FLOATING_POINT_IMPL_LIB_SRCS
 
-$(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX): $(FLOATING_POINT_IMPL_LIB_SRCS)
+$(FLOATING_POINT_IMPL_LIB_NAME): $(FLOATING_POINT_IMPL_LIB_SRCS)
 	$(APP_CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
 
 else
 
-$(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX):
-	@echo "Please define FLOATING_POINT_IMPL_LIB_SRCS as the space-separated " \
-	      "list of sources needed to build $(FLOATING_POINT_IMPL_LIB)"
-	@false
+$(FLOATING_POINT_IMPL_LIB_NAME):
+	$(error Please specify FLOATING_POINT_IMPL_LIB_SRCS as the space-separated \
+	        list of sources needed to build $(FLOATING_POINT_IMPL_LIB))
 
 endif
 
 ###### Special target rules ######
-
-run: $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
-ifndef PROG
-	@echo "Please specify a PROG to instrument"
-else
-ifeq ($(shell cat /proc/sys/kernel/yama/ptrace_scope),1)
-	$(PIN) -injection child -t $< -o ftrace.out -- $(PROG)
-else
-	$(PIN) -t $< -o ftrace.out -- $(PROG)
-endif
-endif
 
 .PHONY: html
 html: Doxyfile

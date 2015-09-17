@@ -3,8 +3,6 @@
 
 #include <pin.H>
 
-#include <iostream>
-
 #include "client/floating_point_implementation.h"
 
 namespace ftrace {
