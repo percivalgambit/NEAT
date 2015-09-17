@@ -132,13 +132,13 @@ ifdef FLOATING_POINT_IMPL_LIB_SRCS
 $(FLOATING_POINT_IMPL_LIB_NAME): $(FLOATING_POINT_IMPL_LIB_SRCS)
 	$(APP_CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
 
-else
+else # !FLOATING_POINT_IMPL_LIB_SRCS
 
 $(FLOATING_POINT_IMPL_LIB_NAME):
 	$(error Please specify FLOATING_POINT_IMPL_LIB_SRCS as the space-separated \
 	        list of sources needed to build $(FLOATING_POINT_IMPL_LIB))
 
-endif
+endif # FLOATING_POINT_IMPL_LIB_SRCS
 
 ###### Special target rules ######
 
