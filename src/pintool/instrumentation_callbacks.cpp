@@ -23,8 +23,8 @@ VOID ExitCallback(const INT32 code,
   delete instrumentation_args;
 }
 
-VOID PrintFloatingPointOperation(const OPCODE operation, const FLT32 operand1,
-                                 const FLT32 operand2, const FLT32 result,
+VOID PrintFloatingPointOperation(const OPCODE &operation, const FLT32 &operand1,
+                                 const FLT32 &operand2, const FLT32 &result,
                                  ofstream *output_stream) {
   *output_stream << OPCODE_StringShort(operation) << " "
                 << FLT32_TO_HEX(operand1) << " " << FLT32_TO_HEX(operand2)
@@ -42,7 +42,7 @@ VOID ReplaceRegisterFloatingPointInstruction(
       instrumentation_args->floating_point_impl_;
 
   *result.flt = floating_point_impl->FloatingPointOperation(
-      *reg1.flt, *reg2.flt, operation, 0);
+      *reg1.flt, *reg2.flt, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
   if (instrumentation_args->print_floating_point_ops_) {
     PrintFloatingPointOperation(operation, *reg1.flt, *reg2.flt, *result.flt,
@@ -59,7 +59,7 @@ VOID ReplaceMemoryFloatingPointInstruction(
       instrumentation_args->floating_point_impl_;
 
   *result.flt = floating_point_impl->FloatingPointOperation(
-      *reg1.flt, *operand2, operation, 0);
+      *reg1.flt, *operand2, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
   if (instrumentation_args->print_floating_point_ops_) {
     PrintFloatingPointOperation(operation, *reg1.flt, *operand2, *result.flt,

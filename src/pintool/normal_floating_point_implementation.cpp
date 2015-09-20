@@ -9,8 +9,7 @@
 namespace ftrace {
 
 FLT32 NormalFloatingPointImplementation::FloatingPointOperation(
-    const FLT32 operand1, const FLT32 operand2, const OPCODE operation,
-    const UINT32 replace_type) {
+    const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation) {
   switch (operation) {
     case XED_ICLASS_ADDSS:
       return operand1 + operand2;

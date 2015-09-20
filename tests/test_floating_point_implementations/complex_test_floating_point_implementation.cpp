@@ -17,9 +17,8 @@ class ComplexTestFloatingPointImplementation : public FloatingPointImplementatio
   /*!
    * A complex implementation of floating-point arithmetic operations.
    */
-  FLT32 FloatingPointOperation(const FLT32 operand1, const FLT32 operand2,
-                               const OPCODE operation,
-                               const UINT32 replace_type) override {
+  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
+                               const OPCODE &operation) override {
     switch (operation) {
       case XED_ICLASS_ADDSS:
         return (operand1 + operand2) * 0.9;

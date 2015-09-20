@@ -56,7 +56,7 @@ INT32 Usage() {
 
 FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     const string &floating_point_impl_lib_name) {
-  VOID *floating_point_impl_lib =
+  void *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
   if (floating_point_impl_lib == nullptr) {
     ERROR("No shared library " << floating_point_impl_lib_name << " found");
@@ -101,13 +101,12 @@ int main(int argc, char *argv[]) {
     return ftrace::Usage();
   }
 
-  const BOOL print_floating_point_ops =
+  const BOOL &print_floating_point_ops =
       KnobPrintFloatingPointOperations.Value();
   const string &output_file_name = KnobOutputFile.Value();
   ofstream *output_stream = new ofstream(output_file_name);
   cerr << "===============================================" << endl;
-  cerr << "See file " << KnobOutputFile.Value() << " for analysis results"
-       << endl;
+  cerr << "See file " << output_file_name << " for analysis results" << endl;
   cerr << "===============================================" << endl;
   const string &floating_point_impl_lib_name =
       KnobFloatingPointImplementationLibrary.Value();

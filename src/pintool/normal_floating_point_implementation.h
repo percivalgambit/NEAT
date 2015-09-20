@@ -9,9 +9,8 @@ namespace ftrace {
 
 class NormalFloatingPointImplementation : public FloatingPointImplementation {
  public:
-  FLT32 FloatingPointOperation(const FLT32 operand1, const FLT32 operand2,
-                               const OPCODE operation,
-                               const UINT32 replace_type) override;
+  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
+                               const OPCODE &operation) override;
 };
 
 }  // namespace ftrace

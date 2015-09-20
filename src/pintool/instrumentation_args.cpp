@@ -9,7 +9,7 @@
 namespace ftrace {
 
 InstrumentationArgs::InstrumentationArgs(
-    const BOOL print_floating_point_ops, ofstream *output_stream,
+    const BOOL &print_floating_point_ops, ofstream *output_stream,
     FloatingPointImplementation *floating_point_impl)
     : print_floating_point_ops_(print_floating_point_ops),
       output_stream_(output_stream),
