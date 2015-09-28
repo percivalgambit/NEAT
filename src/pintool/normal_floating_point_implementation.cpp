@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "client/floating_point_implementation.h"
+#include "client/interfaces/floating_point_implementation.h"
 
 namespace ftrace {
 

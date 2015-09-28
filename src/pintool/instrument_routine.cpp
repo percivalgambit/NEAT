@@ -2,15 +2,13 @@
 
 #include <pin.H>
 
-#include <stack>
-#include <string>
-
+#include "client/program_state.h"
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
 
 namespace ftrace {
 
-static stack<string> function_stack;
+static ProgramState program_state;
 
 /**
  * Return true if an instruction is an SSE floating-point arithmetic
@@ -42,9 +40,9 @@ VOID InstrumentRoutine(const RTN rtn,
   RTN_Open(rtn);
   const string &function_name = RTN_Name(rtn);
   RTN_InsertCall(rtn, IPOINT_BEFORE,
-                 reinterpret_cast<AFUNPTR>(FunctionStackPush),
+                 reinterpret_cast<AFUNPTR>(CallStackPush),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &function_stack,
+                 IARG_PTR, &program_state.call_stack_,
                  IARG_END);
 
   // Forward pass over all instructions in routine
@@ -63,6 +61,7 @@ VOID InstrumentRoutine(const RTN rtn,
                        reinterpret_cast<AFUNPTR>(
                            ReplaceRegisterFloatingPointInstruction),
                        IARG_PTR, instrumentation_args,
+                       IARG_PTR, &program_state,
                        IARG_UINT32, INS_Opcode(ins),
                        IARG_UINT32, INS_OperandReg(ins, 0),
                        IARG_UINT32, INS_OperandReg(ins, 1),
@@ -73,6 +72,7 @@ VOID InstrumentRoutine(const RTN rtn,
                        reinterpret_cast<AFUNPTR>(
                            ReplaceMemoryFloatingPointInstruction),
                        IARG_PTR, instrumentation_args,
+                       IARG_PTR, &program_state,
                        IARG_UINT32, INS_Opcode(ins),
                        IARG_UINT32, INS_OperandReg(ins, 0),
                        IARG_MEMORYREAD_EA,
@@ -83,8 +83,8 @@ VOID InstrumentRoutine(const RTN rtn,
   }
   // Pop replacement type from stack
   RTN_InsertCall(rtn, IPOINT_AFTER,
-                 reinterpret_cast<AFUNPTR>(FunctionStackPop),
-                 IARG_PTR, &function_stack,
+                 reinterpret_cast<AFUNPTR>(CallStackPop),
+                 IARG_PTR, &program_state.call_stack_,
                  IARG_END);
   RTN_Close(rtn);
 }

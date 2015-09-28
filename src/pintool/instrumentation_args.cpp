@@ -4,16 +4,16 @@
 
 #include <fstream>
 
-#include "client/floating_point_implementation.h"
+#include "client/interfaces/floating_point_implementation_generator.h"
 
 namespace ftrace {
 
 InstrumentationArgs::InstrumentationArgs(
     const BOOL &print_floating_point_ops, ofstream *output_stream,
-    FloatingPointImplementation *floating_point_impl)
+    FloatingPointImplementationGenerator *fpig)
     : print_floating_point_ops_(print_floating_point_ops),
       output_stream_(output_stream),
-      floating_point_impl_(floating_point_impl) {}
+      fpig_(fpig) {}
 
 InstrumentationArgs::~InstrumentationArgs() {
   output_stream_->close();

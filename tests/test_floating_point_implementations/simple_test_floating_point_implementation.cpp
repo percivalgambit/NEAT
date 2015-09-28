@@ -6,7 +6,8 @@
 
 #include <pin.H>
 
-#include "client/floating_point_implementation.h"
+#include "client/register_floating_point_implementation_generator.h"
+#include "client/interfaces/floating_point_implementation.h"
 
 namespace ftrace {
 
@@ -21,6 +22,6 @@ class SimpleTestFloatingPointImplementation : public FloatingPointImplementation
   }
 };
 
-REGISTER_FLOATING_POINT_IMPL(SimpleTestFloatingPointImplementation);
+REGISTER_SINGLE_FLOATING_POINT_IMPL(SimpleTestFloatingPointImplementation);
 
 }  // namespace ftrace

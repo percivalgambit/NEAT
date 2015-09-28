@@ -3,7 +3,7 @@
 
 #include <pin.H>
 
-#include "client/floating_point_implementation.h"
+#include "client/interfaces/floating_point_implementation.h"
 
 namespace ftrace {
 

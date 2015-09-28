@@ -6,6 +6,7 @@
 #include <stack>
 #include <string>
 
+#include "client/program_state.h"
 #include "pintool/instrumentation_args.h"
 
 namespace ftrace {
@@ -29,7 +30,8 @@ VOID ExitCallback(const INT32 code,
  *                          before the instruction is executed
  */
 VOID ReplaceRegisterFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args, const OPCODE operation,
+    const InstrumentationArgs *instrumentation_args,
+    const ProgramState *program_state,const OPCODE operation,
     const REG operand1, const REG operand2, CONTEXT *ctxt);
 
 /**
@@ -47,7 +49,8 @@ VOID ReplaceRegisterFloatingPointInstruction(
  *                          before the instruction is executed
  */
 VOID ReplaceMemoryFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args, const OPCODE operation,
+    const InstrumentationArgs *instrumentation_args,
+    const ProgramState *program_state, const OPCODE operation,
     const REG operand1, const FLT32 *operand2, CONTEXT *ctxt);
 
 /**
@@ -56,8 +59,8 @@ VOID ReplaceMemoryFloatingPointInstruction(
  * will happen
  * @param[in]   replace_type    replacement type to push
  */
-VOID FunctionStackPush(const string *function_name,
-                       stack<string> *function_stack);
+VOID CallStackPush(const string *function_name,
+                   stack<string> *call_stack);
 
 /**
  * Pop a function-level replacement type from the replacement type stack.  A
@@ -66,7 +69,7 @@ VOID FunctionStackPush(const string *function_name,
  * will happen
  * @param[in]   replace_type    expected replacement type to pop
  */
-VOID FunctionStackPop(stack<string> *function_stack);
+VOID CallStackPop(stack<string> *call_stack);
 
 }  // namespace ftrace
 
