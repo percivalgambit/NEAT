@@ -20,7 +20,3 @@ ADDSS 05834649 40000000
   40000000
 ADDSS 05834649 05834649
   06034649
------------------------
-Total number of instructions: ?????
-Number of floating point instructions: 11
-Number of instrumented floating point instructions: 11
