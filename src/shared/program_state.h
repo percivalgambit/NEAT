@@ -1,5 +1,5 @@
-#ifndef CLIENT_PROGRAM_STATE_H_
-#define CLIENT_PROGRAM_STATE_H_
+#ifndef SHARED_PROGRAM_STATE_H_
+#define SHARED_PROGRAM_STATE_H_
 
 #include <stack>
 #include <string>
@@ -12,4 +12,4 @@ struct ProgramState {
 
 }  // namespace ftrace
 
-#endif  // CLIENT_PROGRAM_STATE_H_
+#endif  // SHARED_PROGRAM_STATE_H_

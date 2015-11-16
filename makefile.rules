@@ -102,10 +102,16 @@ ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS                   += -floa
 
 ###### Special objects' build rules ######
 
-FTRACE_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
-FTRACE_OBJS := $(addprefix $(OBJDIR),$(FTRACE_SRCS:.cpp=$(OBJ_SUFFIX)))
+PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
+SHARED_SRCS := $(notdir $(wildcard src/shared/*.cpp))
+PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
+SHARED_OBJS := $(addprefix $(OBJDIR),$(SHARED_SRCS:.cpp=$(OBJ_SUFFIX)))
+FTRACE_OBJS := $(PINTOOL_OBJS) $(SHARED_OBJS)
 
-$(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+$(PINTOOL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+	$(CXX) $(TOOL_CXXFLAGS) -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+
+$(SHARED_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
 
 %.d: %.cpp

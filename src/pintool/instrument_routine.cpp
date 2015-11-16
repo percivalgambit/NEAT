@@ -2,9 +2,9 @@
 
 #include <pin.H>
 
-#include "client/program_state.h"
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
+#include "shared/program_state.h"
 
 namespace ftrace {
 

@@ -5,20 +5,21 @@
 
 #include <fstream>
 
-#include "client/interfaces/floating_point_implementation_generator.h"
+#include "shared/floating_point_implementation.h"
 
 namespace ftrace {
 
 struct InstrumentationArgs {
   InstrumentationArgs(const BOOL &print_floating_point_ops,
                       ofstream *output_stream,
-                      FloatingPointImplementationGenerator *fpig);
+                      FloatingPointImplementation
+                          *floating_point_implementation);
 
   ~InstrumentationArgs();
 
   const BOOL print_floating_point_ops_;
   ofstream *output_stream_;
-  FloatingPointImplementationGenerator *fpig_;
+  FloatingPointImplementation *floating_point_implementation_;
 };
 
 }  /// namespace ftrace

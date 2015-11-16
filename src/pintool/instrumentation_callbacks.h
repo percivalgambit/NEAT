@@ -6,8 +6,8 @@
 #include <stack>
 #include <string>
 
-#include "client/program_state.h"
 #include "pintool/instrumentation_args.h"
+#include "shared/program_state.h"
 
 namespace ftrace {
 
@@ -31,7 +31,7 @@ VOID ExitCallback(const INT32 code,
  */
 VOID ReplaceRegisterFloatingPointInstruction(
     const InstrumentationArgs *instrumentation_args,
-    const ProgramState *program_state,const OPCODE operation,
+    const ProgramState *program_state, const OPCODE operation,
     const REG operand1, const REG operand2, CONTEXT *ctxt);
 
 /**
