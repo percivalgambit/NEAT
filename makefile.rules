@@ -20,7 +20,14 @@
 TEST_TOOL_ROOTS :=
 
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
-TEST_ROOTS := ftrace_normal_fp_implementation ftrace_no_output ftrace_no_specified_output_file ftrace_replace_fp_ins_simple ftrace_replace_fp_ins_complex ftrace_replacement_type_simple ftrace_replacement_type_nested
+TEST_ROOTS :=                                \
+    ftrace_normal_fp_implementation          \
+    ftrace_no_output                         \
+    ftrace_no_specified_output_file          \
+    ftrace_replace_fp_ins_simple             \
+    ftrace_replace_fp_ins_complex            \
+    ftrace_function_level_replacement_simple \
+    ftrace_function_level_replacement_nested
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -63,20 +70,22 @@ LIB_ROOTS :=
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
-%.test: EXPECTED_TOOL_OUTPUT = tests/integration/$(@:.test=.reference)
-%.test: EXPECTED_STDOUT      = tests/integration/$(@:.test=.stdout.reference)
-%.test: ACTUAL_TOOL_OUTPUT   = $(@:.test=.out)
-%.test: ACTUAL_STDOUT        = $(@:.test=.stdout.out)
-%.test: FTRACE_TEST_FLAGS    = -print_floating_point_operations \
-                               -o $(ACTUAL_TOOL_OUTPUT)
-%.test: FTRACE_TOOL          = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
-%.test: TEST_APP             = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+%.test: EXPECTED_TOOL_OUTPUT         = tests/integration/$(@:.test=.reference)
+%.test: EXPECTED_STDOUT              = tests/integration/$(@:.test=.stdout.reference)
+%.test: ACTUAL_TOOL_OUTPUT           = $(@:.test=.out)
+%.test: ACTUAL_STDOUT                = $(@:.test=.stdout.out)
+%.test: FTRACE_TEST_FLAGS            = -print_floating_point_operations \
+                                       -o $(ACTUAL_TOOL_OUTPUT)
+%.test: FTRACE_TOOL                  = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+%.test: TEST_APP                     = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+%.test: FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/test_floating_point_implementation_functions.cpp
 %.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) dlls
-	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PIN) -injection child -ifeellucky -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) \
+	    -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
-	-$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
+	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 
 ftrace_no_output.test: FTRACE_TEST_FLAGS = -o $(ACTUAL_TOOL_OUTPUT)
 
@@ -84,12 +93,20 @@ ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
 
 ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/simple_test_floating_point_implementation.cpp
+ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/simple_test_floating_point_implementation.cpp
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
 ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/complex_test_floating_point_implementation.cpp
+ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/complex_test_floating_point_implementation.cpp
 ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+
+ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
+ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/function_level_simple_test_floating_point_implementation.cpp
+ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+
+ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
+ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/function_level_nested_test_floating_point_implementation.cpp
+ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
 ##############################################################
 #
@@ -102,11 +119,17 @@ ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS                   += -floa
 
 ###### Special objects' build rules ######
 
-FTRACE_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
-FTRACE_OBJS := $(addprefix $(OBJDIR),$(FTRACE_SRCS:.cpp=$(OBJ_SUFFIX)))
+PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
+SHARED_SRCS := $(notdir $(wildcard src/shared/*.cpp))
+PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
+SHARED_OBJS := $(addprefix $(OBJDIR),$(SHARED_SRCS:.cpp=$(OBJ_SUFFIX)))
+FTRACE_OBJS := $(PINTOOL_OBJS) $(SHARED_OBJS)
 
-$(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+$(PINTOOL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+	$(CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+
+$(SHARED_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/%.cpp
+	$(CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
 
 %.d: %.cpp
 
@@ -130,7 +153,7 @@ FLOATING_POINT_IMPL_LIB_NAME = $(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$
 ifdef FLOATING_POINT_IMPL_LIB_SRCS
 
 $(FLOATING_POINT_IMPL_LIB_NAME): $(FLOATING_POINT_IMPL_LIB_SRCS)
-	$(APP_CXX) $(TOOL_CXXFLAGS) -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
+	$(APP_CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
 
 else # !FLOATING_POINT_IMPL_LIB_SRCS
 

@@ -16,16 +16,14 @@
 #include <iostream>
 #include <string>
 
-#include "client/register_floating_point_implementation_generator.h"
-#include "client/single_floating_point_implementation_generator.h"
-#include "client/interfaces/floating_point_implementation_generator.h"
 #include "pintool/common_macros.h"
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
-#include "pintool/normal_floating_point_implementation.h"
+#include "shared/floating_point_implementation.h"
+#include "shared/normal_floating_point_implementation.h"
 
-using ftrace::FloatingPointImplementationGenerator;
+using ftrace::FloatingPointImplementation;
 using ftrace::InstrumentationArgs;
 
 KNOB<BOOL> KnobPrintFloatingPointOperations(
@@ -42,7 +40,7 @@ KNOB<string> KnobFloatingPointImplementationLibrary(
 
 namespace ftrace {
 
-static SingleFloatingPointImplementationGenerator<NormalFloatingPointImplementation> normal_fpig;
+static NormalFloatingPointImplementation normal_floating_point_implementation;
 
 /**
  *  Print out a help message.
@@ -56,7 +54,7 @@ INT32 Usage() {
   return -1;
 }
 
-FloatingPointImplementationGenerator *GetFloatingPointImplementationGeneratorOrDie(
+FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     const string &floating_point_impl_lib_name) {
   void *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
@@ -67,7 +65,7 @@ FloatingPointImplementationGenerator *GetFloatingPointImplementationGeneratorOrD
 #define STR1(str) #str
 #define STR2(str) STR1(str)
   void *floating_point_impl =
-      dlsym(floating_point_impl_lib, STR2(FPIG_NAME));
+      dlsym(floating_point_impl_lib, STR2(FLOATING_POINT_IMPL_NAME));
 #undef STR1
 #undef STR2
   if (floating_point_impl == nullptr) {
@@ -75,7 +73,7 @@ FloatingPointImplementationGenerator *GetFloatingPointImplementationGeneratorOrD
           << "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
           << floating_point_impl_lib_name);
   }
-  return static_cast<FloatingPointImplementationGenerator *>(floating_point_impl);
+  return static_cast<FloatingPointImplementation *>(floating_point_impl);
 }
 
 VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
@@ -116,14 +114,14 @@ int main(int argc, char *argv[]) {
   cerr << "===============================================" << endl;
   const string &floating_point_impl_lib_name =
       KnobFloatingPointImplementationLibrary.Value();
-  FloatingPointImplementationGenerator *fpig =
+  FloatingPointImplementation *floating_point_implementation =
       floating_point_impl_lib_name.empty()
-          ? &ftrace::normal_fpig
-          : ftrace::GetFloatingPointImplementationGeneratorOrDie(
+          ? &ftrace::normal_floating_point_implementation
+          : ftrace::GetFloatingPointImplementationOrDie(
                 floating_point_impl_lib_name);
 
   InstrumentationArgs *instrumentation_args = new InstrumentationArgs(
-      print_floating_point_ops, output_stream, fpig);
+      print_floating_point_ops, output_stream, floating_point_implementation);
   ftrace::InstrumentProgram(instrumentation_args);
   // Start the program, never returns.
   PIN_StartProgram();

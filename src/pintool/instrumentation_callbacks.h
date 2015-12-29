@@ -3,11 +3,11 @@
 
 #include <pin.H>
 
-#include <stack>
 #include <string>
+#include <vector>
 
-#include "client/program_state.h"
 #include "pintool/instrumentation_args.h"
+#include "shared/program_state.h"
 
 namespace ftrace {
 
@@ -31,7 +31,7 @@ VOID ExitCallback(const INT32 code,
  */
 VOID ReplaceRegisterFloatingPointInstruction(
     const InstrumentationArgs *instrumentation_args,
-    const ProgramState *program_state,const OPCODE operation,
+    const ProgramState *program_state, const OPCODE operation,
     const REG operand1, const REG operand2, CONTEXT *ctxt);
 
 /**
@@ -59,8 +59,8 @@ VOID ReplaceMemoryFloatingPointInstruction(
  * will happen
  * @param[in]   replace_type    replacement type to push
  */
-VOID CallStackPush(const string *function_name,
-                   stack<string> *call_stack);
+VOID FunctionStackPush(const string *function_name,
+                       vector<string> *function_stack);
 
 /**
  * Pop a function-level replacement type from the replacement type stack.  A
@@ -69,7 +69,7 @@ VOID CallStackPush(const string *function_name,
  * will happen
  * @param[in]   replace_type    expected replacement type to pop
  */
-VOID CallStackPop(stack<string> *call_stack);
+VOID FunctionStackPop(vector<string> *function_stack);
 
 }  // namespace ftrace
 

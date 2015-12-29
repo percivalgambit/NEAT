@@ -4,24 +4,23 @@
 
 #include <iostream>
 #include <fstream>
-#include <stack>
 #include <string>
+#include <vector>
 
-#include "client/program_state.h"
-#include "client/interfaces/floating_point_implementation.h"
-#include "client/interfaces/floating_point_implementation_generator.h"
 #include "pintool/common_macros.h"
 #include "pintool/instrumentation_args.h"
+#include "shared/floating_point_implementation.h"
+#include "shared/program_state.h"
 
 namespace ftrace {
 
 VOID StartCallback(const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->fpig_->StartCallback();
+  instrumentation_args->floating_point_implementation_->StartCallback();
 }
 
 VOID ExitCallback(const INT32 code,
                   const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->fpig_->ExitCallback(code);
+  instrumentation_args->floating_point_implementation_->ExitCallback(code);
   delete instrumentation_args;
 }
 
@@ -41,12 +40,11 @@ VOID ReplaceRegisterFloatingPointInstruction(
   PIN_REGISTER reg1, reg2, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
-  FloatingPointImplementationGenerator *fpig = instrumentation_args->fpig_;
-  FloatingPointImplementation *floating_point_impl =
-      fpig->GenerateFloatingPointImplementation(*program_state);
+  FloatingPointImplementation *floating_point_implementation =
+      instrumentation_args->floating_point_implementation_;
 
-  *result.flt = floating_point_impl->FloatingPointOperation(
-      *reg1.flt, *reg2.flt, operation);
+  *result.flt = floating_point_implementation->FloatingPointOperation(
+      *reg1.flt, *reg2.flt, operation, *program_state);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
   if (instrumentation_args->print_floating_point_ops_) {
     PrintFloatingPointOperation(operation, *reg1.flt, *reg2.flt, *result.flt,
@@ -60,12 +58,11 @@ VOID ReplaceMemoryFloatingPointInstruction(
     const REG operand1, const FLT32 *operand2, CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
-  FloatingPointImplementationGenerator *fpig = instrumentation_args->fpig_;
-  FloatingPointImplementation *floating_point_impl =
-      fpig->GenerateFloatingPointImplementation(*program_state);
+  FloatingPointImplementation *floating_point_implementation =
+      instrumentation_args->floating_point_implementation_;
 
-  *result.flt = floating_point_impl->FloatingPointOperation(
-      *reg1.flt, *operand2, operation);
+  *result.flt = floating_point_implementation->FloatingPointOperation(
+      *reg1.flt, *operand2, operation, *program_state);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
   if (instrumentation_args->print_floating_point_ops_) {
     PrintFloatingPointOperation(operation, *reg1.flt, *operand2, *result.flt,
@@ -73,11 +70,13 @@ VOID ReplaceMemoryFloatingPointInstruction(
   }
 }
 
-VOID CallStackPush(const string *function_name,
-                   stack<string> *call_stack) {
-  call_stack->push(*function_name);
+VOID FunctionStackPush(const string *function_name,
+                       vector<string> *function_stack) {
+  function_stack->push_back(*function_name);
 }
 
-VOID CallStackPop(stack<string> *call_stack) { call_stack->pop(); }
+VOID FunctionStackPop(vector<string> *function_stack) {
+  function_stack->pop_back();
+}
 
 }  // namespace ftrace

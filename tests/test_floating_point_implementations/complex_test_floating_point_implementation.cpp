@@ -6,10 +6,10 @@
 
 #include <pin.H>
 
-#include <iostream>
+#include "test_floating_point_implementation_functions.h"
 
-#include "client/register_floating_point_implementation_generator.h"
-#include "client/interfaces/floating_point_implementation.h"
+#include "shared/floating_point_implementation.h"
+#include "shared/program_state.h"
 
 namespace ftrace {
 
@@ -19,24 +19,12 @@ class ComplexTestFloatingPointImplementation : public FloatingPointImplementatio
    * A complex implementation of floating-point arithmetic operations.
    */
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
-                               const OPCODE &operation) override {
-    switch (operation) {
-      case XED_ICLASS_ADDSS:
-        return (operand1 + operand2) * 0.9;
-      case XED_ICLASS_SUBSS:
-        return (operand1 - operand2) * 0.9;
-      case XED_ICLASS_MULSS:
-        return (operand1 * operand2) * 0.9;
-      case XED_ICLASS_DIVSS:
-        return (operand1 / operand2) * 0.9;
-      default:
-        std::cerr << "Unexpected opcode " << operation << " encountered "
-                      "when replacing floating-point instructions" << endl;
-        return operand1;
-    }
+                               const OPCODE &operation,
+                               const ProgramState &program_state) override {
+    return ComplexTestFloatingPointOperation(operand1, operand2, operation);
   }
 };
 
-REGISTER_SINGLE_FLOATING_POINT_IMPL(ComplexTestFloatingPointImplementation);
+REGISTER_FLOATING_POINT_IMPL(ComplexTestFloatingPointImplementation);
 
 }  // namespace ftrace

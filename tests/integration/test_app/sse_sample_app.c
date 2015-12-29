@@ -55,7 +55,7 @@ float helper1(float fst, float snd) {
     // Make sure that normal arithmetic operations produce the right output
     c = fst + snd;       // c = 2.0 + 0.3 = 2.3
     d = snd - fst;       // d = 0.3 - 2.0 = -1.7
-    e = a * c;           // e = 2.0 * 2.3 = 4.6
+    e = c * a;           // e = 2.0 * 2.3 = 4.6
     f = fst / snd;       // f = 2.0 / 0.3 = 6.666666...
     return nested_helper();
 }
@@ -68,9 +68,9 @@ float nested_helper() {
 void helper2() {
     // Make sure that arithmetic with large and small numbers produces the right output
     i = 6.01e+30f;   // i = 6.01e+30
-    j = i + a;       // j = 6.01e+30 + 2.0 = 6.01e+30
-    k = i * a;       // k = 6.01e+30 * 2.0 = 1.202e+31
+    j = a + i;       // j = 6.01e+30 + 2.0 = 6.01e+30
+    k = a * i;       // k = 6.01e+30 * 2.0 = 1.202e+31
     l = 1.2345e-35f; // l = 1.2345e-35
-    m = l + a;       // m = 1.2345e-35 + 2.0 = 2.0
+    m = a + l;       // m = 1.2345e-35 + 2.0 = 2.0
     n = l + l;       // n  = 1.2345e-35 + 1.2345e-35 = 2.4690e-35
 }
