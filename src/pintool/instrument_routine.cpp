@@ -2,6 +2,8 @@
 
 #include <pin.H>
 
+#include <string>
+
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/program_state.h"
@@ -57,27 +59,27 @@ VOID InstrumentRoutine(const RTN rtn,
       INS_Delete(ins);
       if (INS_OperandIsReg(ins, 1)) {
         REGSET_Insert(regs_in, INS_OperandReg(ins, 1));
-        INS_InsertCall(ins, IPOINT_BEFORE,
-                       reinterpret_cast<AFUNPTR>(
-                           ReplaceRegisterFloatingPointInstruction),
-                       IARG_PTR, instrumentation_args,
-                       IARG_PTR, &program_state,
-                       IARG_UINT32, INS_Opcode(ins),
-                       IARG_UINT32, INS_OperandReg(ins, 0),
-                       IARG_UINT32, INS_OperandReg(ins, 1),
-                       IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
-                       IARG_END);
+        INS_InsertCall(
+            ins, IPOINT_BEFORE,
+            reinterpret_cast<AFUNPTR>(ReplaceRegisterFloatingPointInstruction),
+            IARG_PTR, instrumentation_args,
+            IARG_PTR, &program_state,
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_UINT32, INS_OperandReg(ins, 1),
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
       } else {
-        INS_InsertCall(ins, IPOINT_BEFORE,
-                       reinterpret_cast<AFUNPTR>(
-                           ReplaceMemoryFloatingPointInstruction),
-                       IARG_PTR, instrumentation_args,
-                       IARG_PTR, &program_state,
-                       IARG_UINT32, INS_Opcode(ins),
-                       IARG_UINT32, INS_OperandReg(ins, 0),
-                       IARG_MEMORYREAD_EA,
-                       IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
-                       IARG_END);
+        INS_InsertCall(
+            ins, IPOINT_BEFORE,
+            reinterpret_cast<AFUNPTR>(ReplaceMemoryFloatingPointInstruction),
+            IARG_PTR, instrumentation_args,
+            IARG_PTR, &program_state,
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_MEMORYREAD_EA,
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
       }
     }
   }

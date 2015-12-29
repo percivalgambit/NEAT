@@ -10,10 +10,9 @@
 namespace ftrace {
 
 struct InstrumentationArgs {
-  InstrumentationArgs(const BOOL &print_floating_point_ops,
-                      ofstream *output_stream,
-                      FloatingPointImplementation
-                          *floating_point_implementation);
+  InstrumentationArgs(
+      const BOOL &print_floating_point_ops, ofstream *output_stream,
+      FloatingPointImplementation *floating_point_implementation);
 
   ~InstrumentationArgs();
 

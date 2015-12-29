@@ -34,8 +34,8 @@ VOID PrintFloatingPointOperation(const OPCODE &operation, const FLT32 &operand1,
                                  const FLT32 &operand2, const FLT32 &result,
                                  ofstream *output_stream) {
   *output_stream << OPCODE_StringShort(operation) << " "
-                << FLT32_TO_HEX(operand1) << " " << FLT32_TO_HEX(operand2)
-                << "\n";
+                 << FLT32_TO_HEX(operand1) << " " << FLT32_TO_HEX(operand2)
+                 << "\n";
   *output_stream << "  " << FLT32_TO_HEX(result) << "\n";
 }
 

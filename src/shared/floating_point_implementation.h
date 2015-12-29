@@ -13,9 +13,9 @@ namespace ftrace {
  */
 class FloatingPointImplementation {
  public:
-   /**
-   * Function called before the instrumented application runs.
-   */
+  /**
+  * Function called before the instrumented application runs.
+  */
   virtual VOID StartCallback() {}
 
   /**

@@ -13,7 +13,8 @@
 
 namespace ftrace {
 
-class ComplexTestFloatingPointImplementation : public FloatingPointImplementation {
+class ComplexTestFloatingPointImplementation
+    : public FloatingPointImplementation {
  public:
   /*!
    * A complex implementation of floating-point arithmetic operations.

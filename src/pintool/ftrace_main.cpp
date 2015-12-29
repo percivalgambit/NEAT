@@ -48,7 +48,8 @@ INT32 Usage() {
   cerr << "This tool produces a trace of floating point arithmetic "
           "instruction calls and allows those instructions to be replaced "
           "with arbitrary user code to test different floating-point "
-          "implementations." << endl;
+          "implementations."
+       << endl;
   cerr << KNOB_BASE::StringKnobSummary() << endl;
   return -1;
 }
@@ -58,8 +59,8 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
   void *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
   if (floating_point_impl_lib == nullptr) {
-    cerr << "No shared library " << floating_point_impl_lib_name
-         << " found" << endl;
+    cerr << "No shared library " << floating_point_impl_lib_name << " found"
+         << endl;
     exit(1);
   }
 
@@ -82,8 +83,8 @@ VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
   PIN_AddApplicationStartFunction(
       reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
       instrumentation_args);
-  PIN_AddFiniFunction(
-      reinterpret_cast<FINI_CALLBACK>(ExitCallback), instrumentation_args);
+  PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
+                      instrumentation_args);
   RTN_AddInstrumentFunction(
       reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentRoutine),
       instrumentation_args);

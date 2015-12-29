@@ -1,6 +1,7 @@
 
 /*! @file
- * This is a simple replacement function for arithmetic floating-point instructions
+ * This is a simple replacement function for arithmetic floating-point
+ * instructions
  * in the ftrace tool.
  */
 
@@ -13,7 +14,8 @@
 
 namespace ftrace {
 
-class SimpleTestFloatingPointImplementation : public FloatingPointImplementation {
+class SimpleTestFloatingPointImplementation
+    : public FloatingPointImplementation {
  public:
   /*!
    * A simple implementation of floating-point arithmetic operations.
