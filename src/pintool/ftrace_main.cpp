@@ -22,7 +22,6 @@
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/floating_point_implementation.h"
 #include "shared/normal_floating_point_implementation.h"
-#include "shared/register_floating_point_implementation.h"
 
 using ftrace::FloatingPointImplementation;
 using ftrace::InstrumentationArgs;

@@ -6,9 +6,10 @@
 
 #include <pin.H>
 
+#include "test_floating_point_implementation_functions.h"
+
 #include "shared/floating_point_implementation.h"
 #include "shared/program_state.h"
-#include "shared/register_floating_point_implementation.h"
 
 namespace ftrace {
 
@@ -20,7 +21,7 @@ class SimpleTestFloatingPointImplementation : public FloatingPointImplementation
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
                                const OPCODE &operation,
                                const ProgramState &program_state) override {
-    return 1.0;
+    return SimpleTestFloatingPointOperation(operand1, operand2, operation);
   }
 };
 

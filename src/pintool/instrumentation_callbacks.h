@@ -3,8 +3,8 @@
 
 #include <pin.H>
 
-#include <stack>
 #include <string>
+#include <vector>
 
 #include "pintool/instrumentation_args.h"
 #include "shared/program_state.h"
@@ -59,8 +59,8 @@ VOID ReplaceMemoryFloatingPointInstruction(
  * will happen
  * @param[in]   replace_type    replacement type to push
  */
-VOID CallStackPush(const string *function_name,
-                   stack<string> *call_stack);
+VOID FunctionStackPush(const string *function_name,
+                       vector<string> *function_stack);
 
 /**
  * Pop a function-level replacement type from the replacement type stack.  A
@@ -69,7 +69,7 @@ VOID CallStackPush(const string *function_name,
  * will happen
  * @param[in]   replace_type    expected replacement type to pop
  */
-VOID CallStackPop(stack<string> *call_stack);
+VOID FunctionStackPop(vector<string> *function_stack);
 
 }  // namespace ftrace
 

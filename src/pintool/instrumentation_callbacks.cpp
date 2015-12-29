@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <stack>
 #include <string>
+#include <vector>
 
 #include "pintool/common_macros.h"
 #include "pintool/instrumentation_args.h"
@@ -70,11 +70,13 @@ VOID ReplaceMemoryFloatingPointInstruction(
   }
 }
 
-VOID CallStackPush(const string *function_name,
-                   stack<string> *call_stack) {
-  call_stack->push(*function_name);
+VOID FunctionStackPush(const string *function_name,
+                       vector<string> *function_stack) {
+  function_stack->push_back(*function_name);
 }
 
-VOID CallStackPop(stack<string> *call_stack) { call_stack->pop(); }
+VOID FunctionStackPop(vector<string> *function_stack) {
+  function_stack->pop_back();
+}
 
 }  // namespace ftrace

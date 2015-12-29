@@ -1,13 +1,13 @@
 #ifndef SHARED_PROGRAM_STATE_H_
 #define SHARED_PROGRAM_STATE_H_
 
-#include <stack>
 #include <string>
+#include <vector>
 
 namespace ftrace {
 
 struct ProgramState {
-  stack<string> call_stack_;
+  vector<string> function_stack_;
 };
 
 }  // namespace ftrace

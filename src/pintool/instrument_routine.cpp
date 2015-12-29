@@ -40,9 +40,9 @@ VOID InstrumentRoutine(const RTN rtn,
   RTN_Open(rtn);
   const string &function_name = RTN_Name(rtn);
   RTN_InsertCall(rtn, IPOINT_BEFORE,
-                 reinterpret_cast<AFUNPTR>(CallStackPush),
+                 reinterpret_cast<AFUNPTR>(FunctionStackPush),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &program_state.call_stack_,
+                 IARG_PTR, &program_state.function_stack_,
                  IARG_END);
 
   // Forward pass over all instructions in routine
@@ -83,8 +83,8 @@ VOID InstrumentRoutine(const RTN rtn,
   }
   // Pop replacement type from stack
   RTN_InsertCall(rtn, IPOINT_AFTER,
-                 reinterpret_cast<AFUNPTR>(CallStackPop),
-                 IARG_PTR, &program_state.call_stack_,
+                 reinterpret_cast<AFUNPTR>(FunctionStackPop),
+                 IARG_PTR, &program_state.function_stack_,
                  IARG_END);
   RTN_Close(rtn);
 }
