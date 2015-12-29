@@ -16,7 +16,6 @@
 #include <iostream>
 #include <string>
 
-#include "pintool/common_macros.h"
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
@@ -59,7 +58,9 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
   void *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
   if (floating_point_impl_lib == nullptr) {
-    ERROR("No shared library " << floating_point_impl_lib_name << " found");
+    cerr << "No shared library " << floating_point_impl_lib_name
+         << " found" << endl;
+    exit(1);
   }
 
 #define STR1(str) #str
@@ -69,9 +70,10 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
 #undef STR1
 #undef STR2
   if (floating_point_impl == nullptr) {
-    ERROR("No registered floating-point implementation found. "
-          << "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
-          << floating_point_impl_lib_name);
+    cerr << "No registered floating-point implementation found. "
+         << "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
+         << floating_point_impl_lib_name << endl;
+    exit(1);
   }
   return static_cast<FloatingPointImplementation *>(floating_point_impl);
 }

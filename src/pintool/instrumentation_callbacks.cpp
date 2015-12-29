@@ -7,10 +7,16 @@
 #include <string>
 #include <vector>
 
-#include "pintool/common_macros.h"
 #include "pintool/instrumentation_args.h"
 #include "shared/floating_point_implementation.h"
 #include "shared/program_state.h"
+
+/*!
+ * Convert a FLT32 variable into the string representation of its value in hex.
+ * @param[in]   fp  variable to convert to hex
+ */
+#define FLT32_TO_HEX(fp) \
+  StringHex(*reinterpret_cast<const UINT32 *>(&fp), 8, FALSE)
 
 namespace ftrace {
 
