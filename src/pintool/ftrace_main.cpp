@@ -57,7 +57,7 @@ INT32 Usage() {
 FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     const string &floating_point_impl_lib_name) {
   void *floating_point_impl_lib =
-      dlopen(floating_point_impl_lib_name.c_str(), RTLD_NOW);
+      dlopen(floating_point_impl_lib_name.c_str(), RTLD_LAZY);
   if (floating_point_impl_lib == nullptr) {
     cerr << "No shared library " << floating_point_impl_lib_name << " found"
          << endl;
