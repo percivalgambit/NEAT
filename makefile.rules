@@ -27,7 +27,7 @@ TEST_ROOTS :=                                \
     ftrace_replace_fp_ins_simple             \
     ftrace_replace_fp_ins_complex            \
     ftrace_function_level_replacement_simple \
-    ftrace_function_level_replacement_nested
+    ftrace_function_level_replacement_nested \
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -59,7 +59,6 @@ DLL_ROOTS := $(FLOATING_POINT_IMPL_LIB)
 # This defines any static libraries (archives), that need to be built.
 LIB_ROOTS :=
 
-
 ##############################################################
 #
 # Test recipes
@@ -70,43 +69,47 @@ LIB_ROOTS :=
 # See makefile.default.rules for the default test rules.
 # All tests in this section should adhere to the naming convention: <testname>.test
 
-%.test: EXPECTED_TOOL_OUTPUT         = tests/integration/$(@:.test=.reference)
-%.test: EXPECTED_STDOUT              = tests/integration/$(@:.test=.stdout.reference)
-%.test: ACTUAL_TOOL_OUTPUT           = $(@:.test=.out)
-%.test: ACTUAL_STDOUT                = $(@:.test=.stdout.out)
-%.test: FTRACE_TEST_FLAGS            = -print_floating_point_operations \
-                                       -o $(ACTUAL_TOOL_OUTPUT)
-%.test: FTRACE_TOOL                  = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
-%.test: TEST_APP                     = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-%.test: FLOATING_POINT_IMPL_LIB_SRCS = tests/test_floating_point_implementations/test_floating_point_implementation_functions.cpp
+%.test: EXPECTED_TOOL_OUTPUT                = tests/integration/$(@:.test=.reference)
+%.test: EXPECTED_STDOUT                     = tests/integration/$(@:.test=.stdout.reference)
+%.test: ACTUAL_TOOL_OUTPUT                  = $(@:.test=.out)
+%.test: ACTUAL_STDOUT                       = $(@:.test=.stdout.out)
+%.test: FTRACE_TEST_FLAGS                   = -print_floating_point_operations \
+                                              -o $(ACTUAL_TOOL_OUTPUT)
+%.test: FTRACE_TOOL                         = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+%.test: TEST_APP                            = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+%.test: TEST_IMPL_LIB_SRC_DIR               = tests/test_floating_point_implementations
+%.test: export FLOATING_POINT_IMPL_LIB_SRCS =                                 \
+    $(TEST_IMPL_LIB_SRC_DIR)/test_floating_point_implementation_functions.cpp \
+    $(TEST_IMPL_LIB_SRC_DIR)/$(@:ftrace_%.test=%.cpp)                         \
+
 %.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) dlls
-	$(PIN) -injection child -ifeellucky -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) \
-	    -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PIN) -injection child -ifeellucky -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
+
 
 ftrace_no_output.test: FTRACE_TEST_FLAGS = -o $(ACTUAL_TOOL_OUTPUT)
 
 ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
 
-ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/simple_test_floating_point_implementation.cpp
-ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
+ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS              += \
+    -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
-ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/complex_test_floating_point_implementation.cpp
-ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
+ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS              += \
+    -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
-ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/function_level_simple_test_floating_point_implementation.cpp
-ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
+ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS              += \
+    -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
-ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB      = $(@:.test=)
-ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB_SRCS += tests/test_floating_point_implementations/function_level_nested_test_floating_point_implementation.cpp
-ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS                   += -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
+ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
+ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS              += \
+    -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
 ##############################################################
 #
@@ -117,6 +120,9 @@ ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS                
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 
+# Adds project-specific compiler flags
+TOOL_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=2 -MMD -MP -std=c++11 -Isrc/
+
 ###### Special objects' build rules ######
 
 PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
@@ -125,14 +131,16 @@ PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
 SHARED_OBJS := $(addprefix $(OBJDIR),$(SHARED_SRCS:.cpp=$(OBJ_SUFFIX)))
 FTRACE_OBJS := $(PINTOOL_OBJS) $(SHARED_OBJS)
 
+# Compiles pintool-specific sources
 $(PINTOOL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
-	$(CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
+# Compiles sources shared by the pintool and user libraries
 $(SHARED_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/%.cpp
-	$(CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -MMD -MP -std=c++11 -Isrc/ $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-%.d: %.cpp
-
+# Tracks header dependencies for future recompilation
+$(OBJDIR)%.d: %.cpp
 -include $(OBJDIR)*.d
 
 ###### Special tools' build rules ######
@@ -142,18 +150,21 @@ $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS)
 
 ###### Special applications' build rules ######
 
+# Instrumented application used in integration tests.
 $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_app/sse_sample_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special libraries' build rules ######
 
-FLOATING_POINT_IMPL_LIB_NAME = $(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX)
 .PHONY: $(FLOATING_POINT_IMPL_LIB_NAME)
+FLOATING_POINT_IMPL_LIB_NAME = $(OBJDIR)$(DLL_PREFIX)$(FLOATING_POINT_IMPL_LIB)$(DLL_SUFFIX)
 
 ifdef FLOATING_POINT_IMPL_LIB_SRCS
 
+# Compiles a user library that can be used as a floating point implementation
+# during instrumentation
 $(FLOATING_POINT_IMPL_LIB_NAME): $(FLOATING_POINT_IMPL_LIB_SRCS)
-	$(APP_CXX) -D_GLIBCXX_USE_CXX11_ABI=0 $(TOOL_CXXFLAGS) -fabi-version=2 -std=c++11 -Isrc/ $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
+	$(APP_CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
 
 else # !FLOATING_POINT_IMPL_LIB_SRCS
 
@@ -165,6 +176,7 @@ endif # FLOATING_POINT_IMPL_LIB_SRCS
 
 ###### Special target rules ######
 
+# Generates documentation
 .PHONY: html
 html: Doxyfile
 	doxygen $^
