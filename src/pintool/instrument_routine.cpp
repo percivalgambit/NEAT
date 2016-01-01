@@ -48,7 +48,7 @@ VOID InstrumentRoutine(const RTN rtn,
   RTN_InsertCall(rtn, IPOINT_BEFORE,
                  reinterpret_cast<AFUNPTR>(FunctionStackPush),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &program_state.function_stack_,
+                 IARG_PTR, &program_state.function_stack,
                  IARG_END);
 
   // Forward pass over all instructions in routine
@@ -90,7 +90,7 @@ VOID InstrumentRoutine(const RTN rtn,
   // Pop replacement type from stack
   RTN_InsertCall(rtn, IPOINT_AFTER,
                  reinterpret_cast<AFUNPTR>(FunctionStackPop),
-                 IARG_PTR, &program_state.function_stack_,
+                 IARG_PTR, &program_state.function_stack,
                  IARG_END);
   RTN_Close(rtn);
 }

@@ -34,12 +34,12 @@ VOID PrintFloatingPointOperation(const OPCODE &operation, const FLT32 &operand1,
 namespace ftrace {
 
 VOID StartCallback(const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->floating_point_implementation_->StartCallback();
+  instrumentation_args->floating_point_implementation->StartCallback();
 }
 
 VOID ExitCallback(const INT32 code,
                   const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->floating_point_implementation_->ExitCallback(code);
+  instrumentation_args->floating_point_implementation->ExitCallback(code);
   delete instrumentation_args;
 }
 
@@ -51,14 +51,14 @@ VOID ReplaceRegisterFloatingPointInstruction(
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
   FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation_;
+      instrumentation_args->floating_point_implementation;
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *reg2.flt, operation, *program_state);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
-  if (instrumentation_args->print_floating_point_ops_) {
+  if (instrumentation_args->print_floating_point_ops) {
     PrintFloatingPointOperation(operation, *reg1.flt, *reg2.flt, *result.flt,
-                                instrumentation_args->output_stream_);
+                                instrumentation_args->output_stream);
   }
 }
 
@@ -69,14 +69,14 @@ VOID ReplaceMemoryFloatingPointInstruction(
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation_;
+      instrumentation_args->floating_point_implementation;
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *operand2, operation, *program_state);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
-  if (instrumentation_args->print_floating_point_ops_) {
+  if (instrumentation_args->print_floating_point_ops) {
     PrintFloatingPointOperation(operation, *reg1.flt, *operand2, *result.flt,
-                                instrumentation_args->output_stream_);
+                                instrumentation_args->output_stream);
   }
 }
 

@@ -27,8 +27,8 @@ class FunctionLevelSimpleTestFloatingPointImplementation
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
                                const OPCODE &operation,
                                const ProgramState &program_state) override {
-    for (auto function_name = program_state.function_stack_.crbegin();
-         function_name != program_state.function_stack_.crend();
+    for (auto function_name = program_state.function_stack.crbegin();
+         function_name != program_state.function_stack.crend();
          ++function_name) {
       if (function_operation_map.find(*function_name) !=
           function_operation_map.end()) {

@@ -7,7 +7,7 @@
 namespace ftrace {
 
 struct ProgramState {
-  vector<string> function_stack_;
+  vector<string> function_stack;
 };
 
 }  // namespace ftrace

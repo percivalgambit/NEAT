@@ -16,9 +16,9 @@ struct InstrumentationArgs {
 
   ~InstrumentationArgs();
 
-  const BOOL print_floating_point_ops_;
-  ofstream *output_stream_;
-  FloatingPointImplementation *floating_point_implementation_;
+  const BOOL print_floating_point_ops;
+  ofstream *output_stream;
+  FloatingPointImplementation *floating_point_implementation;
 };
 
 }  /// namespace ftrace
