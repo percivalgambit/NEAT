@@ -1,17 +1,17 @@
 var indexSectionsWithContent =
 {
-  0: "_defgikmnoprstu",
-  1: "g",
-  2: "fnrst",
-  3: "_defikmnprsu",
-  4: "fio",
+  0: "cefimnoprs",
+  1: "cfinps",
+  2: "frs",
+  3: "efms",
+  4: "fnop",
   5: "p"
 };
 
 var indexSectionNames =
 {
   0: "all",
-  1: "namespaces",
+  1: "classes",
   2: "files",
   3: "functions",
   4: "variables",
@@ -21,7 +21,7 @@ var indexSectionNames =
 var indexSectionLabels =
 {
   0: "All",
-  1: "Namespaces",
+  1: "Classes",
   2: "Files",
   3: "Functions",
   4: "Variables",

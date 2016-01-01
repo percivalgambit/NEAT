@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outfile',['OutFile',['../ftrace_8cpp.html#ad115a0fe29ea602faf1908a1ce024c99',1,'ftrace.cpp']]]
+  ['output_5fstream',['output_stream',['../structftrace_1_1InstrumentationArgs.html#aca9e7d97a8e16f2e79a5a55bd2571734',1,'ftrace::InstrumentationArgs']]]
 ];
