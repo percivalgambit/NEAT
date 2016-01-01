@@ -8,9 +8,7 @@
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/program_state.h"
 
-namespace ftrace {
-
-static ProgramState program_state;
+namespace {
 
 /**
  * Return true if an instruction is an SSE floating-point arithmetic
@@ -36,6 +34,12 @@ BOOL IsFpInstruction(const INS &ins) {
       return FALSE;
   }
 }
+
+}  // namespace
+
+namespace ftrace {
+
+static ProgramState program_state;
 
 VOID InstrumentRoutine(const RTN rtn,
                        const InstrumentationArgs *instrumentation_args) {

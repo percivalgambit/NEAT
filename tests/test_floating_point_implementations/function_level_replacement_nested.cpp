@@ -16,11 +16,10 @@ typedef FLT32 (*StatelessFloatingPointOperation)(const FLT32 &, const FLT32 &,
 
 static NormalFloatingPointImplementation normal_floating_point_implementation;
 
-static const map<string, StatelessFloatingPointOperation>
-    function_operation_map = {
-        {"helper1", SimpleTestFloatingPointOperation},
-        {"helper2", SimpleTestFloatingPointOperation},
-        {"nested_helper", ComplexTestFloatingPointOperation},
+static const map<string, StatelessFloatingPointOperation> function_operation_map = {
+    {"helper1", SimpleTestFloatingPointOperation},
+    {"helper2", SimpleTestFloatingPointOperation},
+    {"nested_helper", ComplexTestFloatingPointOperation},
 };
 
 class FunctionLevelNestedTestFloatingPointImplementation
@@ -34,8 +33,8 @@ class FunctionLevelNestedTestFloatingPointImplementation
          ++function_name) {
       if (function_operation_map.find(*function_name) !=
           function_operation_map.end()) {
-        return function_operation_map.at (*function_name)(operand1, operand2,
-                                                          operation);
+        return function_operation_map.at(*function_name)(operand1, operand2,
+                                                         operation);
       }
     }
 
