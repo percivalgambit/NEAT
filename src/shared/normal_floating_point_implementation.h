@@ -10,11 +10,15 @@
 
 namespace ftrace {
 
+/**
+ * A default implementation of floating-point arithmetic that performs each
+ * operation normally.
+ */
 class NormalFloatingPointImplementation : public FloatingPointImplementation {
  public:
-  FLT32 FloatingPointOperation(
-      const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation,
-      const ProgramState &program_state) {
+  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
+                               const OPCODE &operation,
+                               const ProgramState &program_state) {
     switch (operation) {
       case XED_ICLASS_ADDSS:
         return operand1 + operand2;

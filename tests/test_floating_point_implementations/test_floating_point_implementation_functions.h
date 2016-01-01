@@ -7,11 +7,13 @@
 
 namespace ftrace {
 
-FLT32 SimpleTestFloatingPointOperation(
-    const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation);
+FLT32 SimpleTestFloatingPointOperation(const FLT32 &operand1,
+                                       const FLT32 &operand2,
+                                       const OPCODE &operation);
 
-FLT32 ComplexTestFloatingPointOperation(
-    const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation);
+FLT32 ComplexTestFloatingPointOperation(const FLT32 &operand1,
+                                        const FLT32 &operand2,
+                                        const OPCODE &operation);
 
 }  // namespace ftrace
 

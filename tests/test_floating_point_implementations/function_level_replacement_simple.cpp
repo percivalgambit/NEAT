@@ -11,28 +11,30 @@
 
 namespace ftrace {
 
-typedef FLT32 (*StatelessFloatingPointOperation)(
-    const FLT32 &, const FLT32 &, const OPCODE &);
+typedef FLT32 (*StatelessFloatingPointOperation)(const FLT32 &, const FLT32 &,
+                                                 const OPCODE &);
 
 static NormalFloatingPointImplementation normal_floating_point_implementation;
 
 static const map<string, StatelessFloatingPointOperation>
     function_operation_map = {
-        {"helper1", SimpleTestFloatingPointOperation},
         {"helper2", SimpleTestFloatingPointOperation},
-        {"nested_helper", ComplexTestFloatingPointOperation},
-    };
+        {"helper1", ComplexTestFloatingPointOperation},
+};
 
-class FunctionLevelNestedTestFloatingPointImplementation : public FloatingPointImplementation {
+class FunctionLevelSimpleTestFloatingPointImplementation
+    : public FloatingPointImplementation {
  public:
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
                                const OPCODE &operation,
                                const ProgramState &program_state) override {
-    for (auto function_name = program_state.function_stack_.crbegin();
-         function_name != program_state.function_stack_.crend();
+    for (auto function_name = program_state.function_stack.crbegin();
+         function_name != program_state.function_stack.crend();
          ++function_name) {
-      if (function_operation_map.find(*function_name) != function_operation_map.end()) {
-        return function_operation_map.at(*function_name)(operand1, operand2, operation);
+      if (function_operation_map.find(*function_name) !=
+          function_operation_map.end()) {
+        return function_operation_map.at (*function_name)(operand1, operand2,
+                                                          operation);
       }
     }
 
@@ -41,6 +43,7 @@ class FunctionLevelNestedTestFloatingPointImplementation : public FloatingPointI
   }
 };
 
-REGISTER_FLOATING_POINT_IMPL(FunctionLevelNestedTestFloatingPointImplementation);
+REGISTER_FLOATING_POINT_IMPL(
+    FunctionLevelSimpleTestFloatingPointImplementation);
 
 }  // namespace ftrace

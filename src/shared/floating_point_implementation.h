@@ -13,21 +13,21 @@ namespace ftrace {
  */
 class FloatingPointImplementation {
  public:
-   /**
-   * Function called before the instrumented application runs.
-   */
+  /**
+  * Function called before the instrumented application runs.
+  */
   virtual VOID StartCallback() {}
 
   /**
    * Function called after the instrumented application finishes running.
-   * @param[in] code OS specific termination code for the application
+   * @param[in]   code   OS specific termination code for the application
    */
   virtual VOID ExitCallback(const INT32 &code) {}
 
   /**
    * Performs floating-point arithmetic.
-   * @param[in]  operation    the arithmetic operation to perform
-   * @paramm[in] replace_type which replacement type to use
+   * @param[in]    operation      the arithmetic operation to perform
+   * @paramm[in]   replace_type   which replacement type to use
    * @returns the result of the floating-point operation.
    */
   virtual FLT32 FloatingPointOperation(const FLT32 &operand1,
@@ -42,6 +42,13 @@ class FloatingPointImplementation {
  */
 #define FLOATING_POINT_IMPL_NAME floating_point_impl
 
+/**
+ * Registers the given floating-point implementation in a library so that the
+ * pintool can load it from that library. Only one floating-point
+ * implementation can be registered in a single library.
+ * @param[in]   floating_point_impl_type   name of the floating-point
+ *                                         implementation to register
+ */
 #define REGISTER_FLOATING_POINT_IMPL(floating_point_impl_type)  \
   extern "C" floating_point_impl_type FLOATING_POINT_IMPL_NAME; \
   floating_point_impl_type FLOATING_POINT_IMPL_NAME

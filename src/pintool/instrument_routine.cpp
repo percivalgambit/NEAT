@@ -2,13 +2,13 @@
 
 #include <pin.H>
 
+#include <string>
+
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/program_state.h"
 
-namespace ftrace {
-
-static ProgramState program_state;
+namespace {
 
 /**
  * Return true if an instruction is an SSE floating-point arithmetic
@@ -35,6 +35,12 @@ BOOL IsFpInstruction(const INS &ins) {
   }
 }
 
+}  // namespace
+
+namespace ftrace {
+
+static ProgramState program_state;
+
 VOID InstrumentRoutine(const RTN rtn,
                        const InstrumentationArgs *instrumentation_args) {
   RTN_Open(rtn);
@@ -42,7 +48,7 @@ VOID InstrumentRoutine(const RTN rtn,
   RTN_InsertCall(rtn, IPOINT_BEFORE,
                  reinterpret_cast<AFUNPTR>(FunctionStackPush),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &program_state.function_stack_,
+                 IARG_PTR, &program_state.function_stack,
                  IARG_END);
 
   // Forward pass over all instructions in routine
@@ -57,34 +63,33 @@ VOID InstrumentRoutine(const RTN rtn,
       INS_Delete(ins);
       if (INS_OperandIsReg(ins, 1)) {
         REGSET_Insert(regs_in, INS_OperandReg(ins, 1));
-        INS_InsertCall(ins, IPOINT_BEFORE,
-                       reinterpret_cast<AFUNPTR>(
-                           ReplaceRegisterFloatingPointInstruction),
-                       IARG_PTR, instrumentation_args,
-                       IARG_PTR, &program_state,
-                       IARG_UINT32, INS_Opcode(ins),
-                       IARG_UINT32, INS_OperandReg(ins, 0),
-                       IARG_UINT32, INS_OperandReg(ins, 1),
-                       IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
-                       IARG_END);
+        INS_InsertCall(
+            ins, IPOINT_BEFORE,
+            reinterpret_cast<AFUNPTR>(ReplaceRegisterFloatingPointInstruction),
+            IARG_PTR, instrumentation_args,
+            IARG_PTR, &program_state,
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_UINT32, INS_OperandReg(ins, 1),
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
       } else {
-        INS_InsertCall(ins, IPOINT_BEFORE,
-                       reinterpret_cast<AFUNPTR>(
-                           ReplaceMemoryFloatingPointInstruction),
-                       IARG_PTR, instrumentation_args,
-                       IARG_PTR, &program_state,
-                       IARG_UINT32, INS_Opcode(ins),
-                       IARG_UINT32, INS_OperandReg(ins, 0),
-                       IARG_MEMORYREAD_EA,
-                       IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
-                       IARG_END);
+        INS_InsertCall(
+            ins, IPOINT_BEFORE,
+            reinterpret_cast<AFUNPTR>(ReplaceMemoryFloatingPointInstruction),
+            IARG_PTR, instrumentation_args,
+            IARG_PTR, &program_state,
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_MEMORYREAD_EA,
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
       }
     }
   }
-  // Pop replacement type from stack
   RTN_InsertCall(rtn, IPOINT_AFTER,
                  reinterpret_cast<AFUNPTR>(FunctionStackPop),
-                 IARG_PTR, &program_state.function_stack_,
+                 IARG_PTR, &program_state.function_stack,
                  IARG_END);
   RTN_Close(rtn);
 }
