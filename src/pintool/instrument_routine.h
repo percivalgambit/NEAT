@@ -8,16 +8,12 @@
 namespace ftrace {
 
 /**
- * Insert calls to the analysis routines before and after every floating-point
- * instruction of the instrumented application.  If function-level replacement
- * types are enabled, then every routine will also be instrumented with
- * functions
- * to push and pop its replacement type from the stack hen it is entered and
- * exited.
+ * Insert calls to analysis routines to replace every floating-point operation
+ * in the instrumented application with a user-defined implementation
  * This function is called every time a new routine is encountered.
- * @param[in]   rtn      routine to be instrumented
- * @param[in]   v        value specified by the tool in the
- *                       RTN_AddInstrumentFunction function call
+ * @param[in]   rtn                    routine to be instrumented
+ * @param[in]   instrumentation_args   arguments passed to the instrumentation
+ *                                     function
  */
 VOID InstrumentRoutine(const RTN rtn,
                        const InstrumentationArgs *instrumentation_args);

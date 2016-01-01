@@ -10,6 +10,10 @@
 
 namespace ftrace {
 
+/**
+ * A default implementation of floating-point arithmetic that performs each
+ * operation normally.
+ */
 class NormalFloatingPointImplementation : public FloatingPointImplementation {
  public:
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,

@@ -58,6 +58,12 @@ INT32 Usage() {
 
 #define TOKEN_TO_STRING(str) #str
 #define MACRO_TO_STRING(str) TOKEN_TO_STRING(str)
+/**
+ * Loads the floating point implementation from the library with the given
+ * name or crashes the program if an error occurs.
+ * @param[in]   floating_point_impl_lib_name      name of the library to open
+ * @returns the loaded floating-point implementation
+ */
 FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     const string &floating_point_impl_lib_name) {
   void *floating_point_impl_lib =
@@ -81,6 +87,12 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
 #undef TOKEN_TO_STRING
 #undef MACRO_TO_STRING
 
+/**
+ * Registers instrumentation functions with Pin to instrument the application
+ * program.
+ * @param[in]   instrumentation_args        argument to supply to each
+ *                                          instrumentation function
+ */
 VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
   PIN_AddApplicationStartFunction(
       reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
@@ -94,6 +106,10 @@ VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
 
 }  // namespace
 
+/**
+ * Used as a default floating-point implementation if none is supplied by the
+ * user through command-line flags.
+ */
 static NormalFloatingPointImplementation normal_floating_point_implementation;
 
 /**

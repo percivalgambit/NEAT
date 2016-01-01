@@ -87,7 +87,6 @@ VOID InstrumentRoutine(const RTN rtn,
       }
     }
   }
-  // Pop replacement type from stack
   RTN_InsertCall(rtn, IPOINT_AFTER,
                  reinterpret_cast<AFUNPTR>(FunctionStackPop),
                  IARG_PTR, &program_state.function_stack,

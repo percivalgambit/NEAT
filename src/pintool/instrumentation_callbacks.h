@@ -11,23 +11,45 @@
 
 namespace ftrace {
 
+/**
+ * Performs any setup needed by the given floating-point implementation.
+ * This function is called after Pin initialization is finished but before the
+ * instrumented application starts running.
+ * @param[in]   instrumentation_args     contains the floating-point
+ *                                       implementation to setup
+ */
 VOID StartCallback(const InstrumentationArgs *instrumentation_args);
 
+/**
+ * Performs any teardown needed by the given floating-point implementation.
+ * This function is called immediately before the instrumented application
+ * exits.
+ * @param[in]   code                     exit code of the pintool
+ * @param[in]   instrumentation_args     contains the floating-point
+ *                                       implementation to teardown
+ */
 VOID ExitCallback(const INT32 code,
                   const InstrumentationArgs *instrumentation_args);
 
 /**
- * Run a user-specified function as a replacement for a floating-point
- * arithmetic
- * operation.
+ * Replaces a floating-point operation with a user defined implementation and
+ * prints out the operands and result of the operation if specified on the
+ * command line.
  * This function is called for every floating-point arithmetic instruction that
- * operates on two registers, instead of executing the instruction itself.
- * @param[in]   op          the opcode of the floating-point instruction
- * @param[in]   operand1    the first operand of the instruction
- * @param[in]   operand2    the second operand of the instruction
- * @param[in]   ctxt        the context of the instrumented application
- * immediately
- *                          before the instruction is executed
+ * operates on two registers.
+ * @param[in]   instrumentation_args   contains a user-defined implementation
+ *                                     of floating-point operations and
+ *                                     invocation-specific information for the
+ *                                     pintool
+ * @param[in]   program_state          contains information about the current
+ *                                     state of the instrumented application
+ * @param[in]   operation              opcode of the floating-point operation
+ * @param[in]   operand1               first operand of the instruction
+ * @param[in]   operand2               second operand of the instruction
+ * @param[in]   ctxt                   context of the instrumented application
+ *                                     used to store the result of the
+ *                                     floating-point operation in the correct
+ *                                     register
  */
 VOID ReplaceRegisterFloatingPointInstruction(
     const InstrumentationArgs *instrumentation_args,
@@ -35,18 +57,24 @@ VOID ReplaceRegisterFloatingPointInstruction(
     const REG operand1, const REG operand2, CONTEXT *ctxt);
 
 /**
- * Run a user-specified function as a replacement for a floating-point
- * arithmetic
- * operation.
+ * Replaces a floating-point operation with a user defined implementation and
+ * prints out the operands and result of the operation if specified on the
+ * command line.
  * This function is called for every floating-point arithmetic instruction that
- * operates on a register and a memory location, instead of executing the
- * instruction itself.
- * @param[in]   op          the opcode of the floating-point instruction
- * @param[in]   operand1    the first operand of the instruction
- * @param[in]   operand2    the second operand of the instruction
- * @param[in]   ctxt        the context of the instrumented application
- * immediately
- *                          before the instruction is executed
+ * operates on a register and a memory location.
+ * @param[in]   instrumentation_args   contains a user-defined implementation
+ *                                     of floating-point operations and
+ *                                     invocation-specific information for the
+ *                                     pintool
+ * @param[in]   program_state          contains information about the current
+ *                                     state of the instrumented application
+ * @param[in]   operation              opcode of the floating-point operation
+ * @param[in]   operand1               first operand of the instruction
+ * @param[in]   operand2               second operand of the instruction
+ * @param[in]   ctxt                   context of the instrumented application
+ *                                     used to store the result of the
+ *                                     floating-point operation in the correct
+ *                                     register
  */
 VOID ReplaceMemoryFloatingPointInstruction(
     const InstrumentationArgs *instrumentation_args,
@@ -54,20 +82,13 @@ VOID ReplaceMemoryFloatingPointInstruction(
     const REG operand1, const FLT32 *operand2, CONTEXT *ctxt);
 
 /**
- * Push a function-level replacement type on the replacement type stack.  If
- * the replacement type to push is the default replacement type, then nothing
- * will happen
- * @param[in]   replace_type    replacement type to push
+ * Push the name of a function onto the function stack.
  */
 VOID FunctionStackPush(const string *function_name,
                        vector<string> *function_stack);
 
 /**
- * Pop a function-level replacement type from the replacement type stack.  A
- * single parameter is supplied, which is the expected replacement type to pop.
- * If the replacement type to pop is the default replacement type, then nothing
- * will happen
- * @param[in]   replace_type    expected replacement type to pop
+ * Pop the name of a function from the function stack.
  */
 VOID FunctionStackPop(vector<string> *function_stack);
 

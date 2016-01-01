@@ -11,6 +11,8 @@
 #include "shared/floating_point_implementation.h"
 #include "shared/program_state.h"
 
+namespace {
+
 /*!
  * Convert a FLT32 variable into the string representation of its value in hex.
  * @param[in]   fp  variable to convert to hex
@@ -18,8 +20,15 @@
 #define FLT32_TO_HEX(fp) \
   StringHex(*reinterpret_cast<const UINT32 *>(&fp), 8, FALSE)
 
-namespace {
-
+/**
+ * Prints the operands, operation, and result of a floating-point operation to
+ * the specified output stream.
+ * @param[in]   operation       opcode of the floating-point operation
+ * @param[in]   operand1        first operand of the operation
+ * @param[in]   operand2        second operand of the operation
+ * @param[in]   result          result of the operation
+ * @param[in]   output_stream   stream where the operation should be written
+ */
 VOID PrintFloatingPointOperation(const OPCODE &operation, const FLT32 &operand1,
                                  const FLT32 &operand2, const FLT32 &result,
                                  ofstream *output_stream) {
