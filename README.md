@@ -1,9 +1,10 @@
 ftrace
 ======
 
-A PIN tool to trace the value of the arguments and result of each floating point instruction in an IA-32 or x86-64 program.
+A Pin tool to replace floating-point instructions with user-defined
+implementations in an IA-32 or x86-64 program.
 
-Currently, the only instructions that this tool instruments are:
+Currently, the only instructions that this tool replaces are:
 
     ADDSS
     SUBSS
@@ -16,30 +17,31 @@ Setup
 
 After cloning the repository, run the following commands:
 
-    make
-    make PROG=<your_program> run
-
-Alternatively, after making the pintool, to invoke it from the command line run
-the following command:
-
-    pin -t obj-intel64/ftrace.so -- <your_program>
+    make FLOATING_POINT_IMPL_LIB=<floating_point_impl_lib_base_name> FLOATING_POINT_IMPL_LIS_SRCS=<floating_point_impl_lib_srcs>
+    pin -injection child -ifeellucky -t obj-intel64/ftrace.so -floating_point_implementation_lib <floating_point_impl_lib_name>  -- <your_program>
 
 For the IA-32 architecture, use `obj-ia32` instead of `obj-intel64`
 
-To see output from the pintool, you must specify an output file with the `-o`
-flag after you have specified the `ftrace` tool with the `-t` flag.
+You can specify the name of an output file by using the `-o` flag. The default
+name of an output file is `ftrace.out`.
 
-Floating-point Instruction Replacement
+You can use the `-print_floating_point_operations` to print the operands and
+result of every floating-point arithmetic operation in the instrumented
+application.
+
+Floating-Point Instruction Replacement
 --------------------------------------
 
-To compile with floating-point instruction replacement code, create one or more
-files containing the code you want to compile into the pintool, then add the
-correct function and file names to the definitions of the variables in `ftrace.vars`.
+To compile a library with a user-defined implementation of floating-point
+arithmetic instructions, create one or more files containing the code you want
+to compile into the library.  These files must contain exactly one subclass of
+the `FloatingPointImplementation` class that is registered with
+`REGISTER_FLOATING_POINT_IMPL`.  Finally, run the following command:
 
-See `ftrace.vars` for the different possible insertion points of user-defined
-code in the pintool, and see `tests/test_callbacks.cpp` and the files in
-`replacement_examples/` for examples of user-defined code that can be compiled
-into the pintool.
+    make FLOATING_POINT_IMPL_LIB=<floating_point_impl_lib_base_name> FLOATING_POINT_IMPL_LIS_SRCS=<floating_point_impl_lib_srcs>
+
+See the `tests/` directory for examples of user-defined floating-point
+implementations.
 
 Testing
 -------
@@ -57,4 +59,4 @@ Contact
 -------
 
 If you have any questions or comments, or find a bug in the code, please contact
-[percivalgambit@gmail.com] (mailto:percivalgambit@gmail.com).
+[ehudinl@uchicago.edu] (mailto:ehudinl@uchicago.edu).
