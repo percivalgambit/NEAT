@@ -121,7 +121,7 @@ ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS              +=
 # See makefile.default.rules for the default build rules.
 
 # Adds project-specific compiler flags
-TOOL_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=2 -MMD -MP -std=c++11 -Isrc/
+TOOL_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=2 -MMD -MP -std=c++11 -Isrc/ -Wno-error
 
 ###### Special objects' build rules ######
 
