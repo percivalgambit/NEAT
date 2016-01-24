@@ -27,7 +27,7 @@ class FloatingPointImplementation {
   /**
    * Performs floating-point arithmetic.
    * @param[in]    operation      the arithmetic operation to perform
-   * @paramm[in]   replace_type   which replacement type to use
+   * @param[in]   replace_type   which replacement type to use
    * @returns the result of the floating-point operation.
    */
   virtual FLT32 FloatingPointOperation(const FLT32 &operand1,
