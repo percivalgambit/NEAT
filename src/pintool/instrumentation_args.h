@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-#include "shared/floating_point_implementation.h"
+#include "shared/floating_point_implementation_selector.h"
 
 namespace ftrace {
 
@@ -16,7 +16,7 @@ namespace ftrace {
 struct InstrumentationArgs {
   InstrumentationArgs(
       const BOOL &print_floating_point_ops, ofstream *output_stream,
-      FloatingPointImplementation *floating_point_implementation);
+      FloatingPointImplementationSelector *floating_point_implementation_selector);
 
   ~InstrumentationArgs();
 
@@ -27,7 +27,7 @@ struct InstrumentationArgs {
   ofstream *output_stream;
   /// Implementation of floating-point arithmetic with which to replace every
   /// floating-point arithmetic instruction in the instrumented program.
-  FloatingPointImplementation *floating_point_implementation;
+  FloatingPointImplementationSelector *floating_point_implementation_selector;
 };
 
 }  /// namespace ftrace

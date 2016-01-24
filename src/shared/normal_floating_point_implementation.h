@@ -17,8 +17,7 @@ namespace ftrace {
 class NormalFloatingPointImplementation : public FloatingPointImplementation {
  public:
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
-                               const OPCODE &operation,
-                               const ProgramState &program_state) {
+                               const OPCODE &operation) {
     switch (operation) {
       case XED_ICLASS_ADDSS:
         return operand1 + operand2;

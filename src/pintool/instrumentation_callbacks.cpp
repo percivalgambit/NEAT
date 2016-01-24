@@ -9,6 +9,7 @@
 
 #include "pintool/instrumentation_args.h"
 #include "shared/floating_point_implementation.h"
+#include "shared/floating_point_implementation_selector.h"
 #include "shared/program_state.h"
 
 namespace {
@@ -60,7 +61,7 @@ VOID ReplaceRegisterFloatingPointInstruction(
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
   FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation;
+      instrumentation_args->floating_point_implementation_selector->SelectFloatingPointImplementation(program_state);
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *reg2.flt, operation, *program_state);
@@ -78,7 +79,7 @@ VOID ReplaceMemoryFloatingPointInstruction(
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation;
+      instrumentation_args->floating_point_implementation_selector->SelectFloatingPointImplementation(program_state);
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *operand2, operation, *program_state);

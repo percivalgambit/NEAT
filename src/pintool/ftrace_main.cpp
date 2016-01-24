@@ -19,11 +19,11 @@
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
-#include "shared/floating_point_implementation.h"
+#include "shared/floating_point_implementation_selector.h"
 #include "shared/normal_floating_point_implementation.h"
 
 using ftrace::ExitCallback;
-using ftrace::FloatingPointImplementation;
+using ftrace::FloatingPointImplementationSelector;
 using ftrace::InstrumentationArgs;
 using ftrace::InstrumentRoutine;
 using ftrace::NormalFloatingPointImplementation;
@@ -75,7 +75,7 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
   }
 
   void *floating_point_impl =
-      dlsym(floating_point_impl_lib, MACRO_TO_STRING(FLOATING_POINT_IMPL_NAME));
+      dlsym(floating_point_impl_lib, MACRO_TO_STRING(FLOATING_POINT_IMPL_SELECTOR_NAME));
   if (floating_point_impl == nullptr) {
     cerr << "No registered floating-point implementation found. "
             "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
@@ -137,13 +137,14 @@ int main(int argc, char *argv[]) {
        << "===============================================" << endl;
   const string &floating_point_impl_lib_name =
       KnobFloatingPointImplementationLibrary.Value();
-  FloatingPointImplementation *floating_point_implementation =
+  FloatingPointImplementationSelector *floating_point_implementation_selector =
       floating_point_impl_lib_name.empty()
           ? &normal_floating_point_implementation
-          : GetFloatingPointImplementationOrDie(floating_point_impl_lib_name);
+          : GetFloatingPointImplementationSelectorOrDie
+              floating_point_impl_lib_name);
 
   InstrumentationArgs *instrumentation_args = new InstrumentationArgs(
-      print_floating_point_ops, output_stream, floating_point_implementation);
+      print_floating_point_ops, output_stream, floating_point_implementation_selector);
   InstrumentProgram(instrumentation_args);
   // Start the program, never returns.
   PIN_StartProgram();
