@@ -3,7 +3,7 @@
 
 #include <pin.H>
 
-#include "pintool/instrumentation_args.h"
+#include "shared/floating_point_implementation_selector.h"
 
 namespace ftrace {
 
@@ -15,8 +15,11 @@ namespace ftrace {
  * @param[in]   instrumentation_args   arguments passed to the instrumentation
  *                                     function
  */
-VOID InstrumentRoutine(const RTN rtn,
-                       const InstrumentationArgs *instrumentation_args);
+VOID InstrumentFPOperations(const RTN rtn,
+                            FloatingPointImplementationSelector
+                                *floating_point_implementation_selector);
+
+VOID PrintFPOperations(const INS rtn, ofstream *output_stream);
 
 }  // namespace ftrace
 

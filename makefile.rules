@@ -22,7 +22,6 @@ TEST_TOOL_ROOTS :=
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
 TEST_ROOTS :=                                \
     ftrace_normal_fp_implementation          \
-    ftrace_no_output                         \
     ftrace_no_specified_output_file          \
     ftrace_replace_fp_ins_simple             \
     ftrace_replace_fp_ins_complex            \
@@ -88,9 +87,6 @@ LIB_ROOTS :=
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
-
-
-ftrace_no_output.test: FTRACE_TEST_FLAGS = -o $(ACTUAL_TOOL_OUTPUT)
 
 ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
