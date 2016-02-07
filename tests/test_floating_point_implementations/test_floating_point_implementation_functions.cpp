@@ -8,15 +8,13 @@
 
 namespace ftrace {
 
-FLT32 SimpleTestFloatingPointOperation(const FLT32 &operand1,
-                                       const FLT32 &operand2,
-                                       const OPCODE &operation) {
+SimpleTestFloatingPointImplementation::FloatingPointOperation(
+    const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation) override {
   return 1.0;
 }
 
-FLT32 ComplexTestFloatingPointOperation(const FLT32 &operand1,
-                                        const FLT32 &operand2,
-                                        const OPCODE &operation) {
+ComplexTestFloatingPointImplementation::FloatingPointOperation(
+    const FLT32 &operand1, const FLT32 &operand2, const OPCODE &operation) override {
   switch (operation) {
     case XED_ICLASS_ADDSS:
       return (operand1 + operand2) * 0.9;

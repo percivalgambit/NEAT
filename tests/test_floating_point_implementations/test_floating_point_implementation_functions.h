@@ -7,13 +7,26 @@
 
 namespace ftrace {
 
-FLT32 SimpleTestFloatingPointOperation(const FLT32 &operand1,
-                                       const FLT32 &operand2,
-                                       const OPCODE &operation);
+class SimpleTestFloatingPointImplementation
+    : public FloatingPointImplementation {
+ public:
+  /*!
+   * A simple implementation of floating-point arithmetic operations.
+   */
+  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
+                               const OPCODE &operation) override;
+};
 
-FLT32 ComplexTestFloatingPointOperation(const FLT32 &operand1,
-                                        const FLT32 &operand2,
-                                        const OPCODE &operation);
+class ComplexTestFloatingPointImplementation
+    : public FloatingPointImplementation {
+ public:
+  /*!
+   * A complex implementation of floating-point arithmetic operations.
+   */
+  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
+                               const OPCODE &operation) override;
+  }
+};
 
 }  // namespace ftrace
 
