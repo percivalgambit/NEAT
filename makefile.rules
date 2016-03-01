@@ -22,7 +22,6 @@ TEST_TOOL_ROOTS :=
 # This defines the tests to be run that were not already defined in TEST_TOOL_ROOTS.
 TEST_ROOTS :=                                \
     ftrace_normal_fp_implementation          \
-    ftrace_no_output                         \
     ftrace_no_specified_output_file          \
     ftrace_replace_fp_ins_simple             \
     ftrace_replace_fp_ins_complex            \
@@ -78,9 +77,6 @@ LIB_ROOTS :=
 %.test: FTRACE_TOOL                         = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP                            = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: TEST_IMPL_LIB_SRC_DIR               = tests/test_floating_point_implementations
-%.test: export FLOATING_POINT_IMPL_LIB_SRCS =                                 \
-    $(TEST_IMPL_LIB_SRC_DIR)/test_floating_point_implementation_functions.cpp \
-    $(TEST_IMPL_LIB_SRC_DIR)/$(@:ftrace_%.test=%.cpp)                         \
 
 %.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) dlls
@@ -89,24 +85,25 @@ LIB_ROOTS :=
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 
-
-ftrace_no_output.test: FTRACE_TEST_FLAGS = -o $(ACTUAL_TOOL_OUTPUT)
-
 ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
 
+ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS = $(TEST_IMPL_LIB_SRC_DIR)/simple_test_floating_point_implementation_selector.cpp
 ftrace_replace_fp_ins_simple.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS              += \
     -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
+ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB_SRCS = $(TEST_IMPL_LIB_SRC_DIR)/complex_test_floating_point_implementation_selector.cpp
 ftrace_replace_fp_ins_complex.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
 ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS              += \
     -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
+ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB_SRCS = $(TEST_IMPL_LIB_SRC_DIR)/simple_test_function_level_selector.cpp
 ftrace_function_level_replacement_simple.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
 ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS              += \
     -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)
 
+ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB_SRCS = $(TEST_IMPL_LIB_SRC_DIR)/nested_test_function_level_selector.cpp
 ftrace_function_level_replacement_nested.test: export FLOATING_POINT_IMPL_LIB = $(@:.test=)
 ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS              += \
     -floating_point_implementation_lib $(FLOATING_POINT_IMPL_LIB_NAME)

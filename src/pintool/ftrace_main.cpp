@@ -17,16 +17,14 @@
 #include <string>
 
 #include "pintool/instrument_routine.h"
-#include "pintool/instrumentation_args.h"
 #include "pintool/instrumentation_callbacks.h"
-#include "shared/floating_point_implementation.h"
-#include "shared/normal_floating_point_implementation.h"
+#include "shared/floating_point_implementation_selector.h"
 
+using ftrace::CloseOutputStream;
 using ftrace::ExitCallback;
-using ftrace::FloatingPointImplementation;
-using ftrace::InstrumentationArgs;
-using ftrace::InstrumentRoutine;
-using ftrace::NormalFloatingPointImplementation;
+using ftrace::FloatingPointImplementationSelector;
+using ftrace::InstrumentFPOperations;
+using ftrace::PrintFPOperations;
 using ftrace::StartCallback;
 
 namespace {
@@ -64,7 +62,8 @@ INT32 Usage() {
  * @param[in]   floating_point_impl_lib_name      name of the library to open
  * @returns the loaded floating-point implementation
  */
-FloatingPointImplementation *GetFloatingPointImplementationOrDie(
+FloatingPointImplementationSelector *
+GetFloatingPointImplementationSelectorOrDie(
     const string &floating_point_impl_lib_name) {
   void *floating_point_impl_lib =
       dlopen(floating_point_impl_lib_name.c_str(), RTLD_LAZY);
@@ -74,43 +73,22 @@ FloatingPointImplementation *GetFloatingPointImplementationOrDie(
     exit(1);
   }
 
-  void *floating_point_impl =
-      dlsym(floating_point_impl_lib, MACRO_TO_STRING(FLOATING_POINT_IMPL_NAME));
-  if (floating_point_impl == nullptr) {
+  void *floating_point_impl_selector =
+      dlsym(floating_point_impl_lib,
+            MACRO_TO_STRING(FLOATING_POINT_IMPL_SELECTOR_NAME));
+  if (floating_point_impl_selector == nullptr) {
     cerr << "No registered floating-point implementation found. "
             "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
          << floating_point_impl_lib_name << endl;
     exit(1);
   }
-  return static_cast<FloatingPointImplementation *>(floating_point_impl);
+  return static_cast<FloatingPointImplementationSelector *>(
+      floating_point_impl_selector);
 }
 #undef TOKEN_TO_STRING
 #undef MACRO_TO_STRING
 
-/**
- * Registers instrumentation functions with Pin to instrument the application
- * program.
- * @param[in]   instrumentation_args        argument to supply to each
- *                                          instrumentation function
- */
-VOID InstrumentProgram(InstrumentationArgs *instrumentation_args) {
-  PIN_AddApplicationStartFunction(
-      reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
-      instrumentation_args);
-  PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
-                      instrumentation_args);
-  RTN_AddInstrumentFunction(
-      reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentRoutine),
-      instrumentation_args);
-}
-
 }  // namespace
-
-/**
- * Used as a default floating-point implementation if none is supplied by the
- * user through command-line flags.
- */
-static NormalFloatingPointImplementation normal_floating_point_implementation;
 
 /**
  * The main procedure of the tool.
@@ -128,23 +106,39 @@ int main(int argc, char *argv[]) {
     return Usage();
   }
 
-  const BOOL &print_floating_point_ops =
-      KnobPrintFloatingPointOperations.Value();
-  const string &output_file_name = KnobOutputFile.Value();
-  ofstream *output_stream = new ofstream(output_file_name);
-  cerr << "===============================================" << endl
-       << "See file " << output_file_name << " for analysis results" << endl
-       << "===============================================" << endl;
   const string &floating_point_impl_lib_name =
       KnobFloatingPointImplementationLibrary.Value();
-  FloatingPointImplementation *floating_point_implementation =
-      floating_point_impl_lib_name.empty()
-          ? &normal_floating_point_implementation
-          : GetFloatingPointImplementationOrDie(floating_point_impl_lib_name);
+  if (!floating_point_impl_lib_name.empty()) {
+    FloatingPointImplementationSelector
+        *floating_point_implementation_selector =
+            GetFloatingPointImplementationSelectorOrDie(
+                floating_point_impl_lib_name);
 
-  InstrumentationArgs *instrumentation_args = new InstrumentationArgs(
-      print_floating_point_ops, output_stream, floating_point_implementation);
-  InstrumentProgram(instrumentation_args);
+    PIN_AddApplicationStartFunction(
+        reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
+        floating_point_implementation_selector);
+    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
+                        floating_point_implementation_selector);
+    RTN_AddInstrumentFunction(
+        reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentFPOperations),
+        floating_point_implementation_selector);
+  }
+  const string &output_file_name = KnobOutputFile.Value();
+  const BOOL &print_floating_point_ops =
+      KnobPrintFloatingPointOperations.Value();
+  if (print_floating_point_ops) {
+    ofstream *output_stream = new ofstream(output_file_name);
+    cerr << "===============================================" << endl
+         << "See file " << output_file_name << " for analysis results" << endl
+         << "===============================================" << endl;
+
+    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(CloseOutputStream),
+                        output_stream);
+    INS_AddInstrumentFunction(
+        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFPOperations),
+        output_stream);
+  }
+
   // Start the program, never returns.
   PIN_StartProgram();
 }

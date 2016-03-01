@@ -1,5 +1,5 @@
-#ifndef SHARED_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
-#define SHARED_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#ifndef CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#define CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
 
 #include <pin.H>
 
@@ -17,8 +17,7 @@ namespace ftrace {
 class NormalFloatingPointImplementation : public FloatingPointImplementation {
  public:
   FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
-                               const OPCODE &operation,
-                               const ProgramState &program_state) {
+                               const OPCODE &operation) {
     switch (operation) {
       case XED_ICLASS_ADDSS:
         return operand1 + operand2;
@@ -38,4 +37,4 @@ class NormalFloatingPointImplementation : public FloatingPointImplementation {
 
 }  // namespace ftrace
 
-#endif  // SHARED_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#endif  // CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "pintool/instrumentation_args.h"
+#include "shared/floating_point_implementation_selector.h"
 #include "shared/program_state.h"
 
 namespace ftrace {
@@ -18,7 +18,8 @@ namespace ftrace {
  * @param[in]   instrumentation_args     contains the floating-point
  *                                       implementation to setup
  */
-VOID StartCallback(const InstrumentationArgs *instrumentation_args);
+VOID StartCallback(FloatingPointImplementationSelector
+                       *floating_point_implementation_selector);
 
 /**
  * Performs any teardown needed by the given floating-point implementation.
@@ -28,8 +29,8 @@ VOID StartCallback(const InstrumentationArgs *instrumentation_args);
  * @param[in]   instrumentation_args     contains the floating-point
  *                                       implementation to teardown
  */
-VOID ExitCallback(const INT32 code,
-                  const InstrumentationArgs *instrumentation_args);
+VOID ExitCallback(const INT32 code, FloatingPointImplementationSelector *
+                                        floating_point_implementation_selector);
 
 /**
  * Replaces a floating-point operation with a user defined implementation and
@@ -52,9 +53,10 @@ VOID ExitCallback(const INT32 code,
  *                                     register
  */
 VOID ReplaceRegisterFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args,
     const ProgramState *program_state, const OPCODE operation,
-    const REG operand1, const REG operand2, CONTEXT *ctxt);
+    const REG operand1, const REG operand2,
+    FloatingPointImplementationSelector *floating_point_implementation_selector,
+    CONTEXT *ctxt);
 
 /**
  * Replaces a floating-point operation with a user defined implementation and
@@ -77,9 +79,10 @@ VOID ReplaceRegisterFloatingPointInstruction(
  *                                     register
  */
 VOID ReplaceMemoryFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args,
     const ProgramState *program_state, const OPCODE operation,
-    const REG operand1, const FLT32 *operand2, CONTEXT *ctxt);
+    const REG operand1, const FLT32 *operand2,
+    FloatingPointImplementationSelector *floating_point_implementation_selector,
+    CONTEXT *ctxt);
 
 /**
  * Push the name of a function onto the function stack.
@@ -91,6 +94,18 @@ VOID FunctionStackPush(const string *function_name,
  * Pop the name of a function from the function stack.
  */
 VOID FunctionStackPop(vector<string> *function_stack);
+
+VOID CloseOutputStream(const INT32 code, ofstream *output_stream);
+
+VOID PrintRegisterFPOperands(const OPCODE operation,
+                             const PIN_REGISTER *operand1,
+                             const PIN_REGISTER *operand2,
+                             ofstream *output_stream);
+
+VOID PrintMemoryFPOperands(const OPCODE operation, const PIN_REGISTER *operand1,
+                           const FLT32 *operand2, ofstream *output_stream);
+
+VOID PrintFPResult(const PIN_REGISTER *result, ofstream *output_stream);
 
 }  // namespace ftrace
 
