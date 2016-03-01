@@ -15,8 +15,8 @@ namespace ftrace {
 class FunctionLevelFloatingPointImplementationSelector : public FloatingPointImplementationSelector {
  public:
   FunctionLevelFloatingPointImplementationSelector(
-      const map<string, FloatingPointImplementation> function_name_map,
-      FloatingPointImplementation default_floating_point_impl) :
+      const map<string, FloatingPointImplementation *> function_name_map,
+      FloatingPointImplementation *default_floating_point_impl) :
           function_name_map_(function_name_map),
           default_floating_point_impl_(default_floating_point_impl) {}
 
@@ -27,16 +27,16 @@ class FunctionLevelFloatingPointImplementationSelector : public FloatingPointImp
          ++function_name) {
       if (function_name_map_.find(*function_name) !=
           function_name_map_.end()) {
-        return &function_name_map_.at(*function_name);
+        return function_name_map_.at(*function_name);
       }
     }
 
-    return &default_floating_point_impl_
+    return default_floating_point_impl_;
   }
 
  private:
-  const map<string, FloatingPointImplementation> function_name_map_;
-  FloatingPointImplementation default_floating_point_impl_;
+  const map<string, FloatingPointImplementation *> function_name_map_;
+  FloatingPointImplementation *default_floating_point_impl_;
 };
 
 }  // namespace ftrace

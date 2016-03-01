@@ -104,6 +104,7 @@ VOID PrintFPOperations(const INS ins, ofstream *output_stream) {
                      IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
                      IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 1),
                      IARG_PTR, output_stream,
+                     IARG_CALL_ORDER, CALL_ORDER_FIRST,
                      IARG_END);
     } else {
       INS_InsertCall(ins, IPOINT_BEFORE,
@@ -112,6 +113,7 @@ VOID PrintFPOperations(const INS ins, ofstream *output_stream) {
                      IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
                      IARG_MEMORYREAD_EA,
                      IARG_PTR, output_stream,
+                     IARG_CALL_ORDER, CALL_ORDER_FIRST,
                      IARG_END);
     }
 

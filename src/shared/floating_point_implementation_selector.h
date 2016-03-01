@@ -48,9 +48,9 @@ class FloatingPointImplementationSelector {
  * @param[in]   floating_point_impl_type   name of the floating-point
  *                                         implementation to register
  */
-#define REGISTER_FLOATING_POINT_IMPL_SELECTOR(floating_point_impl_selector_type)  \
+#define REGISTER_FLOATING_POINT_IMPL_SELECTOR(floating_point_impl_selector_type, ...)  \
   extern "C" floating_point_impl_selector_type FLOATING_POINT_IMPL_SELECTOR_NAME; \
-  floating_point_impl_selector_type FLOATING_POINT_IMPL_SELECTOR_NAME
+  floating_point_impl_selector_type FLOATING_POINT_IMPL_SELECTOR_NAME = floating_point_impl_selector_type(__VA_ARGS__);
 
 }  // namespace ftrace
 
