@@ -93,7 +93,8 @@ VOID FunctionStackPush(const string *function_name,
 /**
  * Pop the name of a function from the function stack.
  */
-VOID FunctionStackPop(vector<string> *function_stack);
+VOID FunctionStackPop(const string *function_name,
+                      vector<string> *function_stack);
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream);
 

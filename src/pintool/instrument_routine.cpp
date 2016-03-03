@@ -90,6 +90,7 @@ VOID InstrumentFPOperations(const RTN rtn,
   }
   RTN_InsertCall(rtn, IPOINT_AFTER,
                  reinterpret_cast<AFUNPTR>(FunctionStackPop),
+                 IARG_PTR, &function_name,
                  IARG_PTR, &program_state.function_stack,
                  IARG_END);
   RTN_Close(rtn);
