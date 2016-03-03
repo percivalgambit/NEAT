@@ -71,11 +71,16 @@ VOID ReplaceMemoryFloatingPointInstruction(
 
 VOID FunctionStackPush(const string *function_name,
                        vector<string> *function_stack) {
-  function_stack->push_back(*function_name);
+  if (function_stack->empty() || function_stack->back() != *function_name) {
+    function_stack->push_back(*function_name);
+  }
 }
 
-VOID FunctionStackPop(vector<string> *function_stack) {
-  function_stack->pop_back();
+VOID FunctionStackPop(const string *function_name,
+                      vector<string> *function_stack) {
+  if (!function_stack->empty() && function_stack->back() == *function_name) {
+    function_stack->pop_back();
+  }
 }
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream) {
