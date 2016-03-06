@@ -3,8 +3,9 @@
 
 #include <pin.H>
 
+#include <string>
+
 #include "shared/floating_point_implementation.h"
-#include "shared/program_state.h"
 
 namespace ftrace {
 
@@ -25,14 +26,17 @@ class FloatingPointImplementationSelector {
    */
   virtual VOID ExitCallback(const INT32 &code) {}
 
+  virtual VOID OnFunctionStart(const string &function_name) {}
+
+  virtual VOID OnFunctionEnd(const string &function_name) {}
+
   /**
    * Performs floating-point arithmetic.
    * @param[in]    operation      the arithmetic operation to perform
    * @param[in]   replace_type   which replacement type to use
    * @returns the result of the floating-point operation.
    */
-  virtual FloatingPointImplementation *SelectFloatingPointImplementation(
-      const ProgramState &program_state) = 0;
+  virtual FloatingPointImplementation *SelectFloatingPointImplementation() = 0;
 };
 
 /**

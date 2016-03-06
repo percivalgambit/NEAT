@@ -5,15 +5,13 @@
 
 #include "shared/floating_point_implementation.h"
 #include "shared/floating_point_implementation_selector.h"
-#include "shared/program_state.h"
 
 namespace ftrace {
 
 template <class FloatingPointImpl>
 class SingleFloatingPointImplementationSelector : public FloatingPointImplementationSelector {
  public:
-  FloatingPointImplementation *SelectFloatingPointImplementation(
-      const ProgramState &program_state) override {
+  FloatingPointImplementation *SelectFloatingPointImplementation() override {
     return &floating_point_impl_;
   }
 

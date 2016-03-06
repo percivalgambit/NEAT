@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "shared/floating_point_implementation_selector.h"
-#include "shared/program_state.h"
 
 namespace ftrace {
 
@@ -53,7 +52,7 @@ VOID ExitCallback(const INT32 code, FloatingPointImplementationSelector *
  *                                     register
  */
 VOID ReplaceRegisterFloatingPointInstruction(
-    const ProgramState *program_state, const OPCODE operation,
+    const OPCODE operation,
     const REG operand1, const REG operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt);
@@ -79,22 +78,18 @@ VOID ReplaceRegisterFloatingPointInstruction(
  *                                     register
  */
 VOID ReplaceMemoryFloatingPointInstruction(
-    const ProgramState *program_state, const OPCODE operation,
+    const OPCODE operation,
     const REG operand1, const FLT32 *operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt);
 
-/**
- * Push the name of a function onto the function stack.
- */
-VOID FunctionStackPush(const string *function_name,
-                       vector<string> *function_stack);
+VOID EnterFunction(
+    const string *function_name,
+    FloatingPointImplementationSelector *floating_point_implementation_selector);
 
-/**
- * Pop the name of a function from the function stack.
- */
-VOID FunctionStackPop(const string *function_name,
-                      vector<string> *function_stack);
+VOID ExitFunction(
+    const string *function_name,
+    FloatingPointImplementationSelector *floating_point_implementation_selector);
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream);
 

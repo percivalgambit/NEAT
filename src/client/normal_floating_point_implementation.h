@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include "shared/floating_point_implementation.h"
-#include "shared/program_state.h"
 
 namespace ftrace {
 

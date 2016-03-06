@@ -6,7 +6,6 @@
 
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/floating_point_implementation_selector.h"
-#include "shared/program_state.h"
 
 namespace {
 
@@ -39,17 +38,15 @@ BOOL IsFpInstruction(const INS &ins) {
 
 namespace ftrace {
 
-static ProgramState program_state;
-
 VOID InstrumentFPOperations(const RTN rtn,
                             FloatingPointImplementationSelector
                                 *floating_point_implementation_selector) {
   RTN_Open(rtn);
   const string &function_name = RTN_Name(rtn);
   RTN_InsertCall(rtn, IPOINT_BEFORE,
-                 reinterpret_cast<AFUNPTR>(FunctionStackPush),
+                 reinterpret_cast<AFUNPTR>(EnterFunction),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &program_state.function_stack,
+                 IARG_PTR, floating_point_implementation_selector,
                  IARG_END);
 
   // Forward pass over all instructions in routine
@@ -67,7 +64,6 @@ VOID InstrumentFPOperations(const RTN rtn,
         INS_InsertCall(
             ins, IPOINT_BEFORE,
             reinterpret_cast<AFUNPTR>(ReplaceRegisterFloatingPointInstruction),
-            IARG_PTR, &program_state,
             IARG_UINT32, INS_Opcode(ins),
             IARG_UINT32, INS_OperandReg(ins, 0),
             IARG_UINT32, INS_OperandReg(ins, 1),
@@ -78,7 +74,6 @@ VOID InstrumentFPOperations(const RTN rtn,
         INS_InsertCall(
             ins, IPOINT_BEFORE,
             reinterpret_cast<AFUNPTR>(ReplaceMemoryFloatingPointInstruction),
-            IARG_PTR, &program_state,
             IARG_UINT32, INS_Opcode(ins),
             IARG_UINT32, INS_OperandReg(ins, 0),
             IARG_MEMORYREAD_EA,
@@ -89,9 +84,9 @@ VOID InstrumentFPOperations(const RTN rtn,
     }
   }
   RTN_InsertCall(rtn, IPOINT_AFTER,
-                 reinterpret_cast<AFUNPTR>(FunctionStackPop),
+                 reinterpret_cast<AFUNPTR>(ExitFunction),
                  IARG_PTR, &function_name,
-                 IARG_PTR, &program_state.function_stack,
+                 IARG_PTR, floating_point_implementation_selector,
                  IARG_END);
   RTN_Close(rtn);
 }
