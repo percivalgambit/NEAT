@@ -9,7 +9,6 @@
 
 #include "shared/floating_point_implementation.h"
 #include "shared/floating_point_implementation_selector.h"
-#include "shared/program_state.h"
 
 namespace {
 
@@ -36,7 +35,7 @@ VOID ExitCallback(const INT32 code,
 }
 
 VOID ReplaceRegisterFloatingPointInstruction(
-    const ProgramState *program_state, const OPCODE operation,
+    const OPCODE operation,
     const REG operand1, const REG operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt) {
@@ -45,8 +44,7 @@ VOID ReplaceRegisterFloatingPointInstruction(
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
   FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector->SelectFloatingPointImplementation(
-          *program_state);
+      floating_point_implementation_selector->SelectFloatingPointImplementation();
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *reg2.flt, operation);
@@ -54,33 +52,30 @@ VOID ReplaceRegisterFloatingPointInstruction(
 }
 
 VOID ReplaceMemoryFloatingPointInstruction(
-    const ProgramState *program_state, const OPCODE operation,
+    const OPCODE operation,
     const REG operand1, const FLT32 *operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector->SelectFloatingPointImplementation(
-          *program_state);
+      floating_point_implementation_selector->SelectFloatingPointImplementation();
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *operand2, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
-VOID FunctionStackPush(const string *function_name,
-                       vector<string> *function_stack) {
-  if (function_stack->empty() || function_stack->back() != *function_name) {
-    function_stack->push_back(*function_name);
-  }
+VOID EnterFunction(
+    const string *function_name,
+    FloatingPointImplementationSelector *floating_point_implementation_selector) {
+  floating_point_implementation_selector->OnFunctionStart(*function_name);
 }
 
-VOID FunctionStackPop(const string *function_name,
-                      vector<string> *function_stack) {
-  if (!function_stack->empty() && function_stack->back() == *function_name) {
-    function_stack->pop_back();
-  }
+VOID ExitFunction(
+    const string *function_name,
+    FloatingPointImplementationSelector *floating_point_implementation_selector) {
+  floating_point_implementation_selector->OnFunctionEnd(*function_name);
 }
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream) {
