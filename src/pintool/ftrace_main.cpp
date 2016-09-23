@@ -12,6 +12,7 @@
 
 #include <dlfcn.h>
 
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -19,15 +20,15 @@
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_callbacks.h"
 #include "shared/floating_point_implementation_selector.h"
+#include "shared/internal/fp_selector_registry.h"
 
 using ftrace::CloseOutputStream;
 using ftrace::ExitCallback;
 using ftrace::FloatingPointImplementationSelector;
+using ftrace::FpSelectorRegistry;
 using ftrace::InstrumentFPOperations;
 using ftrace::PrintFPOperations;
 using ftrace::StartCallback;
-
-namespace {
 
 KNOB<BOOL> KnobPrintFloatingPointOperations(
     KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "0",
@@ -37,9 +38,13 @@ KNOB<BOOL> KnobPrintFloatingPointOperations(
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "ftrace.out",
                             "specify file name for ftrace output");
 
-KNOB<string> KnobFloatingPointImplementationLibrary(
-    KNOB_MODE_OVERWRITE, "pintool", "floating_point_implementation_lib", "",
-    "specify library from which to load the floating point implementation");
+KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
+                                "fp_selector_name", "",
+                                "specify the name of the "
+                                "FloatingPointImplementationSelector to use "
+                                "when instrumenting an application");
+
+namespace {
 
 /**
  *  Prints out a help message.
@@ -54,6 +59,10 @@ INT32 Usage() {
   return -1;
 }
 
+#ifndef FP_SELECTOR_REGISTRY_LIB_PATH
+#error FP_SELECTOR_REGISTRY_LIB_PATH must be defined.
+#endif
+
 #define TOKEN_TO_STRING(str) #str
 #define MACRO_TO_STRING(str) TOKEN_TO_STRING(str)
 /**
@@ -62,28 +71,25 @@ INT32 Usage() {
  * @param[in]   floating_point_impl_lib_name      name of the library to open
  * @returns the loaded floating-point implementation
  */
-FloatingPointImplementationSelector *
-GetFloatingPointImplementationSelectorOrDie(
-    const string &floating_point_impl_lib_name) {
-  void *floating_point_impl_lib =
-      dlopen(floating_point_impl_lib_name.c_str(), RTLD_LAZY);
-  if (floating_point_impl_lib == nullptr) {
-    cerr << "No shared library " << floating_point_impl_lib_name << " found"
-         << endl;
+FpSelectorRegistry *GetFpSelectorRegistryOrDie() {
+  void *fp_selector_registry_lib =
+      dlopen(MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH), RTLD_LAZY);
+  if (fp_selector_registry_lib == nullptr) {
+    cerr << "No shared library "
+         << MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH) << " found" << endl;
+    cerr << "Please run 'make clean' then 'make' to fix" << endl;
     exit(1);
   }
 
-  void *floating_point_impl_selector =
-      dlsym(floating_point_impl_lib,
-            MACRO_TO_STRING(FLOATING_POINT_IMPL_SELECTOR_NAME));
-  if (floating_point_impl_selector == nullptr) {
-    cerr << "No registered floating-point implementation found. "
-            "Make sure REGISTER_FLOATING_POINT_IMPL is called in "
-         << floating_point_impl_lib_name << endl;
+  void *fp_selector_registry = dlsym(
+      fp_selector_registry_lib, MACRO_TO_STRING(FP_SELECTOR_REGISTRY_NAME));
+  if (fp_selector_registry_lib == nullptr) {
+    cerr << "No registry found in "
+         << MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH) << endl;
+    cerr << "Please run 'make clean' then 'make' to fix" << endl;
     exit(1);
   }
-  return static_cast<FloatingPointImplementationSelector *>(
-      floating_point_impl_selector);
+  return static_cast<FpSelectorRegistry *>(fp_selector_registry);
 }
 #undef TOKEN_TO_STRING
 #undef MACRO_TO_STRING
@@ -106,13 +112,12 @@ int main(int argc, char *argv[]) {
     return Usage();
   }
 
-  const string &floating_point_impl_lib_name =
-      KnobFloatingPointImplementationLibrary.Value();
-  if (!floating_point_impl_lib_name.empty()) {
+  const FpSelectorRegistry *fp_selector_registry = GetFpSelectorRegistryOrDie();
+  const string &fp_selector_name = KnobFpSelectorName.Value();
+  if (!fp_selector_name.empty()) {
     FloatingPointImplementationSelector
         *floating_point_implementation_selector =
-            GetFloatingPointImplementationSelectorOrDie(
-                floating_point_impl_lib_name);
+            fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
 
     PIN_AddApplicationStartFunction(
         reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
@@ -127,7 +132,7 @@ int main(int argc, char *argv[]) {
   const BOOL &print_floating_point_ops =
       KnobPrintFloatingPointOperations.Value();
   if (print_floating_point_ops) {
-    ofstream *output_stream = new ofstream(output_file_name);
+    ofstream *output_stream = new ofstream(output_file_name.c_str());
     cerr << "===============================================" << endl
          << "See file " << output_file_name << " for analysis results" << endl
          << "===============================================" << endl;

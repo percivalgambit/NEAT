@@ -39,23 +39,6 @@ class FloatingPointImplementationSelector {
   virtual FloatingPointImplementation *SelectFloatingPointImplementation() = 0;
 };
 
-/**
- * The name of the symbol which stores the floating-point implementation
- * selector that should be used when instrumenting an application.
- */
-#define FLOATING_POINT_IMPL_SELECTOR_NAME floating_point_impl_selector
-
-/**
- * Registers the given floating-point implementation in a library so that the
- * pintool can load it from that library. Only one floating-point
- * implementation can be registered in a single library.
- * @param[in]   floating_point_impl_type   name of the floating-point
- *                                         implementation to register
- */
-#define REGISTER_FLOATING_POINT_IMPL_SELECTOR(floating_point_impl_selector_type, ...)  \
-  extern "C" floating_point_impl_selector_type FLOATING_POINT_IMPL_SELECTOR_NAME; \
-  floating_point_impl_selector_type FLOATING_POINT_IMPL_SELECTOR_NAME = floating_point_impl_selector_type(__VA_ARGS__);
-
 }  // namespace ftrace
 
 #endif  // SHARED_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
