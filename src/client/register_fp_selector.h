@@ -8,7 +8,7 @@
 namespace ftrace {
 
 template <typename FpSelector>
-class ReigsterFpSelector {
+struct RegisterFpSelector {
  public:
   RegisterFpSelector(const string &fp_selector_name) {
     FpSelectorRegistry::GetFpSelectorRegistry()->RegisterFpSelector(

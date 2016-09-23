@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+#include "client/register_fp_selector.h"
 #include "shared/floating_point_implementation.h"
 
 namespace ftrace {
