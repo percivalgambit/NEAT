@@ -1,5 +1,7 @@
 #include "shared/internal/fp_selector_registry.h"
 
+#include <pin.H>
+
 #include <cstdlib>
 #include <iostream>
 #include <string>

@@ -80,7 +80,7 @@ LIB_ROOTS :=
 
 %.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE) dlls
-	$(PIN) -ifeellucky -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
@@ -111,7 +111,7 @@ FP_SELECTOR_REGISTRY_LIB_BASE := ftrace_fp_selector_registry
 FP_SELECTOR_REGISTRY_LIB := $(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
 
 # Adds project-specific compiler flags
-TOOL_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=2 -DFP_SELECTOR_REGISTRY_LIB_PATH=$(FP_SELECTOR_REGISTRY_LIB) -MMD -MP -std=gnu++11 -Isrc/
+TOOL_CXXFLAGS += -DFP_SELECTOR_REGISTRY_LIB_PATH=$(FP_SELECTOR_REGISTRY_LIB) -MMD -MP -Isrc/
 
 ###### Special objects' build rules ######
 
@@ -136,16 +136,16 @@ $(PINTOOL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
 
 # Compiles sources shared by the pintool and user libraries
 $(SHARED_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(SHARED_INTERNAL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/internal/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(CLIENT_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(TEST_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): tests/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # Tracks header dependencies for future recompilation
 $(OBJDIR)%.d: %.cpp
@@ -166,9 +166,8 @@ $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_app/sse_sample_app.
 
 # Compiles a user library that can be used as a floating point implementation
 # during instrumentation
-.PHONY: $(FP_SELECTOR_REGISTRY_LIB)
 $(FP_SELECTOR_REGISTRY_LIB): $(FP_SELECTOR_REGISTRY_OBJS)
-	$(APP_CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(APP_LIBS)
+	$(APP_CXX) $(APP_CXXFLAGS) $(DLL_CXXFLAGS) $(TOOL_LDFLAGS) $(COMP_EXE)$@ $^ -Wl,-z,defs $(APP_LDFLAGS) $(DLL_LDFLAGS) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ifdef TEST
 
