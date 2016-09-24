@@ -149,7 +149,8 @@ $(TEST_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): tests/%.cpp
 
 # Tracks header dependencies for future recompilation
 $(OBJDIR)%.d: %.cpp
-	-include $(OBJDIR)*.d
+
+-include $(OBJDIR)*.d
 
 ###### Special tools' build rules ######
 
