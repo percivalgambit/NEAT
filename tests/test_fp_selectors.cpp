@@ -62,7 +62,7 @@ static const pair<string, FloatingPointImplementation *>
                                         {"helper2", &simple},
                                         {"nested_helper", &complex}};
 static const int test_nested_function_level_map_size =
-    sizeof(test_simple_function_level_map) /
+    sizeof(test_nested_function_level_map) /
     sizeof(test_nested_function_level_map[0]);
 
 static RegisterSingleFpImplementationSelector<TestSimpleFpImplementation>
@@ -73,7 +73,7 @@ static RegisterFunctionLevelFpSelector test_simple_function_level(
     test_simple_function_level_map, test_simple_function_level_map_size,
     &normal, "test_simple_function_level");
 static RegisterFunctionLevelFpSelector test_nested_function_level(
-    test_nested_function_level_map, test_simple_function_level_map_size,
+    test_nested_function_level_map, test_nested_function_level_map_size,
     &normal, "test_nested_function_level");
 
 }  // namespace ftrace
