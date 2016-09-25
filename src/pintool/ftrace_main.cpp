@@ -10,25 +10,23 @@
 
 #include <pin.H>
 
-#include <dlfcn.h>
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
 
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/registry/internal/fp_selector_registry.h"
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_callbacks.h"
-#include "shared/floating_point_implementation_selector.h"
-#include "shared/internal/fp_selector_registry.h"
 
 using ftrace::CloseOutputStream;
 using ftrace::ExitCallback;
 using ftrace::FloatingPointImplementationSelector;
-using ftrace::FpSelectorRegistry;
 using ftrace::InstrumentFPOperations;
 using ftrace::PrintFPOperations;
 using ftrace::StartCallback;
+using ftrace::internal::FpSelectorRegistry;
 
 KNOB<BOOL> KnobPrintFloatingPointOperations(
     KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "0",
@@ -59,41 +57,6 @@ INT32 Usage() {
   return -1;
 }
 
-#ifndef FP_SELECTOR_REGISTRY_LIB_PATH
-#error FP_SELECTOR_REGISTRY_LIB_PATH must be defined.
-#endif
-
-#define TOKEN_TO_STRING(str) #str
-#define MACRO_TO_STRING(str) TOKEN_TO_STRING(str)
-/**
- * Loads the floating point implementation from the library with the given
- * name or crashes the program if an error occurs.
- * @param[in]   floating_point_impl_lib_name      name of the library to open
- * @returns the loaded floating-point implementation
- */
-FpSelectorRegistry *GetFpSelectorRegistryOrDie() {
-  void *fp_selector_registry_lib =
-      dlopen(MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH), RTLD_LAZY);
-  if (fp_selector_registry_lib == nullptr) {
-    cerr << "No shared library "
-         << MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH) << " found" << endl;
-    cerr << "Please run 'make clean' then 'make' to fix" << endl;
-    exit(1);
-  }
-
-  void *fp_selector_registry = dlsym(
-      fp_selector_registry_lib, MACRO_TO_STRING(FP_SELECTOR_REGISTRY_NAME));
-  if (fp_selector_registry_lib == nullptr) {
-    cerr << "No registry found in "
-         << MACRO_TO_STRING(FP_SELECTOR_REGISTRY_LIB_PATH) << endl;
-    cerr << "Please run 'make clean' then 'make' to fix" << endl;
-    exit(1);
-  }
-  return static_cast<FpSelectorRegistry *>(fp_selector_registry);
-}
-#undef TOKEN_TO_STRING
-#undef MACRO_TO_STRING
-
 }  // namespace
 
 /**
@@ -112,7 +75,8 @@ int main(int argc, char *argv[]) {
     return Usage();
   }
 
-  const FpSelectorRegistry *fp_selector_registry = GetFpSelectorRegistryOrDie();
+  const FpSelectorRegistry *fp_selector_registry =
+      FpSelectorRegistry::GetFpSelectorRegistry();
   const string &fp_selector_name = KnobFpSelectorName.Value();
   if (!fp_selector_name.empty()) {
     FloatingPointImplementationSelector

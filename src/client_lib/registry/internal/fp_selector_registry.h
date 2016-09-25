@@ -1,14 +1,15 @@
-#ifndef SHARED_INTERNAL_FP_SELECTOR_REGISTRY_H_
-#define SHARED_INTERNAL_FP_SELECTOR_REGISTRY_H_
+#ifndef CLIENT_LIB_REGISTRY_INTERNAL_FP_SELECTOR_REGISTRY_H_
+#define CLIENT_LIB_REGISTRY_INTERNAL_FP_SELECTOR_REGISTRY_H_
 
 #include <pin.H>
 
 #include <string>
 #include <unordered_map>
 
-#include "shared/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
 
 namespace ftrace {
+namespace internal {
 
 class FpSelectorRegistry {
  public:
@@ -24,8 +25,7 @@ class FpSelectorRegistry {
   unordered_map<string, FloatingPointImplementationSelector *> fp_selector_map_;
 };
 
-#define FP_SELECTOR_REGISTRY_NAME fp_selector_registry_obj
-
+}  // namespace internal
 }  // namespace ftrace
 
-#endif  // SHARED_INTERNAL_FP_SELECTOR_REGISTRY_H_
+#endif  // CLIENT_LIB_REGISTRY_INTERNAL_FP_SELECTOR_REGISTRY_H_

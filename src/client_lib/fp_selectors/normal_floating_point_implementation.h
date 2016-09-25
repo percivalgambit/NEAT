@@ -1,12 +1,12 @@
-#ifndef CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
-#define CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#ifndef CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#define CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
 
 #include <pin.H>
 
 #include <iostream>
 
-#include "client/register_fp_selector.h"
-#include "shared/floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/registry/register_fp_selector.h"
 
 namespace ftrace {
 
@@ -37,4 +37,4 @@ class NormalFloatingPointImplementation : public FloatingPointImplementation {
 
 }  // namespace ftrace
 
-#endif  // CLIENT_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#endif  // CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_

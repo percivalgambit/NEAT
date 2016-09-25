@@ -78,8 +78,8 @@ LIB_ROOTS :=
 %.test: TEST_APP              = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: TEST_IMPL_LIB_SRC_DIR = tests/test_floating_point_implementations
 
-%.test: $(OBJDIR)ftrace$(PINTOOL_SUFFIX) $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-	$(MAKE) dlls
+%.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
+	$(MAKE)
 	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
@@ -111,37 +111,36 @@ FP_SELECTOR_REGISTRY_LIB_BASE := ftrace_fp_selector_registry
 FP_SELECTOR_REGISTRY_LIB := $(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
 
 # Adds project-specific compiler flags
-TOOL_CXXFLAGS += -DFP_SELECTOR_REGISTRY_LIB_PATH=$(FP_SELECTOR_REGISTRY_LIB) -MMD -MP -Isrc/
+TOOL_CXXFLAGS += -MMD -MP -Isrc/
 
 ###### Special objects' build rules ######
 
 PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
-SHARED_SRCS := $(notdir $(wildcard src/shared/*.cpp))
-SHARED_INTERNAL_SRCS := $(notdir $(wildcard src/shared/internal/*.cpp))
-CLIENT_SRCS := $(notdir $(wildcard src/client/*.cpp))
+REGISTRY_SRCS := $(notdir $(wildcard src/client_lib/registry/*.cpp))
+REGISTRY_INTERNAL_SRCS := $(notdir $(wildcard src/client_lib/registry/internal/*.cpp))
+FP_SELECTORS_SRCS := $(notdir $(wildcard src/client_lib/fp_selectors/*.cpp))
 TEST_SRCS := $(notdir $(wildcard tests/*.cpp))
 
 PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
-SHARED_OBJS := $(addprefix $(OBJDIR),$(SHARED_SRCS:.cpp=$(OBJ_SUFFIX)))
-SHARED_INTERNAL_OBJS := $(addprefix $(OBJDIR),$(SHARED_INTERNAL_SRCS:.cpp=$(OBJ_SUFFIX)))
-CLIENT_OBJS := $(addprefix $(OBJDIR),$(CLIENT_SRCS:.cpp=$(OBJ_SUFFIX)))
+REGISTRY_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_SRCS:.cpp=$(OBJ_SUFFIX)))
+REGISTRY_INTERNAL_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_INTERNAL_SRCS:.cpp=$(OBJ_SUFFIX)))
+FP_SELECTORS_OBJS := $(addprefix $(OBJDIR),$(FP_SELECTORS_SRCS:.cpp=$(OBJ_SUFFIX)))
 TEST_OBJS := $(addprefix $(OBJDIR),$(TEST_SRCS:.cpp=$(OBJ_SUFFIX)))
 
-FTRACE_OBJS := $(PINTOOL_OBJS) $(SHARED_OBJS) $(SHARED_INTERNAL_OBJS)
-FP_SELECTOR_REGISTRY_OBJS := $(SHARED_OBJS) $(SHARED_INTERNAL_OBJS) $(CLIENT_OBJS)
+FTRACE_OBJS := $(PINTOOL_OBJS)
+CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS)
 
 # Compiles pintool-specific sources
-$(PINTOOL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+$(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-# Compiles sources shared by the pintool and user libraries
-$(SHARED_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/%.cpp
+$(REGISTRY_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/registry/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(SHARED_INTERNAL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/shared/internal/%.cpp
+$(REGISTRY_INTERNAL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/registry/internal/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(CLIENT_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client/%.cpp
+$(FP_SELECTORS_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/fp_selectors/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 $(TEST_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): tests/%.cpp
@@ -154,7 +153,7 @@ $(OBJDIR)%.d: %.cpp
 
 ###### Special tools' build rules ######
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) $(FP_SELECTOR_REGISTRY_LIB)
 	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
@@ -167,8 +166,8 @@ $(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_app/sse_sample_app.
 
 # Compiles a user library that can be used as a floating point implementation
 # during instrumentation
-$(FP_SELECTOR_REGISTRY_LIB): $(FP_SELECTOR_REGISTRY_OBJS)
-	$(APP_CXX) $(APP_CXXFLAGS) $(DLL_CXXFLAGS) $(TOOL_LDFLAGS) $(COMP_EXE)$@ $^ -Wl,-z,defs $(APP_LDFLAGS) $(DLL_LDFLAGS) $(TOOL_LPATHS) $(TOOL_LIBS)
+$(FP_SELECTOR_REGISTRY_LIB): $(CLIENT_LIB_OBJS)
+	$(APP_CXX) $(APP_CXXFLAGS) $(DLL_CXXFLAGS) -Wl,--hash-style=sysv $(COMP_EXE)$@ $^ $(APP_LDFLAGS) $(DLL_LDFLAGS) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ifdef TEST
 

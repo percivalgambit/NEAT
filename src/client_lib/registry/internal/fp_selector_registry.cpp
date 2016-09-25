@@ -1,4 +1,4 @@
-#include "shared/internal/fp_selector_registry.h"
+#include "client_lib/registry/internal/fp_selector_registry.h"
 
 #include <pin.H>
 
@@ -6,14 +6,14 @@
 #include <iostream>
 #include <string>
 
-#include "shared/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
 
 namespace ftrace {
+namespace internal {
 
-extern "C" FpSelectorRegistry FP_SELECTOR_REGISTRY_NAME;
-FpSelectorRegistry FP_SELECTOR_REGISTRY_NAME;
+static FpSelectorRegistry fp_selector_registry_obj;
 FpSelectorRegistry *FpSelectorRegistry::GetFpSelectorRegistry() {
-  return &FP_SELECTOR_REGISTRY_NAME;
+  return &fp_selector_registry_obj;
 }
 
 VOID FpSelectorRegistry::RegisterFpSelector(
@@ -39,4 +39,5 @@ FloatingPointImplementationSelector *FpSelectorRegistry::GetFpSelectorOrDie(
   return fp_selector_map_.find(fp_selector_name)->second;
 }
 
+}  // namespace internal
 }  // namespace ftrace

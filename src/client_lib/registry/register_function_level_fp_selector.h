@@ -1,5 +1,5 @@
-#ifndef CLIENT_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
-#define CLIENT_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
+#ifndef CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
+#define CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
 
 #include <pin.H>
 
@@ -7,9 +7,9 @@
 #include <string>
 #include <utility>
 
-#include "client/register_initialized_fp_selector.h"
-#include "shared/floating_point_implementation.h"
-#include "shared/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/registry/register_initialized_fp_selector.h"
 
 namespace ftrace {
 namespace internal {
@@ -73,4 +73,4 @@ class RegisterFunctionLevelFpSelector {
 
 }  // namespace ftrace
 
-#endif  // CLIENT_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
+#endif  // CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_

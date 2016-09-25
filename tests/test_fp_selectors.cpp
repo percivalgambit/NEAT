@@ -3,10 +3,10 @@
 #include <iostream>
 #include <utility>
 
-#include "client/normal_floating_point_implementation.h"
-#include "client/register_function_level_fp_selector.h"
-#include "client/register_single_fp_implementation_selector.h"
-#include "shared/floating_point_implementation.h"
+#include "client_lib/fp_selectors/normal_floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/registry/register_function_level_fp_selector.h"
+#include "client_lib/registry/register_single_fp_implementation_selector.h"
 
 namespace ftrace {
 

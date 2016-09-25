@@ -2,15 +2,13 @@
 
 #include <pin.H>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
-#include "shared/floating_point_implementation.h"
-#include "shared/floating_point_implementation_selector.h"
-
-namespace {
+#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
 
 /*!
  * Convert a FLT32 variable into the string representation of its value in hex.
@@ -18,8 +16,6 @@ namespace {
  */
 #define FLT32_TO_HEX(fp) \
   StringHex(*reinterpret_cast<const UINT32 *>(&fp), 8, FALSE)
-
-}  // namespace
 
 namespace ftrace {
 
@@ -35,8 +31,7 @@ VOID ExitCallback(const INT32 code,
 }
 
 VOID ReplaceRegisterFloatingPointInstruction(
-    const OPCODE operation,
-    const REG operand1, const REG operand2,
+    const OPCODE operation, const REG operand1, const REG operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt) {
   PIN_REGISTER reg1, reg2, result;
@@ -44,7 +39,8 @@ VOID ReplaceRegisterFloatingPointInstruction(
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
   FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector->SelectFloatingPointImplementation();
+      floating_point_implementation_selector
+          ->SelectFloatingPointImplementation();
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *reg2.flt, operation);
@@ -52,29 +48,29 @@ VOID ReplaceRegisterFloatingPointInstruction(
 }
 
 VOID ReplaceMemoryFloatingPointInstruction(
-    const OPCODE operation,
-    const REG operand1, const FLT32 *operand2,
+    const OPCODE operation, const REG operand1, const FLT32 *operand2,
     FloatingPointImplementationSelector *floating_point_implementation_selector,
     CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector->SelectFloatingPointImplementation();
+      floating_point_implementation_selector
+          ->SelectFloatingPointImplementation();
 
   *result.flt = floating_point_implementation->FloatingPointOperation(
       *reg1.flt, *operand2, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
-VOID EnterFunction(
-    const string *function_name,
-    FloatingPointImplementationSelector *floating_point_implementation_selector) {
+VOID EnterFunction(const string *function_name,
+                   FloatingPointImplementationSelector
+                       *floating_point_implementation_selector) {
   floating_point_implementation_selector->OnFunctionStart(*function_name);
 }
 
-VOID ExitFunction(
-    const string *function_name,
-    FloatingPointImplementationSelector *floating_point_implementation_selector) {
+VOID ExitFunction(const string *function_name,
+                  FloatingPointImplementationSelector
+                      *floating_point_implementation_selector) {
   floating_point_implementation_selector->OnFunctionEnd(*function_name);
 }
 

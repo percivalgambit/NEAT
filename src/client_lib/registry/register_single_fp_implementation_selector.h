@@ -1,11 +1,13 @@
-#ifndef CLIENT_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_
-#define CLIENT_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_
+#ifndef CLIENT_LIB_REGISTRY_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_
+#define CLIENT_LIB_REGISTRY_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_
 
 #include <pin.H>
 
-#include "client/register_fp_selector.h"
-#include "shared/floating_point_implementation.h"
-#include "shared/floating_point_implementation_selector.h"
+#include <string>
+
+#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/registry/register_fp_selector.h"
 
 namespace ftrace {
 namespace internal {
@@ -27,7 +29,8 @@ class SingleFpImplementationSelector
 template <typename FpImpl>
 class RegisterSingleFpImplementationSelector {
  public:
-  RegisterSingleFpImplementationSelector(const string &fp_selector_name)
+  explicit RegisterSingleFpImplementationSelector(
+      const string &fp_selector_name)
       : fp_selector_(fp_selector_name) {}
 
  private:
@@ -37,4 +40,4 @@ class RegisterSingleFpImplementationSelector {
 
 }  // namespace ftrace
 
-#endif  // CLIENT_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_
+#endif  // CLIENT_LIB_REGISTRY_REGISTER_SINGLE_FP_IMPLEMENTATION_SELECTOR_H_

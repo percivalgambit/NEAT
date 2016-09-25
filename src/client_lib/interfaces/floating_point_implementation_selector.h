@@ -1,11 +1,11 @@
-#ifndef SHARED_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
-#define SHARED_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
+#ifndef CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
+#define CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
 
 #include <pin.H>
 
 #include <string>
 
-#include "shared/floating_point_implementation.h"
+#include "client_lib/interfaces/floating_point_implementation.h"
 
 namespace ftrace {
 
@@ -41,4 +41,4 @@ class FloatingPointImplementationSelector {
 
 }  // namespace ftrace
 
-#endif  // SHARED_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
+#endif  // CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
