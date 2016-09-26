@@ -158,8 +158,8 @@ $(OBJDIR)%.d: %.cpp
 
 ###### Special tools' build rules ######
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) $(FP_SELECTOR_REGISTRY_LIB)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) | $(FP_SELECTOR_REGISTRY_LIB)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(FP_SELECTOR_REGISTRY_LIB) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
 
