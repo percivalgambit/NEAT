@@ -16,22 +16,20 @@ namespace ftrace {
  */
 class NormalFpImplementation : public FpImplementation {
  public:
-  FLT32 FpOperation(const FLT32 &operand1, const FLT32 &operand2,
-                    const OPCODE &operation) {
-    switch (operation) {
-      case XED_ICLASS_ADDSS:
-        return operand1 + operand2;
-      case XED_ICLASS_SUBSS:
-        return operand1 - operand2;
-      case XED_ICLASS_MULSS:
-        return operand1 * operand2;
-      case XED_ICLASS_DIVSS:
-        return operand1 / operand2;
-      default:
-        cerr << "Unexpected opcode " << operation << "encountered when "
-             << "replacing floating-point instructions" << endl;
-        return operand1;
-    }
+  FLT32 FpAdd(const FLT32 &operand1, const FLT32 &operand2) {
+    return operand1 + operand2;
+  }
+
+  FLT32 FpSub(const FLT32 &operand1, const FLT32 &operand2) {
+    return operand1 - operand2;
+  }
+
+  FLT32 FpMul(const FLT32 &operand1, const FLT32 &operand2) {
+    return operand1 * operand2;
+  }
+
+  FLT32 FpDiv(const FLT32 &operand1, const FLT32 &operand2) {
+    return operand1 / operand2;
   }
 };
 
