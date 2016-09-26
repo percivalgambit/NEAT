@@ -1,11 +1,11 @@
-#ifndef CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
-#define CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#ifndef CLIENT_LIB_FP_SELECTORS_NORMAL_FP_IMPLEMENTATION_H_
+#define CLIENT_LIB_FP_SELECTORS_NORMAL_FP_IMPLEMENTATION_H_
 
 #include <pin.H>
 
 #include <iostream>
 
-#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/registry/register_fp_selector.h"
 
 namespace ftrace {
@@ -14,10 +14,10 @@ namespace ftrace {
  * A default implementation of floating-point arithmetic that performs each
  * operation normally.
  */
-class NormalFloatingPointImplementation : public FloatingPointImplementation {
+class NormalFpImplementation : public FpImplementation {
  public:
-  FLT32 FloatingPointOperation(const FLT32 &operand1, const FLT32 &operand2,
-                               const OPCODE &operation) {
+  FLT32 FpOperation(const FLT32 &operand1, const FLT32 &operand2,
+                    const OPCODE &operation) {
     switch (operation) {
       case XED_ICLASS_ADDSS:
         return operand1 + operand2;
@@ -37,4 +37,4 @@ class NormalFloatingPointImplementation : public FloatingPointImplementation {
 
 }  // namespace ftrace
 
-#endif  // CLIENT_LIB_FP_SELECTORS_NORMAL_FLOATING_POINT_IMPLEMENTATION_H_
+#endif  // CLIENT_LIB_FP_SELECTORS_NORMAL_FP_IMPLEMENTATION_H_

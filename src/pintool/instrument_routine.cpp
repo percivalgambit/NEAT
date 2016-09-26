@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 #include "pintool/instrumentation_callbacks.h"
 
 namespace {
@@ -38,14 +38,17 @@ BOOL IsFpInstruction(const INS &ins) {
 
 namespace ftrace {
 
-VOID InstrumentFPOperations(const RTN rtn,
-                            FloatingPointImplementationSelector
-                                *floating_point_implementation_selector) {
+VOID InstrumentFpOperations(const RTN rtn, FpSelector *fp_selector) {
   RTN_Open(rtn);
   const string &function_name = RTN_Name(rtn);
-  RTN_InsertCall(rtn, IPOINT_BEFORE, reinterpret_cast<AFUNPTR>(EnterFunction),
-                 IARG_PTR, &function_name, IARG_PTR,
-                 floating_point_implementation_selector, IARG_END);
+  // clang-format off
+  RTN_InsertCall(
+      rtn, IPOINT_BEFORE,
+      reinterpret_cast<AFUNPTR>(EnterFunction),
+      IARG_PTR, &function_name,
+      IARG_PTR, fp_selector,
+      IARG_END);
+  // clang-format on
 
   // Forward pass over all instructions in routine
   for (INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
@@ -59,50 +62,79 @@ VOID InstrumentFPOperations(const RTN rtn,
       INS_Delete(ins);
       if (INS_OperandIsReg(ins, 1)) {
         REGSET_Insert(regs_in, INS_OperandReg(ins, 1));
+        // clang-format off
         INS_InsertCall(
             ins, IPOINT_BEFORE,
-            reinterpret_cast<AFUNPTR>(ReplaceRegisterFloatingPointInstruction),
-            IARG_UINT32, INS_Opcode(ins), IARG_UINT32, INS_OperandReg(ins, 0),
-            IARG_UINT32, INS_OperandReg(ins, 1), IARG_PTR,
-            floating_point_implementation_selector, IARG_PARTIAL_CONTEXT,
-            &regs_in, &regs_out, IARG_END);
+            reinterpret_cast<AFUNPTR>(ReplaceRegisterFpInstruction),
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_UINT32, INS_OperandReg(ins, 1),
+            IARG_PTR, fp_selector,
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
+        // clang-format on
       } else {
+        // clang-format off
         INS_InsertCall(
             ins, IPOINT_BEFORE,
-            reinterpret_cast<AFUNPTR>(ReplaceMemoryFloatingPointInstruction),
-            IARG_UINT32, INS_Opcode(ins), IARG_UINT32, INS_OperandReg(ins, 0),
-            IARG_MEMORYREAD_EA, IARG_PTR,
-            floating_point_implementation_selector, IARG_PARTIAL_CONTEXT,
-            &regs_in, &regs_out, IARG_END);
+            reinterpret_cast<AFUNPTR>(ReplaceMemoryFpInstruction),
+            IARG_UINT32, INS_Opcode(ins),
+            IARG_UINT32, INS_OperandReg(ins, 0),
+            IARG_MEMORYREAD_EA,
+            IARG_PTR, fp_selector,
+            IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
+            IARG_END);
+        // clang-format on
       }
     }
   }
-  RTN_InsertCall(rtn, IPOINT_AFTER, reinterpret_cast<AFUNPTR>(ExitFunction),
-                 IARG_PTR, &function_name, IARG_PTR,
-                 floating_point_implementation_selector, IARG_END);
+  // clang-format off
+  RTN_InsertCall(
+      rtn, IPOINT_AFTER,
+      reinterpret_cast<AFUNPTR>(ExitFunction),
+      IARG_PTR, &function_name,
+      IARG_PTR, fp_selector,
+      IARG_END);
+  // clang-format on
   RTN_Close(rtn);
 }
 
-VOID PrintFPOperations(const INS ins, ofstream *output_stream) {
+VOID PrintFpOperations(const INS ins, ofstream *output_stream) {
   if (IsFpInstruction(ins)) {
     if (INS_OperandIsReg(ins, 1)) {
-      INS_InsertCall(ins, IPOINT_BEFORE,
-                     reinterpret_cast<AFUNPTR>(PrintRegisterFPOperands),
-                     IARG_UINT32, INS_Opcode(ins), IARG_REG_CONST_REFERENCE,
-                     INS_OperandReg(ins, 0), IARG_REG_CONST_REFERENCE,
-                     INS_OperandReg(ins, 1), IARG_PTR, output_stream,
-                     IARG_CALL_ORDER, CALL_ORDER_FIRST, IARG_END);
-    } else {
+      // clang-format off
       INS_InsertCall(
-          ins, IPOINT_BEFORE, reinterpret_cast<AFUNPTR>(PrintMemoryFPOperands),
-          IARG_UINT32, INS_Opcode(ins), IARG_REG_CONST_REFERENCE,
-          INS_OperandReg(ins, 0), IARG_MEMORYREAD_EA, IARG_PTR, output_stream,
-          IARG_CALL_ORDER, CALL_ORDER_FIRST, IARG_END);
+          ins, IPOINT_BEFORE,
+          reinterpret_cast<AFUNPTR>(PrintRegisterFpOperands),
+          IARG_UINT32, INS_Opcode(ins),
+          IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
+          IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 1),
+          IARG_PTR, output_stream,
+          IARG_CALL_ORDER, CALL_ORDER_FIRST,
+          IARG_END);
+      // clang-format on
+    } else {
+      // clang-format off
+      INS_InsertCall(
+          ins, IPOINT_BEFORE,
+          reinterpret_cast<AFUNPTR>(PrintMemoryFpOperands),
+          IARG_UINT32, INS_Opcode(ins),
+          IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
+          IARG_MEMORYREAD_EA,
+          IARG_PTR, output_stream,
+          IARG_CALL_ORDER, CALL_ORDER_FIRST,
+          IARG_END);
+      // clang-format on
     }
 
-    INS_InsertCall(ins, IPOINT_AFTER, reinterpret_cast<AFUNPTR>(PrintFPResult),
-                   IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0), IARG_PTR,
-                   output_stream, IARG_END);
+    // clang-format off
+    INS_InsertCall(
+        ins, IPOINT_AFTER,
+        reinterpret_cast<AFUNPTR>(PrintFpResult),
+        IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
+        IARG_PTR, output_stream,
+        IARG_END);
+    // clang-format on
   }
 }
 

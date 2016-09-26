@@ -73,7 +73,7 @@ LIB_ROOTS :=
 %.test: EXPECTED_STDOUT       = tests/integration/$(@:.test=.stdout.reference)
 %.test: ACTUAL_TOOL_OUTPUT    = $(@:.test=.out)
 %.test: ACTUAL_STDOUT         = $(@:.test=.stdout.out)
-%.test: FTRACE_TEST_FLAGS     = -print_floating_point_operations -o $(ACTUAL_TOOL_OUTPUT)
+%.test: FTRACE_TEST_FLAGS     = -print_fp_ops -o $(ACTUAL_TOOL_OUTPUT)
 %.test: FTRACE_TOOL           = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP              = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: TEST_IMPL_LIB_SRC_DIR = tests/test_floating_point_implementations
@@ -86,7 +86,7 @@ LIB_ROOTS :=
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 	$(RM) $(FP_SELECTOR_REGISTRY_LIB)
 
-ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
+ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_fp_ops
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
 
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple

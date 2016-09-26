@@ -1,5 +1,5 @@
-#ifndef CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_H_
-#define CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_H_
+#ifndef CLIENT_LIB_INTERFACES_FP_IMPLEMENTATION_H_
+#define CLIENT_LIB_INTERFACES_FP_IMPLEMENTATION_H_
 
 #include <pin.H>
 
@@ -9,7 +9,7 @@ namespace ftrace {
  * Implementation of floating-point arithmetic to be used in the ftrace
  * instrumentation tool.
  */
-class FloatingPointImplementation {
+class FpImplementation {
  public:
   /**
    * Performs floating-point arithmetic.
@@ -17,11 +17,10 @@ class FloatingPointImplementation {
    * @param[in]   replace_type   which replacement type to use
    * @returns the result of the floating-point operation.
    */
-  virtual FLT32 FloatingPointOperation(const FLT32 &operand1,
-                                       const FLT32 &operand2,
-                                       const OPCODE &operation) = 0;
+  virtual FLT32 FpOperation(const FLT32 &operand1, const FLT32 &operand2,
+                            const OPCODE &operation) = 0;
 };
 
 }  // namespace ftrace
 
-#endif  // CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_H_
+#endif  // CLIENT_LIB_INTERFACES_FP_IMPLEMENTATION_H_

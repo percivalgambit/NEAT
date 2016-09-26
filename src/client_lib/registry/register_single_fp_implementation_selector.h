@@ -5,23 +5,20 @@
 
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation.h"
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/register_fp_selector.h"
 
 namespace ftrace {
 namespace internal {
 
 template <typename FpImpl>
-class SingleFpImplementationSelector
-    : public FloatingPointImplementationSelector {
+class SingleFpImplementationSelector : public FpSelector {
  public:
-  FloatingPointImplementation *SelectFloatingPointImplementation() override {
-    return &floating_point_impl_;
-  }
+  FpImplementation *SelectFpImplementation() override { return &fp_impl_; }
 
  private:
-  FpImpl floating_point_impl_;
+  FpImpl fp_impl_;
 };
 
 }  // namespace internal

@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "client_lib/interfaces/floating_point_implementation.h"
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/interfaces/fp_selector.h"
 
 /*!
  * Convert a FLT32 variable into the string representation of its value in hex.
@@ -19,59 +19,42 @@
 
 namespace ftrace {
 
-VOID StartCallback(FloatingPointImplementationSelector
-                       *floating_point_implementation_selector) {
-  floating_point_implementation_selector->StartCallback();
+VOID StartCallback(FpSelector *fp_selector) { fp_selector->StartCallback(); }
+
+VOID ExitCallback(const INT32 code, FpSelector *fp_selector) {
+  fp_selector->ExitCallback(code);
 }
 
-VOID ExitCallback(const INT32 code,
-                  FloatingPointImplementationSelector
-                      *floating_point_implementation_selector) {
-  floating_point_implementation_selector->ExitCallback(code);
-}
-
-VOID ReplaceRegisterFloatingPointInstruction(
-    const OPCODE operation, const REG operand1, const REG operand2,
-    FloatingPointImplementationSelector *floating_point_implementation_selector,
-    CONTEXT *ctxt) {
+VOID ReplaceRegisterFpInstruction(const OPCODE operation, const REG operand1,
+                                  const REG operand2, FpSelector *fp_selector,
+                                  CONTEXT *ctxt) {
   PIN_REGISTER reg1, reg2, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
-  FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector
-          ->SelectFloatingPointImplementation();
+  FpImplementation *fp_implementation = fp_selector->SelectFpImplementation();
 
-  *result.flt = floating_point_implementation->FloatingPointOperation(
-      *reg1.flt, *reg2.flt, operation);
+  *result.flt = fp_implementation->FpOperation(*reg1.flt, *reg2.flt, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
-VOID ReplaceMemoryFloatingPointInstruction(
-    const OPCODE operation, const REG operand1, const FLT32 *operand2,
-    FloatingPointImplementationSelector *floating_point_implementation_selector,
-    CONTEXT *ctxt) {
+VOID ReplaceMemoryFpInstruction(const OPCODE operation, const REG operand1,
+                                const FLT32 *operand2, FpSelector *fp_selector,
+                                CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
-  FloatingPointImplementation *floating_point_implementation =
-      floating_point_implementation_selector
-          ->SelectFloatingPointImplementation();
+  FpImplementation *fp_implementation = fp_selector->SelectFpImplementation();
 
-  *result.flt = floating_point_implementation->FloatingPointOperation(
-      *reg1.flt, *operand2, operation);
+  *result.flt = fp_implementation->FpOperation(*reg1.flt, *operand2, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
-VOID EnterFunction(const string *function_name,
-                   FloatingPointImplementationSelector
-                       *floating_point_implementation_selector) {
-  floating_point_implementation_selector->OnFunctionStart(*function_name);
+VOID EnterFunction(const string *function_name, FpSelector *fp_selector) {
+  fp_selector->OnFunctionStart(*function_name);
 }
 
-VOID ExitFunction(const string *function_name,
-                  FloatingPointImplementationSelector
-                      *floating_point_implementation_selector) {
-  floating_point_implementation_selector->OnFunctionEnd(*function_name);
+VOID ExitFunction(const string *function_name, FpSelector *fp_selector) {
+  fp_selector->OnFunctionEnd(*function_name);
 }
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream) {
@@ -79,7 +62,7 @@ VOID CloseOutputStream(const INT32 code, ofstream *output_stream) {
   delete output_stream;
 }
 
-VOID PrintRegisterFPOperands(const OPCODE operation,
+VOID PrintRegisterFpOperands(const OPCODE operation,
                              const PIN_REGISTER *operand1,
                              const PIN_REGISTER *operand2,
                              ofstream *output_stream) {
@@ -88,14 +71,14 @@ VOID PrintRegisterFPOperands(const OPCODE operation,
                  << FLT32_TO_HEX(operand2->flt) << "\n";
 }
 
-VOID PrintMemoryFPOperands(const OPCODE operation, const PIN_REGISTER *operand1,
+VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
                            const FLT32 *operand2, ofstream *output_stream) {
   *output_stream << OPCODE_StringShort(operation) << " "
                  << FLT32_TO_HEX(operand1->flt) << " "
                  << FLT32_TO_HEX(*operand2) << "\n";
 }
 
-VOID PrintFPResult(const PIN_REGISTER *result, ofstream *output_stream) {
+VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output_stream) {
   *output_stream << "  " << FLT32_TO_HEX(result->flt) << "\n";
 }
 

@@ -15,21 +15,21 @@
 #include <iostream>
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
 #include "pintool/instrument_routine.h"
 #include "pintool/instrumentation_callbacks.h"
 
 using ftrace::CloseOutputStream;
 using ftrace::ExitCallback;
-using ftrace::FloatingPointImplementationSelector;
-using ftrace::InstrumentFPOperations;
-using ftrace::PrintFPOperations;
+using ftrace::FpSelector;
+using ftrace::InstrumentFpOperations;
+using ftrace::PrintFpOperations;
 using ftrace::StartCallback;
 using ftrace::internal::FpSelectorRegistry;
 
-KNOB<BOOL> KnobPrintFloatingPointOperations(
-    KNOB_MODE_WRITEONCE, "pintool", "print_floating_point_operations", "0",
+KNOB<BOOL> KnobPrintFpOps(
+    KNOB_MODE_WRITEONCE, "pintool", "print_fp_ops", "0",
     "print the value of every floating point operation in the instrumented "
     "program");
 
@@ -38,8 +38,7 @@ KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "ftrace.out",
 
 KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
                                 "fp_selector_name", "",
-                                "specify the name of the "
-                                "FloatingPointImplementationSelector to use "
+                                "specify the name of the FpSelector to use "
                                 "when instrumenting an application");
 
 namespace {
@@ -79,23 +78,21 @@ int main(int argc, char *argv[]) {
       FpSelectorRegistry::GetFpSelectorRegistry();
   const string &fp_selector_name = KnobFpSelectorName.Value();
   if (!fp_selector_name.empty()) {
-    FloatingPointImplementationSelector
-        *floating_point_implementation_selector =
-            fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
+    FpSelector *fp_selector =
+        fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
 
     PIN_AddApplicationStartFunction(
         reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
-        floating_point_implementation_selector);
+        fp_selector);
     PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
-                        floating_point_implementation_selector);
+                        fp_selector);
     RTN_AddInstrumentFunction(
-        reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentFPOperations),
-        floating_point_implementation_selector);
+        reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(InstrumentFpOperations),
+        fp_selector);
   }
   const string &output_file_name = KnobOutputFile.Value();
-  const BOOL &print_floating_point_ops =
-      KnobPrintFloatingPointOperations.Value();
-  if (print_floating_point_ops) {
+  const BOOL &print_fp_ops = KnobPrintFpOps.Value();
+  if (print_fp_ops) {
     ofstream *output_stream = new ofstream(output_file_name.c_str());
     cerr << "===============================================" << endl
          << "See file " << output_file_name << " for analysis results" << endl
@@ -104,7 +101,7 @@ int main(int argc, char *argv[]) {
     PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(CloseOutputStream),
                         output_stream);
     INS_AddInstrumentFunction(
-        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFPOperations),
+        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFpOperations),
         output_stream);
   }
 

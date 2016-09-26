@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 
 namespace ftrace {
 namespace internal {
@@ -15,14 +15,13 @@ class FpSelectorRegistry {
  public:
   static FpSelectorRegistry *GetFpSelectorRegistry();
 
-  VOID RegisterFpSelector(FloatingPointImplementationSelector *fp_selector,
+  VOID RegisterFpSelector(FpSelector *fp_selector,
                           const string &fp_selector_name);
 
-  FloatingPointImplementationSelector *GetFpSelectorOrDie(
-      const string &fp_selector_name) const;
+  FpSelector *GetFpSelectorOrDie(const string &fp_selector_name) const;
 
  private:
-  unordered_map<string, FloatingPointImplementationSelector *> fp_selector_map_;
+  unordered_map<string, FpSelector *> fp_selector_map_;
 };
 
 }  // namespace internal
