@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 
 namespace ftrace {
 namespace internal {
@@ -16,9 +16,8 @@ FpSelectorRegistry *FpSelectorRegistry::GetFpSelectorRegistry() {
   return &fp_selector_registry_obj;
 }
 
-VOID FpSelectorRegistry::RegisterFpSelector(
-    FloatingPointImplementationSelector *fp_selector,
-    const string &fp_selector_name) {
+VOID FpSelectorRegistry::RegisterFpSelector(FpSelector *fp_selector,
+                                            const string &fp_selector_name) {
   if (fp_selector_map_.count(fp_selector_name) > 0) {
     cerr << "Overwriting FpSelectorRegistry entry at " << fp_selector_name
          << endl;
@@ -26,13 +25,12 @@ VOID FpSelectorRegistry::RegisterFpSelector(
   fp_selector_map_[fp_selector_name] = fp_selector;
 }
 
-FloatingPointImplementationSelector *FpSelectorRegistry::GetFpSelectorOrDie(
+FpSelector *FpSelectorRegistry::GetFpSelectorOrDie(
     const string &fp_selector_name) const {
   if (fp_selector_map_.count(fp_selector_name) == 0) {
-    cerr << "No FloatingPointImplementationSelector registered at "
-         << fp_selector_name << endl;
+    cerr << "No FpSelector registered at " << fp_selector_name << endl;
     cerr << "Please make sure RegisterFpSelector is used to register your "
-            "FloatingPointImplementationSelector."
+            "FpSelector."
          << endl;
     exit(1);
   }

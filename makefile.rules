@@ -73,7 +73,7 @@ LIB_ROOTS :=
 %.test: EXPECTED_STDOUT       = tests/integration/$(@:.test=.stdout.reference)
 %.test: ACTUAL_TOOL_OUTPUT    = $(@:.test=.out)
 %.test: ACTUAL_STDOUT         = $(@:.test=.stdout.out)
-%.test: FTRACE_TEST_FLAGS     = -print_floating_point_operations -o $(ACTUAL_TOOL_OUTPUT)
+%.test: FTRACE_TEST_FLAGS     = -print_fp_ops -o $(ACTUAL_TOOL_OUTPUT)
 %.test: FTRACE_TOOL           = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP              = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: TEST_IMPL_LIB_SRC_DIR = tests/test_floating_point_implementations
@@ -86,7 +86,7 @@ LIB_ROOTS :=
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 	$(RM) $(FP_SELECTOR_REGISTRY_LIB)
 
-ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_floating_point_operations
+ftrace_no_specified_output_file.test: FTRACE_TEST_FLAGS = -print_fp_ops
 ftrace_no_specified_output_file.test: ACTUAL_TOOL_OUTPUT = ftrace.out
 
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
@@ -119,16 +119,18 @@ PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
 REGISTRY_SRCS := $(notdir $(wildcard src/client_lib/registry/*.cpp))
 REGISTRY_INTERNAL_SRCS := $(notdir $(wildcard src/client_lib/registry/internal/*.cpp))
 FP_SELECTORS_SRCS := $(notdir $(wildcard src/client_lib/fp_selectors/*.cpp))
+INTERFACES_SRCS := $(notdir $(wildcard src/client_lib/interfaces/*.cpp))
 TEST_SRCS := $(notdir $(wildcard tests/*.cpp))
 
 PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
 REGISTRY_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_SRCS:.cpp=$(OBJ_SUFFIX)))
 REGISTRY_INTERNAL_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_INTERNAL_SRCS:.cpp=$(OBJ_SUFFIX)))
 FP_SELECTORS_OBJS := $(addprefix $(OBJDIR),$(FP_SELECTORS_SRCS:.cpp=$(OBJ_SUFFIX)))
+INTERFACES_OBJS := $(addprefix $(OBJDIR),$(INTERFACES_SRCS:.cpp=$(OBJ_SUFFIX)))
 TEST_OBJS := $(addprefix $(OBJDIR),$(TEST_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 FTRACE_OBJS := $(PINTOOL_OBJS)
-CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS)
+CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
 
 # Compiles pintool-specific sources
 $(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
@@ -143,6 +145,9 @@ $(REGISTRY_INTERNAL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/registry/inte
 $(FP_SELECTORS_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/fp_selectors/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
+$(INTERFACES_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/interfaces/%.cpp
+	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
 $(TEST_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): tests/%.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
@@ -153,8 +158,8 @@ $(OBJDIR)%.d: %.cpp
 
 ###### Special tools' build rules ######
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) $(FP_SELECTOR_REGISTRY_LIB)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS)
+$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) | $(FP_SELECTOR_REGISTRY_LIB)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(FP_SELECTOR_REGISTRY_LIB) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######
 

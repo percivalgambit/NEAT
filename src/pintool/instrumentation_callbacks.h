@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 
 namespace ftrace {
 
@@ -17,8 +17,7 @@ namespace ftrace {
  * @param[in]   instrumentation_args     contains the floating-point
  *                                       implementation to setup
  */
-VOID StartCallback(FloatingPointImplementationSelector
-                       *floating_point_implementation_selector);
+VOID StartCallback(FpSelector *fp_selector);
 
 /**
  * Performs any teardown needed by the given floating-point implementation.
@@ -28,8 +27,7 @@ VOID StartCallback(FloatingPointImplementationSelector
  * @param[in]   instrumentation_args     contains the floating-point
  *                                       implementation to teardown
  */
-VOID ExitCallback(const INT32 code, FloatingPointImplementationSelector *
-                                        floating_point_implementation_selector);
+VOID ExitCallback(const INT32 code, FpSelector *fp_selector);
 
 /**
  * Replaces a floating-point operation with a user defined implementation and
@@ -51,10 +49,9 @@ VOID ExitCallback(const INT32 code, FloatingPointImplementationSelector *
  *                                     floating-point operation in the correct
  *                                     register
  */
-VOID ReplaceRegisterFloatingPointInstruction(
-    const OPCODE operation, const REG operand1, const REG operand2,
-    FloatingPointImplementationSelector *floating_point_implementation_selector,
-    CONTEXT *ctxt);
+VOID ReplaceRegisterFpInstruction(const OPCODE operation, const REG operand1,
+                                  const REG operand2, FpSelector *fp_selector,
+                                  CONTEXT *ctxt);
 
 /**
  * Replaces a floating-point operation with a user defined implementation and
@@ -76,30 +73,25 @@ VOID ReplaceRegisterFloatingPointInstruction(
  *                                     floating-point operation in the correct
  *                                     register
  */
-VOID ReplaceMemoryFloatingPointInstruction(
-    const OPCODE operation, const REG operand1, const FLT32 *operand2,
-    FloatingPointImplementationSelector *floating_point_implementation_selector,
-    CONTEXT *ctxt);
+VOID ReplaceMemoryFpInstruction(const OPCODE operation, const REG operand1,
+                                const FLT32 *operand2, FpSelector *fp_selector,
+                                CONTEXT *ctxt);
 
-VOID EnterFunction(const string *function_name,
-                   FloatingPointImplementationSelector
-                       *floating_point_implementation_selector);
+VOID EnterFunction(const string *function_name, FpSelector *fp_selector);
 
-VOID ExitFunction(const string *function_name,
-                  FloatingPointImplementationSelector
-                      *floating_point_implementation_selector);
+VOID ExitFunction(const string *function_name, FpSelector *fp_selector);
 
 VOID CloseOutputStream(const INT32 code, ofstream *output_stream);
 
-VOID PrintRegisterFPOperands(const OPCODE operation,
+VOID PrintRegisterFpOperands(const OPCODE operation,
                              const PIN_REGISTER *operand1,
                              const PIN_REGISTER *operand2,
                              ofstream *output_stream);
 
-VOID PrintMemoryFPOperands(const OPCODE operation, const PIN_REGISTER *operand1,
+VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
                            const FLT32 *operand2, ofstream *output_stream);
 
-VOID PrintFPResult(const PIN_REGISTER *result, ofstream *output_stream);
+VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output_stream);
 
 }  // namespace ftrace
 

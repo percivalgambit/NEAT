@@ -3,16 +3,15 @@
 
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
 
 namespace ftrace {
 
 struct RegisterInitializedFpSelector {
  public:
-  RegisterInitializedFpSelector(
-      FloatingPointImplementationSelector *fp_selector,
-      const string &fp_selector_name) {
+  RegisterInitializedFpSelector(FpSelector *fp_selector,
+                                const string &fp_selector_name) {
     internal::FpSelectorRegistry::GetFpSelectorRegistry()->RegisterFpSelector(
         fp_selector, fp_selector_name);
   }

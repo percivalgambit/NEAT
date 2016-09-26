@@ -7,24 +7,23 @@
 #include <string>
 #include <utility>
 
-#include "client_lib/interfaces/floating_point_implementation.h"
-#include "client_lib/interfaces/floating_point_implementation_selector.h"
+#include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/register_initialized_fp_selector.h"
 
 namespace ftrace {
 namespace internal {
 
-class FunctionLevelFpSelector : public FloatingPointImplementationSelector {
+class FunctionLevelFpSelector : public FpSelector {
  public:
   FunctionLevelFpSelector(
-      const pair<string, FloatingPointImplementation *> function_name_map[],
-      const int function_name_map_size,
-      FloatingPointImplementation *default_fp_impl)
+      const pair<string, FpImplementation *> function_name_map[],
+      const int function_name_map_size, FpImplementation *default_fp_impl)
       : function_name_map_(function_name_map),
         function_name_map_size_(function_name_map_size),
         default_fp_impl_(default_fp_impl) {}
 
-  FloatingPointImplementation *SelectFloatingPointImplementation() override {
+  FpImplementation *SelectFpImplementation() override {
     if (fp_impl_stack_.empty()) {
       return default_fp_impl_;
     }
@@ -47,10 +46,10 @@ class FunctionLevelFpSelector : public FloatingPointImplementationSelector {
   }
 
  private:
-  const pair<string, FloatingPointImplementation *> *function_name_map_;
+  const pair<string, FpImplementation *> *function_name_map_;
   const int function_name_map_size_;
-  FloatingPointImplementation *default_fp_impl_;
-  stack<pair<const string, FloatingPointImplementation *>> fp_impl_stack_;
+  FpImplementation *default_fp_impl_;
+  stack<pair<const string, FpImplementation *>> fp_impl_stack_;
 };
 
 }  // namespace internal
@@ -58,9 +57,8 @@ class FunctionLevelFpSelector : public FloatingPointImplementationSelector {
 class RegisterFunctionLevelFpSelector {
  public:
   RegisterFunctionLevelFpSelector(
-      const pair<string, FloatingPointImplementation *> function_name_map[],
-      const int function_name_map_size,
-      FloatingPointImplementation *default_fp_impl,
+      const pair<string, FpImplementation *> function_name_map[],
+      const int function_name_map_size, FpImplementation *default_fp_impl,
       const string &fp_selector_name)
       : fp_selector_(function_name_map, function_name_map_size,
                      default_fp_impl),

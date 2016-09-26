@@ -1,11 +1,11 @@
-#ifndef CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
-#define CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
+#ifndef CLIENT_LIB_INTERFACES_FP_SELECTOR_H_
+#define CLIENT_LIB_INTERFACES_FP_SELECTOR_H_
 
 #include <pin.H>
 
 #include <string>
 
-#include "client_lib/interfaces/floating_point_implementation.h"
+#include "client_lib/interfaces/fp_implementation.h"
 
 namespace ftrace {
 
@@ -13,7 +13,7 @@ namespace ftrace {
  * Selector for the current floating-point arithmetic implementation to use
  * depending on the current state of the instrumented application.
  */
-class FloatingPointImplementationSelector {
+class FpSelector {
  public:
   /**
   * Function called before the instrumented application runs.
@@ -36,9 +36,9 @@ class FloatingPointImplementationSelector {
    * @param[in]   replace_type   which replacement type to use
    * @returns the result of the floating-point operation.
    */
-  virtual FloatingPointImplementation *SelectFloatingPointImplementation() = 0;
+  virtual FpImplementation *SelectFpImplementation() = 0;
 };
 
 }  // namespace ftrace
 
-#endif  // CLIENT_LIB_INTERFACES_FLOATING_POINT_IMPLEMENTATION_SELECTOR_H_
+#endif  // CLIENT_LIB_INTERFACES_FP_SELECTOR_H_
