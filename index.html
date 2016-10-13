@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.12"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ftrace: Main Page</title>
+<title>ftrace: ftrace</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -33,6 +33,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ftrace
    </div>
+   <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -89,31 +90,34 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">ftrace Documentation</div>  </div>
+<div class="title">ftrace </div>  </div>
 </div><!--header-->
 <div class="contents">
-<ul><li><a href="index.html"><span>Main&#160;Page</span></a>
-</li><li><a href="namespaces.html"><span>Namespaces</span></a>
-<ul><li><a href="namespaces.html"><span>Namespace&#160;List</span></a>
-</li><li><a href="namespacemembers.html"><span>Namespace&#160;Members</span></a>
-</li></ul>
-</li><li><a href="annotated.html"><span>Classes</span></a>
-<ul><li><a href="annotated.html"><span>Class&#160;List</span></a>
-</li><li><a href="classes.html"><span>Class&#160;Index</span></a>
-</li><li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a>
-</li><li><a href="functions.html"><span>Class&#160;Members</span></a>
-</li></ul>
-</li><li><a href="files.html"><span>Files</span></a>
-<ul><li><a href="files.html"><span>File&#160;List</span></a>
-</li><li><a href="globals.html"><span>File&#160;Members</span></a>
-</li></ul>
-</li></ul>
-</div><!-- contents -->
+<div class="textblock"><p>A Pin tool to replace floating-point instructions with user-defined implementations in an IA-32 or x86-64 program.</p>
+<p>Currently, the only instructions that this tool replaces are: </p><pre class="fragment">ADDSS
+SUBSS
+MULSS
+DIVSS
+</pre><h2>Setup </h2>
+<p>Before running the tool, make sure that you have the Intel PIN library downloaded and that the shell variable PIN_ROOT is set to the path where the PIN library is located. To build the tool, simply run <code>make</code> from the main directory. To run the tool, run the following command: </p><pre class="fragment">pin -t obj-intel64/ftrace.so [-fp_selector_name &lt;fp_selector_name&gt;] -- &lt;your_program&gt;
+</pre><p>For the IA-32 architecture, use <code>obj-ia32</code> instead of <code>obj-intel64</code></p>
+<p>You can use the <code>-print_floating_point_operations</code> flag to print the operands and result of every floating-point arithmetic operation in the instrumented application.</p>
+<p>You can specify the name of an output file for the operands and result of each floating-point operation by using the <code>-o</code> flag. The default name of an output file is <code>ftrace.out</code>.</p>
+<h2>Floating-Point Instruction Replacement </h2>
+<p>Custom floating-point implementation selectors can be written to test the accuracy of different floating-point implementations. Each <code>FpSelector</code> selects an <code>FpImplementation</code> to replace each SSE floating-point arithmetic instruction. To use an <code>FpSelector</code> to instrument an application, the <code>FpSelector</code> must first be registered with one of the classes in <code>src/client_lib/registry</code>. Once an <code>FpSelector</code> has been registered to a name, that name may be used to specify the <code>FpSelector</code> to be used to instrument an application with the <code>-fp_selector_name</code> flag.</p>
+<p>See the <code>tests/</code> directory for examples of user-defined <code>FpSelector</code>s.</p>
+<h2>Testing </h2>
+<p>To run the tests for this pintool, run <code>make test</code> from the main directory.</p>
+<h2>Documentation </h2>
+<p>Full documentation can be found here: <a href="http://percivalgambit.github.io/ftrace/">http://percivalgambit.github.io/ftrace/</a></p>
+<h2>Contact </h2>
+<p>If you have any questions or comments, or find a bug in the code, please contact <a href="#" onclick="location.href='mai'+'lto:'+'ehu'+'di'+'nl@'+'uc'+'hic'+'ag'+'o.e'+'du'; return false;">ehudinl@uchicago.edu</a>. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Oct 13 2016 02:37:05 for ftrace by
+    <li class="footer">Generated on Thu Oct 13 2016 03:05:27 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.12 </li>
   </ul>

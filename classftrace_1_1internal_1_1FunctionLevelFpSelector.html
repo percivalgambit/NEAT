@@ -33,6 +33,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ftrace
    </div>
+   <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -140,6 +141,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of a <a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a> that returns a different <a class="el" href="classftrace_1_1FpImplementation.html">FpImplementation</a> based on the functions in the instrumented application's call stack. The <a class="el" href="classftrace_1_1FpImplementation.html">FpImplementation</a> instance associated with the function name most recent in the call stack will be selected, otherwise a default <a class="el" href="classftrace_1_1FpImplementation.html">FpImplementation</a> will be selected. </p>
+
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00024">24</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1fa0cfafd40ae06e7c66e42461cad08"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1fa0cfafd40ae06e7c66e42461cad08">&sect;&nbsp;</a></span>FunctionLevelFpSelector()</h2>
@@ -189,6 +192,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
   </dd>
 </dl>
 
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00032">32</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -225,6 +230,10 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 
 <p>Reimplemented from <a class="el" href="classftrace_1_1FpSelector.html#a24e3b13fde2203a32189162c06d56b4c">ftrace::FpSelector</a>.</p>
 
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00056">56</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
+
+<p>References <a class="el" href="register__function__level__fp__selector_8h_source.html#l00069">fp_impl_stack_</a>.</p>
+
 </div>
 </div>
 <a id="a697bd835d3b3f974d5d4db63739f7241"></a>
@@ -259,6 +268,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 </dl>
 
 <p>Reimplemented from <a class="el" href="classftrace_1_1FpSelector.html#aac29138bd3adb56e2da7baa182afbbeb">ftrace::FpSelector</a>.</p>
+
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00048">48</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
 
 </div>
 </div>
@@ -314,6 +325,10 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 
 <p>Implements <a class="el" href="classftrace_1_1FpSelector.html#a8d912f83f912a33f846e643a9cb5707a">ftrace::FpSelector</a>.</p>
 
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00039">39</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
+
+<p>References <a class="el" href="register__function__level__fp__selector_8h_source.html#l00069">fp_impl_stack_</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -338,6 +353,10 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 </div><div class="memdoc">
 <p>Keeps track of the current <a class="el" href="classftrace_1_1FpImplementation.html">FpImplementation</a> to use based on the current call stack of the instrumented application. </p>
 
+<p>Definition at line <a class="el" href="register__function__level__fp__selector_8h_source.html#l00069">69</a> of file <a class="el" href="register__function__level__fp__selector_8h_source.html">register_function_level_fp_selector.h</a>.</p>
+
+<p>Referenced by <a class="el" href="register__function__level__fp__selector_8h_source.html#l00056">OnFunctionEnd()</a>, and <a class="el" href="register__function__level__fp__selector_8h_source.html#l00039">SelectFpImplementation()</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -349,7 +368,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>function_name_ma
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceftrace.html">ftrace</a></li><li class="navelem"><b>internal</b></li><li class="navelem"><a class="el" href="classftrace_1_1internal_1_1FunctionLevelFpSelector.html">FunctionLevelFpSelector</a></li>
-    <li class="footer">Generated on Thu Oct 13 2016 02:37:05 for ftrace by
+    <li class="footer">Generated on Thu Oct 13 2016 03:05:27 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.12 </li>
   </ul>

@@ -11,6 +11,7 @@ var searchData=
   ['fpselectorregistry',['FpSelectorRegistry',['../classftrace_1_1internal_1_1FpSelectorRegistry.html',1,'ftrace::internal']]],
   ['fpsub',['FpSub',['../classftrace_1_1NormalFpImplementation.html#aabd9a41a4237c46fd643753261d79915',1,'ftrace::NormalFpImplementation::FpSub()'],['../classftrace_1_1FpImplementation.html#a7c89726a477da769da71a73e95f9e9eb',1,'ftrace::FpImplementation::FpSub()'],['../classftrace_1_1TestSimpleFpImplementation.html#a938aeed5da18544decf73455bce57280',1,'ftrace::TestSimpleFpImplementation::FpSub()'],['../classftrace_1_1TestComplexFpImplementation.html#ab8c0abf85bd92687935cf7f785730774',1,'ftrace::TestComplexFpImplementation::FpSub()']]],
   ['ftrace',['ftrace',['../namespaceftrace.html',1,'']]],
+  ['functionlevelfpselector',['FunctionLevelFpSelector',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html#ab1fa0cfafd40ae06e7c66e42461cad08',1,'ftrace::internal::FunctionLevelFpSelector']]],
   ['functionlevelfpselector',['FunctionLevelFpSelector',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html',1,'ftrace::internal']]],
-  ['functionlevelfpselector',['FunctionLevelFpSelector',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html#ab1fa0cfafd40ae06e7c66e42461cad08',1,'ftrace::internal::FunctionLevelFpSelector']]]
+  ['ftrace',['ftrace',['../index.html',1,'']]]
 ];

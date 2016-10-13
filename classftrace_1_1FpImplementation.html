@@ -33,6 +33,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ftrace
    </div>
+   <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -128,6 +129,8 @@ Protected Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of floating-point arithmetic to be used in the ftrace instrumentation tool. </p>
+
+<p>Definition at line <a class="el" href="fp__implementation_8h_source.html#l00012">12</a> of file <a class="el" href="fp__implementation_8h_source.html">fp_implementation.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac048dbc6daf318012f01c9ec90a87bb6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac048dbc6daf318012f01c9ec90a87bb6">&sect;&nbsp;</a></span>FpAdd()</h2>
@@ -173,6 +176,8 @@ Protected Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The result of the floating-point addition. </dd></dl>
 
 <p>Implemented in <a class="el" href="classftrace_1_1TestComplexFpImplementation.html#a56f7d771a1cb5f733998d6c777613689">ftrace::TestComplexFpImplementation</a>, <a class="el" href="classftrace_1_1NormalFpImplementation.html#a27bd8ee9bd849fae83adde8f3c73dfd1">ftrace::NormalFpImplementation</a>, and <a class="el" href="classftrace_1_1TestSimpleFpImplementation.html#af15367f15269cf70c816782249a2a9ae">ftrace::TestSimpleFpImplementation</a>.</p>
+
+<p>Referenced by <a class="el" href="fp__implementation_8cpp_source.html#l00009">FpOperation()</a>.</p>
 
 </div>
 </div>
@@ -221,6 +226,8 @@ Protected Member Functions</h2></td></tr>
 
 <p>Implemented in <a class="el" href="classftrace_1_1TestComplexFpImplementation.html#a7c0cabccc9c9166722c517aae4c42d3c">ftrace::TestComplexFpImplementation</a>, <a class="el" href="classftrace_1_1NormalFpImplementation.html#a511bbb6113fe670ee2bc9f624c27e331">ftrace::NormalFpImplementation</a>, and <a class="el" href="classftrace_1_1TestSimpleFpImplementation.html#a378fe4e216fbcd60eca55ce34473e341">ftrace::TestSimpleFpImplementation</a>.</p>
 
+<p>Referenced by <a class="el" href="fp__implementation_8cpp_source.html#l00009">FpOperation()</a>.</p>
+
 </div>
 </div>
 <a id="a136aac5da27e1797cbc1ee1af4b73202"></a>
@@ -268,6 +275,8 @@ Protected Member Functions</h2></td></tr>
 
 <p>Implemented in <a class="el" href="classftrace_1_1TestComplexFpImplementation.html#aa17caab28d2b0db958cf33eb3db2e971">ftrace::TestComplexFpImplementation</a>, <a class="el" href="classftrace_1_1NormalFpImplementation.html#a3a2a6b80cb989f529e032f3368ecc2c2">ftrace::NormalFpImplementation</a>, and <a class="el" href="classftrace_1_1TestSimpleFpImplementation.html#aac8f04c530684c1db5731c54f40ec5d2">ftrace::TestSimpleFpImplementation</a>.</p>
 
+<p>Referenced by <a class="el" href="fp__implementation_8cpp_source.html#l00009">FpOperation()</a>.</p>
+
 </div>
 </div>
 <a id="aaf8e963e5234c38d61cc68b751c8947b"></a>
@@ -311,6 +320,12 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the floating-point operation. </dd></dl>
+
+<p>Definition at line <a class="el" href="fp__implementation_8cpp_source.html#l00009">9</a> of file <a class="el" href="fp__implementation_8cpp_source.html">fp_implementation.cpp</a>.</p>
+
+<p>References <a class="el" href="classftrace_1_1FpImplementation.html#ac048dbc6daf318012f01c9ec90a87bb6">FpAdd()</a>, <a class="el" href="classftrace_1_1FpImplementation.html#a2db0d2154c25d234208cca3ed7118ffc">FpDiv()</a>, <a class="el" href="classftrace_1_1FpImplementation.html#a136aac5da27e1797cbc1ee1af4b73202">FpMul()</a>, and <a class="el" href="classftrace_1_1FpImplementation.html#a7c89726a477da769da71a73e95f9e9eb">FpSub()</a>.</p>
+
+<p>Referenced by <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00043">ftrace::ReplaceMemoryFpInstruction()</a>, and <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00030">ftrace::ReplaceRegisterFpInstruction()</a>.</p>
 
 </div>
 </div>
@@ -359,11 +374,13 @@ Protected Member Functions</h2></td></tr>
 
 <p>Implemented in <a class="el" href="classftrace_1_1TestComplexFpImplementation.html#ab8c0abf85bd92687935cf7f785730774">ftrace::TestComplexFpImplementation</a>, <a class="el" href="classftrace_1_1NormalFpImplementation.html#aabd9a41a4237c46fd643753261d79915">ftrace::NormalFpImplementation</a>, and <a class="el" href="classftrace_1_1TestSimpleFpImplementation.html#a938aeed5da18544decf73455bce57280">ftrace::TestSimpleFpImplementation</a>.</p>
 
+<p>Referenced by <a class="el" href="fp__implementation_8cpp_source.html#l00009">FpOperation()</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/client_lib/interfaces/<a class="el" href="fp__implementation_8h_source.html">fp_implementation.h</a></li>
-<li>src/client_lib/interfaces/fp_implementation.cpp</li>
+<li>src/client_lib/interfaces/<a class="el" href="fp__implementation_8cpp_source.html">fp_implementation.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -371,7 +388,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceftrace.html">ftrace</a></li><li class="navelem"><a class="el" href="classftrace_1_1FpImplementation.html">FpImplementation</a></li>
-    <li class="footer">Generated on Thu Oct 13 2016 02:37:05 for ftrace by
+    <li class="footer">Generated on Thu Oct 13 2016 03:05:27 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.12 </li>
   </ul>

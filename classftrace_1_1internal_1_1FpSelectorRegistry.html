@@ -33,6 +33,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ftrace
    </div>
+   <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -121,6 +122,8 @@ unordered_map&lt; string, <a class="el" href="classftrace_1_1FpSelector.html">Fp
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains a mapping from names to <a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a> instances. This is used to determine which <a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a> instance to use to instrument a program when the KnobFpSelectorName flag is supplied on the command line. </p>
+
+<p>Definition at line <a class="el" href="fp__selector__registry_8h_source.html#l00019">19</a> of file <a class="el" href="fp__selector__registry_8h_source.html">fp_selector_registry.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a5fae7c7154abdbb61619ed6422ad7258"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5fae7c7154abdbb61619ed6422ad7258">&sect;&nbsp;</a></span>GetFpSelectorOrDie()</h2>
@@ -145,6 +148,10 @@ unordered_map&lt; string, <a class="el" href="classftrace_1_1FpSelector.html">Fp
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a> instance mapped to the supplied name. </dd></dl>
+
+<p>Definition at line <a class="el" href="fp__selector__registry_8cpp_source.html#l00031">31</a> of file <a class="el" href="fp__selector__registry_8cpp_source.html">fp_selector_registry.cpp</a>.</p>
+
+<p>References <a class="el" href="fp__selector__registry_8h_source.html#l00048">fp_selector_map_</a>.</p>
 
 </div>
 </div>
@@ -171,6 +178,10 @@ unordered_map&lt; string, <a class="el" href="classftrace_1_1FpSelector.html">Fp
 </table>
 </div><div class="memdoc">
 <p>Returns the global registry for <a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a> instances. </p>
+
+<p>Definition at line <a class="el" href="fp__selector__registry_8cpp_source.html#l00018">18</a> of file <a class="el" href="fp__selector__registry_8cpp_source.html">fp_selector_registry.cpp</a>.</p>
+
+<p>Referenced by <a class="el" href="register__fp__selector_8h_source.html#l00022">ftrace::RegisterFpSelector&lt; internal::SingleFpImplementationSelector&lt; FpImpl &gt; &gt;::RegisterFpSelector()</a>, and <a class="el" href="register__initialized__fp__selector_8h_source.html#l00022">ftrace::RegisterInitializedFpSelector::RegisterInitializedFpSelector()</a>.</p>
 
 </div>
 </div>
@@ -208,11 +219,17 @@ unordered_map&lt; string, <a class="el" href="classftrace_1_1FpSelector.html">Fp
   </dd>
 </dl>
 
+<p>Definition at line <a class="el" href="fp__selector__registry_8cpp_source.html#l00022">22</a> of file <a class="el" href="fp__selector__registry_8cpp_source.html">fp_selector_registry.cpp</a>.</p>
+
+<p>References <a class="el" href="fp__selector__registry_8h_source.html#l00048">fp_selector_map_</a>.</p>
+
+<p>Referenced by <a class="el" href="register__fp__selector_8h_source.html#l00022">ftrace::RegisterFpSelector&lt; internal::SingleFpImplementationSelector&lt; FpImpl &gt; &gt;::RegisterFpSelector()</a>, and <a class="el" href="register__initialized__fp__selector_8h_source.html#l00022">ftrace::RegisterInitializedFpSelector::RegisterInitializedFpSelector()</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/client_lib/registry/internal/<a class="el" href="fp__selector__registry_8h_source.html">fp_selector_registry.h</a></li>
-<li>src/client_lib/registry/internal/fp_selector_registry.cpp</li>
+<li>src/client_lib/registry/internal/<a class="el" href="fp__selector__registry_8cpp_source.html">fp_selector_registry.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -220,7 +237,7 @@ unordered_map&lt; string, <a class="el" href="classftrace_1_1FpSelector.html">Fp
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceftrace.html">ftrace</a></li><li class="navelem"><b>internal</b></li><li class="navelem"><a class="el" href="classftrace_1_1internal_1_1FpSelectorRegistry.html">FpSelectorRegistry</a></li>
-    <li class="footer">Generated on Thu Oct 13 2016 02:37:05 for ftrace by
+    <li class="footer">Generated on Thu Oct 13 2016 03:05:27 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.12 </li>
   </ul>

@@ -33,6 +33,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ftrace
    </div>
+   <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -123,6 +124,8 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Selects which floating-point arithmetic implementation to use for an arithmetic operation depending on the current state of the instrumented application. </p>
+
+<p>Definition at line <a class="el" href="fp__selector_8h_source.html#l00017">17</a> of file <a class="el" href="fp__selector_8h_source.html">fp_selector.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a48e71c12a3a3d59f7a51a7435df74bee"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48e71c12a3a3d59f7a51a7435df74bee">&sect;&nbsp;</a></span>ExitCallback()</h2>
@@ -154,6 +157,10 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Definition at line <a class="el" href="fp__selector_8h_source.html#l00031">31</a> of file <a class="el" href="fp__selector_8h_source.html">fp_selector.h</a>.</p>
+
+<p>Referenced by <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00026">ftrace::ExitCallback()</a>.</p>
 
 </div>
 </div>
@@ -190,6 +197,12 @@ Public Member Functions</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classftrace_1_1internal_1_1FunctionLevelFpSelector.html#adf7d77c189f9b91c7c07eb76f2e440c5">ftrace::internal::FunctionLevelFpSelector</a>.</p>
 
+<p>Definition at line <a class="el" href="fp__selector_8h_source.html#l00047">47</a> of file <a class="el" href="fp__selector_8h_source.html">fp_selector.h</a>.</p>
+
+<p>References <a class="el" href="classftrace_1_1FpSelector.html#a8d912f83f912a33f846e643a9cb5707a">SelectFpImplementation()</a>.</p>
+
+<p>Referenced by <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00059">ftrace::ExitFunction()</a>.</p>
+
 </div>
 </div>
 <a id="aac29138bd3adb56e2da7baa182afbbeb"></a>
@@ -224,6 +237,10 @@ Public Member Functions</h2></td></tr>
 </dl>
 
 <p>Reimplemented in <a class="el" href="classftrace_1_1internal_1_1FunctionLevelFpSelector.html#a697bd835d3b3f974d5d4db63739f7241">ftrace::internal::FunctionLevelFpSelector</a>.</p>
+
+<p>Definition at line <a class="el" href="fp__selector_8h_source.html#l00039">39</a> of file <a class="el" href="fp__selector_8h_source.html">fp_selector.h</a>.</p>
+
+<p>Referenced by <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00055">ftrace::EnterFunction()</a>.</p>
 
 </div>
 </div>
@@ -279,6 +296,8 @@ Public Member Functions</h2></td></tr>
 
 <p>Implemented in <a class="el" href="classftrace_1_1internal_1_1FunctionLevelFpSelector.html#a3c0b954e80966670f8e330ee3952faac">ftrace::internal::FunctionLevelFpSelector</a>, and <a class="el" href="classftrace_1_1internal_1_1SingleFpImplementationSelector.html#ae19aad1be81b046b390dc736f873a3a8">ftrace::internal::SingleFpImplementationSelector&lt; FpImpl &gt;</a>.</p>
 
+<p>Referenced by <a class="el" href="fp__selector_8h_source.html#l00047">OnFunctionEnd()</a>, <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00043">ftrace::ReplaceMemoryFpInstruction()</a>, and <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00030">ftrace::ReplaceRegisterFpInstruction()</a>.</p>
+
 </div>
 </div>
 <a id="aa3a7e449a83df837d6668f36a4a3fd4f"></a>
@@ -305,6 +324,10 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Called before the instrumented application runs to perform setup for this class. </p>
 
+<p>Definition at line <a class="el" href="fp__selector_8h_source.html#l00023">23</a> of file <a class="el" href="fp__selector_8h_source.html">fp_selector.h</a>.</p>
+
+<p>Referenced by <a class="el" href="instrumentation__callbacks_8cpp_source.html#l00024">ftrace::StartCallback()</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -316,7 +339,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceftrace.html">ftrace</a></li><li class="navelem"><a class="el" href="classftrace_1_1FpSelector.html">FpSelector</a></li>
-    <li class="footer">Generated on Thu Oct 13 2016 02:37:05 for ftrace by
+    <li class="footer">Generated on Thu Oct 13 2016 03:05:27 for ftrace by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.12 </li>
   </ul>
