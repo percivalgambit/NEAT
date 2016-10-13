@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['normalfloatingpointimplementation',['NormalFloatingPointImplementation',['../classftrace_1_1NormalFloatingPointImplementation.html',1,'ftrace']]]
+  ['singlefpimplementationselector',['SingleFpImplementationSelector',['../classftrace_1_1internal_1_1SingleFpImplementationSelector.html',1,'ftrace::internal']]]
 ];
