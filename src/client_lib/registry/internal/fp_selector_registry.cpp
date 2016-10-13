@@ -11,6 +11,9 @@
 namespace ftrace {
 namespace internal {
 
+/**
+ * The global FpSelector registry object.
+ */
 static FpSelectorRegistry fp_selector_registry_obj;
 FpSelectorRegistry *FpSelectorRegistry::GetFpSelectorRegistry() {
   return &fp_selector_registry_obj;

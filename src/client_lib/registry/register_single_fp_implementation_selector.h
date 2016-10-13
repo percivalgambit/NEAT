@@ -12,10 +12,20 @@
 namespace ftrace {
 namespace internal {
 
+/**
+ * Implementation of an FpSelector that always returns the same
+ * FpImplementation.
+ *
+ * @tparam FpImpl The FpImplementation class to return.
+ */
 template <typename FpImpl>
 class SingleFpImplementationSelector : public FpSelector {
  public:
-  FpImplementation *SelectFpImplementation() override { return &fp_impl_; }
+  FpImplementation *SelectFpImplementation(const FLT32 &operand1,
+                                           const FLT32 &operand2,
+                                           const OPCODE &operation) override {
+    return &fp_impl_;
+  }
 
  private:
   FpImpl fp_impl_;
@@ -23,9 +33,19 @@ class SingleFpImplementationSelector : public FpSelector {
 
 }  // namespace internal
 
+/**
+ * Registers a FpSelector instance that always returns the same FpImplementation
+ * in the global FpSelectorRegistry.
+ *
+ * @tparam FpImpl The FpImplementation class to return.
+ */
 template <typename FpImpl>
 class RegisterSingleFpImplementationSelector {
  public:
+  /**
+   * @param[in] fp_selector_name The name to register for the FpSelector
+   *     instance.
+   */
   explicit RegisterSingleFpImplementationSelector(
       const string &fp_selector_name)
       : fp_selector_(fp_selector_name) {}

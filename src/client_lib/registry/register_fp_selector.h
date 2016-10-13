@@ -7,9 +7,18 @@
 
 namespace ftrace {
 
+/**
+ * Registers an FpSelector instance in the global FpSelectorRegistry.
+ *
+ * @tparam FpSelector The FpSelector class to register.
+ */
 template <typename FpSelector>
 struct RegisterFpSelector {
  public:
+  /**
+   * @param[in] fp_selector_name The name to register for the FpSelector
+   *     instance.
+   */
   explicit RegisterFpSelector(const string &fp_selector_name) {
     internal::FpSelectorRegistry::GetFpSelectorRegistry()->RegisterFpSelector(
         &fp_selector, fp_selector_name);
