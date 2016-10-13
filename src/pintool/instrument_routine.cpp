@@ -7,21 +7,22 @@
 #include "client_lib/interfaces/fp_selector.h"
 #include "pintool/instrumentation_callbacks.h"
 
-namespace {
-
 /**
  * Return true if an instruction is an SSE floating-point arithmetic
  * instruction.
- * This function is called on every instruction.
- * @param[in]   ins     the instruction to test
+ * This function is called on every instruction while the instrumented program
+ * is running if the KnobFpSelectorName flag is supplied on the command line.
+ *
+ * @param[in] ins The instruction to test.
+ * @return Whether an instruction is a floating-point arithmetic instruction.
  * @note Currently, the instructions defined as SSE floating-point arithmetic
- *       operations are:
- *  - ADDSS
- *  - SUBSS
- *  - MULSS
- *  - DIVSS
+ *     operations are:
+ *       - ADDSS
+ *       - SUBSS
+ *       - MULSS
+ *       - DIVSS
  */
-BOOL IsFpInstruction(const INS &ins) {
+static BOOL IsFpInstruction(const INS &ins) {
   const OPCODE op = INS_Opcode(ins);
   switch (op) {
     case XED_ICLASS_ADDSS:
@@ -34,11 +35,9 @@ BOOL IsFpInstruction(const INS &ins) {
   }
 }
 
-}  // namespace
-
 namespace ftrace {
 
-VOID InstrumentFpOperations(const RTN rtn, FpSelector *fp_selector) {
+VOID ReplaceFpOperations(const RTN rtn, FpSelector *fp_selector) {
   RTN_Open(rtn);
   const string &function_name = RTN_Name(rtn);
   // clang-format off
@@ -50,7 +49,8 @@ VOID InstrumentFpOperations(const RTN rtn, FpSelector *fp_selector) {
       IARG_END);
   // clang-format on
 
-  // Forward pass over all instructions in routine
+  // Pass through every instruction in the routine and replace every
+  // floating-point instruction.
   for (INS ins = RTN_InsHead(rtn); INS_Valid(ins); ins = INS_Next(ins)) {
     if (IsFpInstruction(ins)) {
       REGSET regs_in, regs_out;
@@ -99,7 +99,7 @@ VOID InstrumentFpOperations(const RTN rtn, FpSelector *fp_selector) {
   RTN_Close(rtn);
 }
 
-VOID PrintFpOperations(const INS ins, ofstream *output_stream) {
+VOID PrintFpOperations(const INS ins, ofstream *output) {
   if (IsFpInstruction(ins)) {
     if (INS_OperandIsReg(ins, 1)) {
       // clang-format off
@@ -109,7 +109,7 @@ VOID PrintFpOperations(const INS ins, ofstream *output_stream) {
           IARG_UINT32, INS_Opcode(ins),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 1),
-          IARG_PTR, output_stream,
+          IARG_PTR, output,
           IARG_CALL_ORDER, CALL_ORDER_FIRST,
           IARG_END);
       // clang-format on
@@ -121,7 +121,7 @@ VOID PrintFpOperations(const INS ins, ofstream *output_stream) {
           IARG_UINT32, INS_Opcode(ins),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
           IARG_MEMORYREAD_EA,
-          IARG_PTR, output_stream,
+          IARG_PTR, output,
           IARG_CALL_ORDER, CALL_ORDER_FIRST,
           IARG_END);
       // clang-format on
@@ -132,7 +132,7 @@ VOID PrintFpOperations(const INS ins, ofstream *output_stream) {
         ins, IPOINT_AFTER,
         reinterpret_cast<AFUNPTR>(PrintFpResult),
         IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
-        IARG_PTR, output_stream,
+        IARG_PTR, output,
         IARG_END);
     // clang-format on
   }

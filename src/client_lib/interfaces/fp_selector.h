@@ -10,33 +10,55 @@
 namespace ftrace {
 
 /**
- * Selector for the current floating-point arithmetic implementation to use
- * depending on the current state of the instrumented application.
+ * Selects which floating-point arithmetic implementation to use for an
+ * arithmetic operation depending on the current state of the instrumented
+ * application.
  */
 class FpSelector {
  public:
   /**
-  * Function called before the instrumented application runs.
+  * Called before the instrumented application runs to perform setup for this
+  * class.
   */
   virtual VOID StartCallback() {}
 
   /**
-   * Function called after the instrumented application finishes running.
-   * @param[in]   code   OS specific termination code for the application
+   * Called after the instrumented application finishes running to perform
+   * teardown for this class.
+   *
+   * @param[in] code OS specific termination code for the application.
    */
   virtual VOID ExitCallback(const INT32 &code) {}
 
+  /**
+   * Called whenever a function begins in the instrumented application to
+   * perform per-function setup for this class.
+   *
+   * @param[in] function_name The name of the function that is beginning.
+   */
   virtual VOID OnFunctionStart(const string &function_name) {}
 
+  /**
+   * Called whenever a function ends in the instrumented application to perform
+   * per-function setup for this class.
+   *
+   * @param[in] function_name The name of the function that is ending.
+   */
   virtual VOID OnFunctionEnd(const string &function_name) {}
 
   /**
-   * Performs floating-point arithmetic.
-   * @param[in]    operation      the arithmetic operation to perform
-   * @param[in]   replace_type   which replacement type to use
-   * @returns the result of the floating-point operation.
+   * Selects a floating-point arithmetic implementation to use for the supplied
+   * floating-point instruction.
+   *
+   * @param[in] operand1 The first operand of the floating-point instruction.
+   * @param[in] operand2 The second operand of the floating-point instruction.
+   * @param[in] operation The floating-point instruction to be performed.
+   * @return The floating-point implementation to use to calculate the result of
+   *     the arithmetic instruction.
    */
-  virtual FpImplementation *SelectFpImplementation() = 0;
+  virtual FpImplementation *SelectFpImplementation(const FLT32 &operand1,
+                                                   const FLT32 &operand2,
+                                                   const OPCODE &operation) = 0;
 };
 
 }  // namespace ftrace

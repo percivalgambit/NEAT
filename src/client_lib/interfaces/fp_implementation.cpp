@@ -20,8 +20,7 @@ FLT32 FpImplementation::FpOperation(const FLT32 &operand1,
       return FpDiv(operand1, operand2);
     default:
       std::cerr << "Unexpected opcode " << operation
-                << " encountered "
-                   "when replacing floating-point instructions"
+                << " encountered when replacing floating-point instructions"
                 << endl;
       return operand1;
   }
