@@ -15,40 +15,41 @@ Currently, the only instructions that this tool replaces are:
 Setup
 -----
 
-After cloning the repository, run the following commands:
+Before running the tool, make sure that you have the Intel PIN library
+downloaded and that the shell variable PIN_ROOT is set to the path where the PIN
+library is located.  To build the tool, simply run `make` from the main
+directory.  To run the tool, run the following command:
 
-    make FLOATING_POINT_IMPL_LIB=<floating_point_impl_lib_base_name> FLOATING_POINT_IMPL_LIS_SRCS=<floating_point_impl_lib_srcs>
-    pin -injection child -ifeellucky -t obj-intel64/ftrace.so -floating_point_implementation_lib <floating_point_impl_lib_name>  -- <your_program>
+    pin -t obj-intel64/ftrace.so [-fp_selector_name <fp_selector_name>] -- <your_program>
 
 For the IA-32 architecture, use `obj-ia32` instead of `obj-intel64`
 
-You can specify the name of an output file by using the `-o` flag. The default
-name of an output file is `ftrace.out`.
-
-You can use the `-print_floating_point_operations` to print the operands and
-result of every floating-point arithmetic operation in the instrumented
+You can use the `-print_floating_point_operations` flag to print the operands
+and result of every floating-point arithmetic operation in the instrumented
 application.
+
+You can specify the name of an output file for the operands and result of each
+floating-point operation by using the `-o` flag. The default name of an output
+file is `ftrace.out`.
 
 Floating-Point Instruction Replacement
 --------------------------------------
 
-To compile a library with a user-defined implementation of floating-point
-arithmetic instructions, create one or more files containing the code you want
-to compile into the library.  These files must contain exactly one subclass of
-the `FloatingPointImplementation` class that is registered with
-`REGISTER_FLOATING_POINT_IMPL`.  Finally, run the following command:
+Custom floating-point implementation selectors can be written to test the
+accuracy of different floating-point implementations. Each `FpSelector` selects
+an `FpImplementation` to replace each SSE floating-point arithmetic instruction.
+To use an `FpSelector` to instrument an application, the `FpSelector` must first
+be registered with one of the classes in `src/client_lib/registry`.  Once an
+`FpSelector` has been registered to a name, that name may be used to specify the
+`FpSelector` to be used to instrument an application with the
+`-fp_selector_name` flag.
 
-    make FLOATING_POINT_IMPL_LIB=<floating_point_impl_lib_base_name> FLOATING_POINT_IMPL_LIS_SRCS=<floating_point_impl_lib_srcs>
-
-See the `tests/` directory for examples of user-defined floating-point
-implementations.
+See the `tests/` directory for examples of user-defined `FpSelector`s.
 
 Testing
 -------
 
-To run the tests for this pintool, run the following command:
-
-    make test
+To run the tests for this pintool, run `make test` from the main directory.
 
 Documentation
 -------------

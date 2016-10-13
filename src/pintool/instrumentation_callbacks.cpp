@@ -2,100 +2,84 @@
 
 #include <pin.H>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
-#include "pintool/instrumentation_args.h"
-#include "shared/floating_point_implementation.h"
-#include "shared/program_state.h"
-
-namespace {
+#include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/interfaces/fp_selector.h"
 
 /*!
- * Convert a FLT32 variable into the string representation of its value in hex.
- * @param[in]   fp  variable to convert to hex
+ * Convert a FLT32 variable into the string representation of its value as an 8
+ * digit hex number, padded with 0's.
+ *
+ * @param[in] fp Variable to convert.
  */
 #define FLT32_TO_HEX(fp) \
   StringHex(*reinterpret_cast<const UINT32 *>(&fp), 8, FALSE)
 
-/**
- * Prints the operands, operation, and result of a floating-point operation to
- * the specified output stream.
- * @param[in]   operation       opcode of the floating-point operation
- * @param[in]   operand1        first operand of the operation
- * @param[in]   operand2        second operand of the operation
- * @param[in]   result          result of the operation
- * @param[in]   output_stream   stream where the operation should be written
- */
-VOID PrintFloatingPointOperation(const OPCODE &operation, const FLT32 &operand1,
-                                 const FLT32 &operand2, const FLT32 &result,
-                                 ofstream *output_stream) {
-  *output_stream << OPCODE_StringShort(operation) << " "
-                 << FLT32_TO_HEX(operand1) << " " << FLT32_TO_HEX(operand2)
-                 << "\n";
-  *output_stream << "  " << FLT32_TO_HEX(result) << "\n";
-}
-
-}  // namespace
-
 namespace ftrace {
 
-VOID StartCallback(const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->floating_point_implementation->StartCallback();
+VOID StartCallback(FpSelector *fp_selector) { fp_selector->StartCallback(); }
+
+VOID ExitCallback(const INT32 code, FpSelector *fp_selector) {
+  fp_selector->ExitCallback(code);
 }
 
-VOID ExitCallback(const INT32 code,
-                  const InstrumentationArgs *instrumentation_args) {
-  instrumentation_args->floating_point_implementation->ExitCallback(code);
-  delete instrumentation_args;
-}
-
-VOID ReplaceRegisterFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args,
-    const ProgramState *program_state, const OPCODE operation,
-    const REG operand1, const REG operand2, CONTEXT *ctxt) {
+VOID ReplaceRegisterFpInstruction(const OPCODE operation, const REG operand1,
+                                  const REG operand2, FpSelector *fp_selector,
+                                  CONTEXT *ctxt) {
   PIN_REGISTER reg1, reg2, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
-  FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation;
 
-  *result.flt = floating_point_implementation->FloatingPointOperation(
-      *reg1.flt, *reg2.flt, operation, *program_state);
+  FpImplementation *fp_implementation =
+      fp_selector->SelectFpImplementation(*reg1.flt, *reg2.flt, operation);
+  *result.flt = fp_implementation->FpOperation(*reg1.flt, *reg2.flt, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
-  if (instrumentation_args->print_floating_point_ops) {
-    PrintFloatingPointOperation(operation, *reg1.flt, *reg2.flt, *result.flt,
-                                instrumentation_args->output_stream);
-  }
 }
 
-VOID ReplaceMemoryFloatingPointInstruction(
-    const InstrumentationArgs *instrumentation_args,
-    const ProgramState *program_state, const OPCODE operation,
-    const REG operand1, const FLT32 *operand2, CONTEXT *ctxt) {
+VOID ReplaceMemoryFpInstruction(const OPCODE operation, const REG operand1,
+                                const FLT32 *operand2, FpSelector *fp_selector,
+                                CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
-  FloatingPointImplementation *floating_point_implementation =
-      instrumentation_args->floating_point_implementation;
 
-  *result.flt = floating_point_implementation->FloatingPointOperation(
-      *reg1.flt, *operand2, operation, *program_state);
+  FpImplementation *fp_implementation =
+      fp_selector->SelectFpImplementation(*reg1.flt, *operand2, operation);
+  *result.flt = fp_implementation->FpOperation(*reg1.flt, *operand2, operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
-  if (instrumentation_args->print_floating_point_ops) {
-    PrintFloatingPointOperation(operation, *reg1.flt, *operand2, *result.flt,
-                                instrumentation_args->output_stream);
-  }
 }
 
-VOID FunctionStackPush(const string *function_name,
-                       vector<string> *function_stack) {
-  function_stack->push_back(*function_name);
+VOID EnterFunction(const string *function_name, FpSelector *fp_selector) {
+  fp_selector->OnFunctionStart(*function_name);
 }
 
-VOID FunctionStackPop(vector<string> *function_stack) {
-  function_stack->pop_back();
+VOID ExitFunction(const string *function_name, FpSelector *fp_selector) {
+  fp_selector->OnFunctionEnd(*function_name);
+}
+
+VOID CloseOutputStream(const INT32 code, ofstream *output) {
+  output->close();
+  delete output;
+}
+
+VOID PrintRegisterFpOperands(const OPCODE operation,
+                             const PIN_REGISTER *operand1,
+                             const PIN_REGISTER *operand2, ofstream *output) {
+  *output << OPCODE_StringShort(operation) << " " << FLT32_TO_HEX(operand1->flt)
+          << " " << FLT32_TO_HEX(operand2->flt) << "\n";
+}
+
+VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
+                           const FLT32 *operand2, ofstream *output) {
+  *output << OPCODE_StringShort(operation) << " " << FLT32_TO_HEX(operand1->flt)
+          << " " << FLT32_TO_HEX(*operand2) << "\n";
+}
+
+VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output) {
+  *output << "  " << FLT32_TO_HEX(result->flt) << "\n";
 }
 
 }  // namespace ftrace
