@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/*! Print the hex value of a 32-bit value to stdout */
-#define PRINT_HEX(fp) printf("%08x\n", *(uint32_t *) & (fp))
+/// Print the hex value of a 32-bit value to stdout
+#define PRINT_HEX(fp) printf("%08x\n", *(uint32_t *)&(fp))
 
 float helper1(float a, float b);
 
@@ -18,7 +18,7 @@ void helper2();
 
 float a, b, c, d, e, f, g, h, i, j, k, l, m, n;
 
-/*!
+/**
  * The main procedure of the application.
  * @param[in]   argc            total number of elements in the argv array
  * @param[in]   argv            array of command line arguments
