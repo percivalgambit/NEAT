@@ -103,6 +103,9 @@ ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector
 #
 ##############################################################
 
+.DELETE_ON_ERROR:
+.SECONDEXPANSION:
+
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 
@@ -111,45 +114,29 @@ FP_SELECTOR_REGISTRY_LIB_BASE := ftrace_fp_selector_registry
 FP_SELECTOR_REGISTRY_LIB := $(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
 
 # Adds project-specific compiler flags
-TOOL_CXXFLAGS += -MMD -MP -Isrc/
+TOOL_CXXFLAGS += -MMD -MP -Isrc/ -std=gnu++11
 
 ###### Special objects' build rules ######
 
-PINTOOL_SRCS := $(notdir $(wildcard src/pintool/*.cpp))
-REGISTRY_SRCS := $(notdir $(wildcard src/client_lib/registry/*.cpp))
-REGISTRY_INTERNAL_SRCS := $(notdir $(wildcard src/client_lib/registry/internal/*.cpp))
-FP_SELECTORS_SRCS := $(notdir $(wildcard src/client_lib/fp_selectors/*.cpp))
-INTERFACES_SRCS := $(notdir $(wildcard src/client_lib/interfaces/*.cpp))
-TEST_SRCS := $(notdir $(wildcard tests/*.cpp))
-
-PINTOOL_OBJS := $(addprefix $(OBJDIR),$(PINTOOL_SRCS:.cpp=$(OBJ_SUFFIX)))
-REGISTRY_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_SRCS:.cpp=$(OBJ_SUFFIX)))
-REGISTRY_INTERNAL_OBJS := $(addprefix $(OBJDIR),$(REGISTRY_INTERNAL_SRCS:.cpp=$(OBJ_SUFFIX)))
-FP_SELECTORS_OBJS := $(addprefix $(OBJDIR),$(FP_SELECTORS_SRCS:.cpp=$(OBJ_SUFFIX)))
-INTERFACES_OBJS := $(addprefix $(OBJDIR),$(INTERFACES_SRCS:.cpp=$(OBJ_SUFFIX)))
-TEST_OBJS := $(addprefix $(OBJDIR),$(TEST_SRCS:.cpp=$(OBJ_SUFFIX)))
+PINTOOL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/pintool/*.cpp))
+REGISTRY_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/*.cpp))
+REGISTRY_INTERNAL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/internal/*.cpp))
+FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/fp_selectors/*.cpp))
+INTERFACES_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/interfaces/*.cpp))
+TEST_OBJS := $(patsubst %.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard tests/*.cpp))
 
 FTRACE_OBJS := $(PINTOOL_OBJS)
 CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
 
+$(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
+	@mkdir -p $@
+
 # Compiles pintool-specific sources
-$(FTRACE_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/pintool/%.cpp
+$(OBJDIR)%.o: src/%.cpp | $$(@D)
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-$(REGISTRY_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/registry/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
-
-$(REGISTRY_INTERNAL_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/registry/internal/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
-
-$(FP_SELECTORS_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/fp_selectors/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
-
-$(INTERFACES_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): src/client_lib/interfaces/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
-
-$(TEST_OBJS): $(OBJDIR)%$(OBJ_SUFFIX): tests/%.cpp
-	$(CXX) $(TOOL_CXXFLAGS) $(DLL_CXXFLAGS) $(COMP_OBJ)$@ $<
+$(OBJDIR)tests/%.o: tests/%.cpp | $(OBJDIR)tests
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # Tracks header dependencies for future recompilation
 $(OBJDIR)%.d: %.cpp
