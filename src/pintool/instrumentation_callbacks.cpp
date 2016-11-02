@@ -68,14 +68,30 @@ VOID CloseOutputStream(const INT32 code, ofstream *output) {
 VOID PrintRegisterFpOperands(const OPCODE operation,
                              const PIN_REGISTER *operand1,
                              const PIN_REGISTER *operand2, ofstream *output) {
-  *output << OPCODE_StringShort(operation) << " " << FLT32_TO_HEX(operand1->flt)
-          << " " << FLT32_TO_HEX(operand2->flt) << "\n";
+  *output << OPCODE_StringShort(operation) << " ";
+  // To disambiguate assosiative operations, list the largest operand first.
+  if (operation == XED_ICLASS_SUBSS || operation == XED_ICLASS_DIVSS ||
+      *operand1->flt > *operand2->flt) {
+    *output << FLT32_TO_HEX(operand1->flt) << " "
+            << FLT32_TO_HEX(operand2->flt);
+  } else {
+    *output << FLT32_TO_HEX(operand2->flt) << " "
+            << FLT32_TO_HEX(operand1->flt);
+  }
+  *output << "\n";
 }
 
 VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
                            const FLT32 *operand2, ofstream *output) {
-  *output << OPCODE_StringShort(operation) << " " << FLT32_TO_HEX(operand1->flt)
-          << " " << FLT32_TO_HEX(*operand2) << "\n";
+  *output << OPCODE_StringShort(operation) << " ";
+  // To disambiguate assosiative operations, list the largest operand first.
+  if (operation == XED_ICLASS_SUBSS || operation == XED_ICLASS_DIVSS ||
+      *operand1->flt > *operand2) {
+    *output << FLT32_TO_HEX(operand1->flt) << " " << FLT32_TO_HEX(*operand2);
+  } else {
+    *output << FLT32_TO_HEX(*operand2) << " " << FLT32_TO_HEX(operand1->flt);
+  }
+  *output << "\n";
 }
 
 VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output) {
