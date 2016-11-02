@@ -117,7 +117,9 @@ VOID CloseOutputStream(const INT32 code, ofstream *output);
  * @param[in] operand2 Second operand of the instruction
  * @param[out] output The output file to write to.
  * @note All floating-point values are printed as 8 digit hex numbers padded
- * with 0's.
+ *     with 0's.
+ * @note Associative operations print the largest operand first so that the
+ *     format of the output is identical on different architectures.
  */
 VOID PrintRegisterFpOperands(const OPCODE operation,
                              const PIN_REGISTER *operand1,
@@ -135,7 +137,9 @@ VOID PrintRegisterFpOperands(const OPCODE operation,
  * @param[in] operand2 Second operand of the instruction
  * @param[out] output The output file to write to.
  * @note All floating-point values are printed as 8 digit hex numbers padded
- * with 0's.
+ *     with 0's.
+ * @note Associative operations print the largest operand first so that the
+ *     format of the output is identical on different architectures.
  */
 VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
                            const FLT32 *operand2, ofstream *output);
@@ -149,7 +153,7 @@ VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
  * @param[in] result Result of the instruction.
  * @param[out] output The output file to write to.
  * @note All floating-point values are printed as 8 digit hex numbers padded
- * with 0's.
+ *     with 0's.
  */
 VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output);
 
