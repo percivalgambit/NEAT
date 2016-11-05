@@ -33,13 +33,11 @@ KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
                                 "specify the name of the FpSelector to use "
                                 "when instrumenting an application");
 
-KNOB<BOOL> KnobPrintFpOps(
-    KNOB_MODE_WRITEONCE, "pintool", "print_fp_ops", "0",
+KNOB<string> KnobPrintFpOps(
+    KNOB_MODE_OVERWRITE, "pintool", "print_fp_ops", "",
     "print the value of every floating point operation in the instrumented "
-    "program");
+    "program to the specified log file");
 
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "ftrace.out",
-                            "specify file name for ftrace output");
 /**
  *  Prints out a help message.
  *
@@ -65,6 +63,7 @@ static INT32 Usage() {
  *     including pin -t <toolname> -- ...
  */
 int main(int argc, char *argv[]) {
+  // Initialize program symbols for use by PIN
   PIN_InitSymbols();
   // Initialize PIN library. Print help message if -h(elp) is specified
   // in the command line or the command line is invalid.
@@ -72,12 +71,12 @@ int main(int argc, char *argv[]) {
     return Usage();
   }
 
-  const FpSelectorRegistry *fp_selector_registry =
-      FpSelectorRegistry::GetFpSelectorRegistry();
-  const string &fp_selector_name = KnobFpSelectorName.Value();
   // If the KnobFpSelectorName flag is specified on the command line, attempt to
   // look up the FpSelector from the registry and use it to instrument the
   // application program with a user-defined FP implementation if it is found.
+  const FpSelectorRegistry *fp_selector_registry =
+      FpSelectorRegistry::GetFpSelectorRegistry();
+  const string &fp_selector_name = KnobFpSelectorName.Value();
   if (!fp_selector_name.empty()) {
     FpSelector *fp_selector =
         fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
@@ -92,21 +91,23 @@ int main(int argc, char *argv[]) {
         fp_selector);
   }
 
-  const string &output_file_name = KnobOutputFile.Value();
-  const BOOL &print_fp_ops = KnobPrintFpOps.Value();
   // If the KnobPrintFpOps flag is specified on the command line, instrument the
   // application program to print the arguments and result of every FP operation
   // formatted as 8 digit hex numbers padded with 0's to a file.
-  if (print_fp_ops) {
-    ofstream *output = new ofstream(output_file_name.c_str());
+  const string &print_fp_ops_file_name = KnobPrintFpOps.Value();
+  if (!print_fp_ops_file_name.empty()) {
+    ofstream *print_fp_ops_output =
+        new ofstream(print_fp_ops_file_name.c_str());
     cerr << "===============================================" << endl
-         << "See file " << output_file_name << " for analysis results" << endl
+         << "See file " << print_fp_ops_file_name
+         << " for all FP operations and results" << endl
          << "===============================================" << endl;
 
     PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(CloseOutputStream),
-                        output);
+                        print_fp_ops_output);
     INS_AddInstrumentFunction(
-        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFpOperations), output);
+        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFpOperations),
+        print_fp_ops_output);
   }
 
   // Start the program, never returns.
