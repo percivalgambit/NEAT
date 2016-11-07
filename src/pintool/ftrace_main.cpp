@@ -17,15 +17,12 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
-#include "pintool/instrument_routine.h"
-#include "pintool/instrumentation_callbacks.h"
+#include "pintool/print_fp_operations.h"
+#include "pintool/replace_fp_operations.h"
 
-using ftrace::CloseOutputStream;
-using ftrace::ExitCallback;
 using ftrace::FpSelector;
-using ftrace::ReplaceFpOperations;
 using ftrace::PrintFpOperations;
-using ftrace::StartCallback;
+using ftrace::ReplaceFpOperations;
 using ftrace::internal::FpSelectorRegistry;
 
 KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
@@ -80,15 +77,7 @@ int main(int argc, char *argv[]) {
   if (!fp_selector_name.empty()) {
     FpSelector *fp_selector =
         fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
-
-    PIN_AddApplicationStartFunction(
-        reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
-        fp_selector);
-    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
-                        fp_selector);
-    RTN_AddInstrumentFunction(
-        reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(ReplaceFpOperations),
-        fp_selector);
+    ReplaceFpOperations(fp_selector);
   }
 
   // If the KnobPrintFpOps flag is specified on the command line, instrument the
@@ -102,12 +91,7 @@ int main(int argc, char *argv[]) {
          << "See file " << print_fp_ops_file_name
          << " for all FP operations and results" << endl
          << "===============================================" << endl;
-
-    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(CloseOutputStream),
-                        print_fp_ops_output);
-    INS_AddInstrumentFunction(
-        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFpOperations),
-        print_fp_ops_output);
+    PrintFpOperations(print_fp_ops_output);
   }
 
   // Start the program, never returns.
