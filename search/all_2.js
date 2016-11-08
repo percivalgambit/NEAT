@@ -1,5 +1,10 @@
 var searchData=
 [
+  ['anonymous_5fnamespace_7bprint_5ffp_5fbits_5fmanipulated_2ecpp_7d',['anonymous_namespace{print_fp_bits_manipulated.cpp}',['../namespaceftrace_1_1anonymous__namespace_02print__fp__bits__manipulated_8cpp_03.html',1,'ftrace']]],
+  ['anonymous_5fnamespace_7bprint_5ffp_5foperations_2ecpp_7d',['anonymous_namespace{print_fp_operations.cpp}',['../namespaceftrace_1_1anonymous__namespace_02print__fp__operations_8cpp_03.html',1,'ftrace']]],
+  ['anonymous_5fnamespace_7bprint_5ffunction_5fnum_5ffp_5fops_2ecpp_7d',['anonymous_namespace{print_function_num_fp_ops.cpp}',['../namespaceftrace_1_1anonymous__namespace_02print__function__num__fp__ops_8cpp_03.html',1,'ftrace']]],
+  ['anonymous_5fnamespace_7breplace_5ffp_5foperations_2ecpp_7d',['anonymous_namespace{replace_fp_operations.cpp}',['../namespaceftrace_1_1anonymous__namespace_02replace__fp__operations_8cpp_03.html',1,'ftrace']]],
+  ['fp_5fbits_5fmanipulated',['fp_bits_manipulated',['../namespaceftrace_1_1anonymous__namespace_02print__fp__bits__manipulated_8cpp_03.html#a452e65ba68c4efffebf464995c0c40f1',1,'ftrace::anonymous_namespace{print_fp_bits_manipulated.cpp}']]],
   ['fp_5fimpl_5fstack_5f',['fp_impl_stack_',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html#a3a0c2bb2f326cbcdac7a98bbf393997a',1,'ftrace::internal::FunctionLevelFpSelector']]],
   ['fp_5fselector_5fmap_5f',['fp_selector_map_',['../classftrace_1_1internal_1_1FpSelectorRegistry.html#a7bec5af1c14657f0e1a9b6ccef2bd29f',1,'ftrace::internal::FpSelectorRegistry']]],
   ['fpadd',['FpAdd',['../classftrace_1_1NormalFpImplementation.html#a27bd8ee9bd849fae83adde8f3c73dfd1',1,'ftrace::NormalFpImplementation::FpAdd()'],['../classftrace_1_1FpImplementation.html#ac048dbc6daf318012f01c9ec90a87bb6',1,'ftrace::FpImplementation::FpAdd()'],['../classftrace_1_1TestSimpleFpImplementation.html#af15367f15269cf70c816782249a2a9ae',1,'ftrace::TestSimpleFpImplementation::FpAdd()'],['../classftrace_1_1TestComplexFpImplementation.html#a56f7d771a1cb5f733998d6c777613689',1,'ftrace::TestComplexFpImplementation::FpAdd()']]],
@@ -11,6 +16,7 @@ var searchData=
   ['fpselectorregistry',['FpSelectorRegistry',['../classftrace_1_1internal_1_1FpSelectorRegistry.html',1,'ftrace::internal']]],
   ['fpsub',['FpSub',['../classftrace_1_1NormalFpImplementation.html#aabd9a41a4237c46fd643753261d79915',1,'ftrace::NormalFpImplementation::FpSub()'],['../classftrace_1_1FpImplementation.html#a7c89726a477da769da71a73e95f9e9eb',1,'ftrace::FpImplementation::FpSub()'],['../classftrace_1_1TestSimpleFpImplementation.html#a938aeed5da18544decf73455bce57280',1,'ftrace::TestSimpleFpImplementation::FpSub()'],['../classftrace_1_1TestComplexFpImplementation.html#ab8c0abf85bd92687935cf7f785730774',1,'ftrace::TestComplexFpImplementation::FpSub()']]],
   ['ftrace',['ftrace',['../namespaceftrace.html',1,'']]],
+  ['function_5ffp_5fop_5fcount',['function_fp_op_count',['../namespaceftrace_1_1anonymous__namespace_02print__function__num__fp__ops_8cpp_03.html#a634d166607d307af85105c29bd1798df',1,'ftrace::anonymous_namespace{print_function_num_fp_ops.cpp}']]],
   ['functionlevelfpselector',['FunctionLevelFpSelector',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html#ab1fa0cfafd40ae06e7c66e42461cad08',1,'ftrace::internal::FunctionLevelFpSelector']]],
   ['functionlevelfpselector',['FunctionLevelFpSelector',['../classftrace_1_1internal_1_1FunctionLevelFpSelector.html',1,'ftrace::internal']]],
   ['ftrace',['ftrace',['../index.html',1,'']]]

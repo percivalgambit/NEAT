@@ -1,4 +1,4 @@
 var namespaces =
 [
-    [ "ftrace", "namespaceftrace.html", null ]
+    [ "ftrace", "namespaceftrace.html", "namespaceftrace" ]
 ];
