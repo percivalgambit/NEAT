@@ -17,15 +17,16 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
-#include "pintool/instrument_routine.h"
-#include "pintool/instrumentation_callbacks.h"
+#include "pintool/print_fp_bits_manipulated.h"
+#include "pintool/print_fp_operations.h"
+#include "pintool/print_function_num_fp_ops.h"
+#include "pintool/replace_fp_operations.h"
 
-using ftrace::CloseOutputStream;
-using ftrace::ExitCallback;
 using ftrace::FpSelector;
-using ftrace::ReplaceFpOperations;
+using ftrace::PrintFpBitsManipulated;
 using ftrace::PrintFpOperations;
-using ftrace::StartCallback;
+using ftrace::PrintFunctionNumFpOps;
+using ftrace::ReplaceFpOperations;
 using ftrace::internal::FpSelectorRegistry;
 
 KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
@@ -33,13 +34,25 @@ KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
                                 "specify the name of the FpSelector to use "
                                 "when instrumenting an application");
 
-KNOB<BOOL> KnobPrintFpOps(
-    KNOB_MODE_WRITEONCE, "pintool", "print_fp_ops", "0",
+KNOB<string> KnobPrintFpOps(
+    KNOB_MODE_OVERWRITE, "pintool", "print_fp_ops", "",
     "print the value of every floating point operation in the instrumented "
-    "program");
+    "program to the specified log file");
 
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "ftrace.out",
-                            "specify file name for ftrace output");
+KNOB<string> KnobPrintFpBitsManipulated(KNOB_MODE_OVERWRITE, "pintool",
+                                        "print_fp_bits_manipulated", "",
+                                        "print the total number of bits "
+                                        "manipulated in every floating point "
+                                        "operation in the instrumented program "
+                                        "to the specified log file");
+
+KNOB<string> KnobPrintFunctionNumFpOps(
+    KNOB_MODE_OVERWRITE, "pintool", "print_function_num_fp_ops", "",
+    "print the number of floating point "
+    "operations executed per function of the "
+    "instrumented application to the "
+    "specified log file");
+
 /**
  *  Prints out a help message.
  *
@@ -65,6 +78,7 @@ static INT32 Usage() {
  *     including pin -t <toolname> -- ...
  */
 int main(int argc, char *argv[]) {
+  // Initialize program symbols for use by PIN
   PIN_InitSymbols();
   // Initialize PIN library. Print help message if -h(elp) is specified
   // in the command line or the command line is invalid.
@@ -72,41 +86,60 @@ int main(int argc, char *argv[]) {
     return Usage();
   }
 
-  const FpSelectorRegistry *fp_selector_registry =
-      FpSelectorRegistry::GetFpSelectorRegistry();
-  const string &fp_selector_name = KnobFpSelectorName.Value();
   // If the KnobFpSelectorName flag is specified on the command line, attempt to
   // look up the FpSelector from the registry and use it to instrument the
   // application program with a user-defined FP implementation if it is found.
+  const FpSelectorRegistry *fp_selector_registry =
+      FpSelectorRegistry::GetFpSelectorRegistry();
+  const string &fp_selector_name = KnobFpSelectorName.Value();
   if (!fp_selector_name.empty()) {
     FpSelector *fp_selector =
         fp_selector_registry->GetFpSelectorOrDie(fp_selector_name);
-
-    PIN_AddApplicationStartFunction(
-        reinterpret_cast<APPLICATION_START_CALLBACK>(StartCallback),
-        fp_selector);
-    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(ExitCallback),
-                        fp_selector);
-    RTN_AddInstrumentFunction(
-        reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(ReplaceFpOperations),
-        fp_selector);
+    ReplaceFpOperations(fp_selector);
   }
 
-  const string &output_file_name = KnobOutputFile.Value();
-  const BOOL &print_fp_ops = KnobPrintFpOps.Value();
   // If the KnobPrintFpOps flag is specified on the command line, instrument the
   // application program to print the arguments and result of every FP operation
   // formatted as 8 digit hex numbers padded with 0's to a file.
-  if (print_fp_ops) {
-    ofstream *output = new ofstream(output_file_name.c_str());
+  const string &print_fp_ops_file_name = KnobPrintFpOps.Value();
+  if (!print_fp_ops_file_name.empty()) {
+    ofstream *print_fp_ops_output =
+        new ofstream(print_fp_ops_file_name.c_str());
     cerr << "===============================================" << endl
-         << "See file " << output_file_name << " for analysis results" << endl
+         << "See file " << print_fp_ops_file_name
+         << " for all FP operations and results" << endl
          << "===============================================" << endl;
+    PrintFpOperations(print_fp_ops_output);
+  }
 
-    PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(CloseOutputStream),
-                        output);
-    INS_AddInstrumentFunction(
-        reinterpret_cast<INS_INSTRUMENT_CALLBACK>(PrintFpOperations), output);
+  // If the KnobPrintFpBitsManipulated flag is specified on the command line,
+  // instrument the application program to print the total number of bits
+  // manipulated in every floating-point operation.
+  const string &print_fp_bits_file_name = KnobPrintFpBitsManipulated.Value();
+  if (!print_fp_bits_file_name.empty()) {
+    ofstream *print_fp_bits_output =
+        new ofstream(print_fp_bits_file_name.c_str());
+    cerr << "===============================================" << endl
+         << "See file " << print_fp_bits_file_name
+         << " for the total number of bits manipulated in FP operations" << endl
+         << "===============================================" << endl;
+    PrintFpBitsManipulated(print_fp_bits_output);
+  }
+
+  // If the KnobPrintFunctionNumFpOps flag is specified on the command line,
+  // instrument the application program to print the number of floating-point
+  // operations executed per function in the application.
+  const string &print_function_num_fp_ops_file_name =
+      KnobPrintFunctionNumFpOps.Value();
+  if (!print_function_num_fp_ops_file_name.empty()) {
+    ofstream *print_function_num_fp_ops_output =
+        new ofstream(print_function_num_fp_ops_file_name.c_str());
+    cerr << "===============================================" << endl
+         << "See file " << print_function_num_fp_ops_file_name
+         << " for the number of FP operations per function in the application"
+         << endl
+         << "===============================================" << endl;
+    PrintFunctionNumFpOps(print_function_num_fp_ops_output);
   }
 
   // Start the program, never returns.
