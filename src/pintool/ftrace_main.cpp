@@ -17,10 +17,12 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
+#include "pintool/print_fp_bits_manipulated.h"
 #include "pintool/print_fp_operations.h"
 #include "pintool/replace_fp_operations.h"
 
 using ftrace::FpSelector;
+using ftrace::PrintFpBitsManipulated;
 using ftrace::PrintFpOperations;
 using ftrace::ReplaceFpOperations;
 using ftrace::internal::FpSelectorRegistry;
@@ -34,6 +36,13 @@ KNOB<string> KnobPrintFpOps(
     KNOB_MODE_OVERWRITE, "pintool", "print_fp_ops", "",
     "print the value of every floating point operation in the instrumented "
     "program to the specified log file");
+
+KNOB<string> KnobPrintFpBitsManipulated(KNOB_MODE_OVERWRITE, "pintool",
+                                        "print_fp_bits_manipulated", "",
+                                        "print the total number of bits "
+                                        "manipulated in every floating point "
+                                        "operation in the instrumented program "
+                                        "to the specified log file");
 
 /**
  *  Prints out a help message.
@@ -92,6 +101,20 @@ int main(int argc, char *argv[]) {
          << " for all FP operations and results" << endl
          << "===============================================" << endl;
     PrintFpOperations(print_fp_ops_output);
+  }
+
+  // If the KnobPrintFpBitsManipulated flag is specified on the command line,
+  // instrument the application program to print the total number of bits
+  // manipulated in every floating-point operation.
+  const string &print_fp_bits_file_name = KnobPrintFpBitsManipulated.Value();
+  if (!print_fp_bits_file_name.empty()) {
+    ofstream *print_fp_bits_output =
+        new ofstream(print_fp_bits_file_name.c_str());
+    cerr << "===============================================" << endl
+         << "See file " << print_fp_bits_file_name
+         << " for the total number of bits manipulated in FP operations" << endl
+         << "===============================================" << endl;
+    PrintFpBitsManipulated(print_fp_bits_output);
   }
 
   // Start the program, never returns.

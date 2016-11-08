@@ -28,4 +28,4 @@ BOOL IsFpInstruction(const INS &ins);
 
 }  // namespace ftrace
 
-#endif  // PINTOOL_UTILS_H
+#endif  // PINTOOL_UTILS_H_

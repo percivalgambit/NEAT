@@ -70,9 +70,12 @@ LIB_ROOTS :=
 %.test: export TEST           = test
 %.test: EXPECTED_TOOL_OUTPUT  = tests/integration/$(@:.test=.reference)
 %.test: EXPECTED_STDOUT       = tests/integration/$(@:.test=.stdout.reference)
+%.test: EXPECTED_BIT_COUNT    = tests/integration/$(@:.test=.bits.reference)
 %.test: ACTUAL_TOOL_OUTPUT    = $(@:.test=.out)
 %.test: ACTUAL_STDOUT         = $(@:.test=.stdout.out)
+%.test: ACTUAL_BIT_COUNT      = $(@:.test=.bits.out)
 %.test: FTRACE_TEST_FLAGS     = -print_fp_ops $(ACTUAL_TOOL_OUTPUT)
+%.test: FTRACE_TEST_FLAGS    += -print_fp_bits_manipulated $(ACTUAL_BIT_COUNT)
 %.test: FTRACE_TOOL           = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP              = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 %.test: TEST_IMPL_LIB_SRC_DIR = tests/test_floating_point_implementations
@@ -82,6 +85,7 @@ LIB_ROOTS :=
 	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
+	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
 	$(RM) $(FP_SELECTOR_REGISTRY_LIB)
 
