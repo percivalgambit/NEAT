@@ -19,11 +19,13 @@
 #include "client_lib/registry/internal/fp_selector_registry.h"
 #include "pintool/print_fp_bits_manipulated.h"
 #include "pintool/print_fp_operations.h"
+#include "pintool/print_function_num_fp_ops.h"
 #include "pintool/replace_fp_operations.h"
 
 using ftrace::FpSelector;
 using ftrace::PrintFpBitsManipulated;
 using ftrace::PrintFpOperations;
+using ftrace::PrintFunctionNumFpOps;
 using ftrace::ReplaceFpOperations;
 using ftrace::internal::FpSelectorRegistry;
 
@@ -43,6 +45,13 @@ KNOB<string> KnobPrintFpBitsManipulated(KNOB_MODE_OVERWRITE, "pintool",
                                         "manipulated in every floating point "
                                         "operation in the instrumented program "
                                         "to the specified log file");
+
+KNOB<string> KnobPrintFunctionNumFpOps(
+    KNOB_MODE_OVERWRITE, "pintool", "print_function_num_fp_ops", "",
+    "print the number of floating point "
+    "operations executed per function of the "
+    "instrumented application to the "
+    "specified log file");
 
 /**
  *  Prints out a help message.
@@ -115,6 +124,22 @@ int main(int argc, char *argv[]) {
          << " for the total number of bits manipulated in FP operations" << endl
          << "===============================================" << endl;
     PrintFpBitsManipulated(print_fp_bits_output);
+  }
+
+  // If the KnobPrintFunctionNumFpOps flag is specified on the command line,
+  // instrument the application program to print the number of floating-point
+  // operations executed per function in the application.
+  const string &print_function_num_fp_ops_file_name =
+      KnobPrintFunctionNumFpOps.Value();
+  if (!print_function_num_fp_ops_file_name.empty()) {
+    ofstream *print_function_num_fp_ops_output =
+        new ofstream(print_function_num_fp_ops_file_name.c_str());
+    cerr << "===============================================" << endl
+         << "See file " << print_function_num_fp_ops_file_name
+         << " for the number of FP operations per function in the application"
+         << endl
+         << "===============================================" << endl;
+    PrintFunctionNumFpOps(print_function_num_fp_ops_output);
   }
 
   // Start the program, never returns.
