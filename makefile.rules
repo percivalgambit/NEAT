@@ -115,7 +115,7 @@ ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector
 
 # Location of the shared library containing the fp selector registry
 FP_SELECTOR_REGISTRY_LIB_BASE := ftrace_fp_selector_registry
-FP_SELECTOR_REGISTRY_LIB := $(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
+FP_SELECTOR_REGISTRY_LIB := $(CURDIR)/$(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
 
 # Adds project-specific compiler flags
 TOOL_CXXFLAGS += -MMD -MP -Isrc/ -std=gnu++11
