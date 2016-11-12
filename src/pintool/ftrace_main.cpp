@@ -105,10 +105,6 @@ int main(int argc, char *argv[]) {
   if (!print_fp_ops_file_name.empty()) {
     ofstream *print_fp_ops_output =
         new ofstream(print_fp_ops_file_name.c_str());
-    cerr << "===============================================" << endl
-         << "See file " << print_fp_ops_file_name
-         << " for all FP operations and results" << endl
-         << "===============================================" << endl;
     PrintFpOperations(print_fp_ops_output);
   }
 
@@ -119,10 +115,6 @@ int main(int argc, char *argv[]) {
   if (!print_fp_bits_file_name.empty()) {
     ofstream *print_fp_bits_output =
         new ofstream(print_fp_bits_file_name.c_str());
-    cerr << "===============================================" << endl
-         << "See file " << print_fp_bits_file_name
-         << " for the total number of bits manipulated in FP operations" << endl
-         << "===============================================" << endl;
     PrintFpBitsManipulated(print_fp_bits_output);
   }
 
@@ -134,11 +126,6 @@ int main(int argc, char *argv[]) {
   if (!print_function_num_fp_ops_file_name.empty()) {
     ofstream *print_function_num_fp_ops_output =
         new ofstream(print_function_num_fp_ops_file_name.c_str());
-    cerr << "===============================================" << endl
-         << "See file " << print_function_num_fp_ops_file_name
-         << " for the number of FP operations per function in the application"
-         << endl
-         << "===============================================" << endl;
     PrintFunctionNumFpOps(print_function_num_fp_ops_output);
   }
 
