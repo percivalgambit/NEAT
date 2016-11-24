@@ -4,7 +4,7 @@
 
 #include "client_lib/default_fp_selectors/normal_fp_implementation.h"
 #include "client_lib/interfaces/fp_implementation.h"
-#include "client_lib/registry/register_function_level_fp_selector.h"
+#include "client_lib/registry/register_function_stack_fp_selector.h"
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
 
 namespace ftrace {
@@ -61,27 +61,27 @@ static TestSimpleFpImplementation simple;
 static TestComplexFpImplementation complex;
 static NormalFpImplementation normal;
 
-static const pair<string, FpImplementation *> test_simple_function_level_map[] =
+static const pair<string, FpImplementation *> test_simple_function_stack_map[] =
     {{"helper2", &simple}, {"helper1", &complex}};
-static const int test_simple_function_level_map_size =
-    sizeof(test_simple_function_level_map) /
-    sizeof(test_simple_function_level_map[0]);
-static const pair<string, FpImplementation *> test_nested_function_level_map[] =
+static const int test_simple_function_stack_map_size =
+    sizeof(test_simple_function_stack_map) /
+    sizeof(test_simple_function_stack_map[0]);
+static const pair<string, FpImplementation *> test_nested_function_stack_map[] =
     {{"helper1", &simple}, {"helper2", &simple}, {"nested_helper", &complex}};
-static const int test_nested_function_level_map_size =
-    sizeof(test_nested_function_level_map) /
-    sizeof(test_nested_function_level_map[0]);
+static const int test_nested_function_stack_map_size =
+    sizeof(test_nested_function_stack_map) /
+    sizeof(test_nested_function_stack_map[0]);
 
 // Register FpSelector instances for tests.
 static RegisterSingleFpImplementationSelector<TestSimpleFpImplementation>
     test_simple("test_simple");
 static RegisterSingleFpImplementationSelector<TestComplexFpImplementation>
     test_complex("test_complex");
-static RegisterFunctionLevelFpSelector test_simple_function_level(
-    test_simple_function_level_map, test_simple_function_level_map_size,
-    &normal, "test_simple_function_level");
-static RegisterFunctionLevelFpSelector test_nested_function_level(
-    test_nested_function_level_map, test_nested_function_level_map_size,
-    &normal, "test_nested_function_level");
+static RegisterFunctionStackFpSelector test_simple_function_stack(
+    test_simple_function_stack_map, test_simple_function_stack_map_size,
+    &normal, "test_simple_function_stack");
+static RegisterFunctionStackFpSelector test_nested_function_stack(
+    test_nested_function_stack_map, test_nested_function_stack_map_size,
+    &normal, "test_nested_function_stack");
 
 }  // namespace ftrace

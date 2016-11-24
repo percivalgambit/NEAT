@@ -1,5 +1,5 @@
-#ifndef CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
-#define CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
+#ifndef CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_STACK_FP_SELECTOR_H_
+#define CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_STACK_FP_SELECTOR_H_
 
 #include <pin.H>
 
@@ -21,7 +21,7 @@ namespace internal {
  * the call stack will be selected, otherwise a default FpImplementation will
  * be selected.
  */
-class FunctionLevelFpSelector : public FpSelector {
+class FunctionStackFpSelector : public FpSelector {
  public:
   /**
    * @param[in] function_name_map The map of function names to FpImplementation
@@ -29,7 +29,7 @@ class FunctionLevelFpSelector : public FpSelector {
    * @param[in] function_name_map_size The size of function_name_map.
    * @param[in] default_fp_impl The default FpImplementation instance to use.
    */
-  FunctionLevelFpSelector(
+  FunctionStackFpSelector(
       const pair<string, FpImplementation *> function_name_map[],
       const int function_name_map_size, FpImplementation *default_fp_impl)
       : function_name_map_(function_name_map),
@@ -76,7 +76,7 @@ class FunctionLevelFpSelector : public FpSelector {
  * based on the functions in the instrumented application's call stack with the
  * global FpSelectorRegistry.
  */
-class RegisterFunctionLevelFpSelector {
+class RegisterFunctionStackFpSelector {
  public:
   /**
    * @param[in] function_name_map The map of function names to FpImplementation
@@ -86,7 +86,7 @@ class RegisterFunctionLevelFpSelector {
    * @param[in] fp_selector_name The name to register for the FpSelector
    *     instance.
    */
-  RegisterFunctionLevelFpSelector(
+  RegisterFunctionStackFpSelector(
       const pair<string, FpImplementation *> function_name_map[],
       const int function_name_map_size, FpImplementation *default_fp_impl,
       const string &fp_selector_name)
@@ -95,10 +95,10 @@ class RegisterFunctionLevelFpSelector {
         register_fp_selector_(&fp_selector_, fp_selector_name) {}
 
  private:
-  internal::FunctionLevelFpSelector fp_selector_;
+  internal::FunctionStackFpSelector fp_selector_;
   RegisterInitializedFpSelector register_fp_selector_;
 };
 
 }  // namespace ftrace
 
-#endif  // CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_LEVEL_FP_SELECTOR_H_
+#endif  // CLIENT_LIB_REGISTRY_REGISTER_FUNCTION_STACK_FP_SELECTOR_H_

@@ -24,8 +24,8 @@ TEST_ROOTS := \
 	ftrace_normal_fp_implementation \
 	ftrace_replace_fp_ins_simple \
 	ftrace_replace_fp_ins_complex \
-	ftrace_function_level_replacement_simple \
-	ftrace_function_level_replacement_nested \
+	ftrace_function_stack_replacement_simple \
+	ftrace_function_stack_replacement_nested \
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -81,7 +81,6 @@ LIB_ROOTS :=
 %.test: FTRACE_TEST_FLAGS            += -print_function_num_fp_ops $(ACTUAL_FUNCTION_FP_OP_COUNT)
 %.test: FTRACE_TOOL                   = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP                      = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-%.test: TEST_IMPL_LIB_SRC_DIR         = tests/test_floating_point_implementations
 
 %.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE)
@@ -97,9 +96,9 @@ ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_s
 
 ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS += -fp_selector_name test_complex
 
-ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_level
+ftrace_function_stack_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_stack
 
-ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_level
+ftrace_function_stack_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_stack
 
 ##############################################################
 #
