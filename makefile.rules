@@ -126,13 +126,14 @@ PINTOOL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/pint
 REGISTRY_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/*.cpp))
 REGISTRY_INTERNAL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/internal/*.cpp))
 FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/fp_selectors/*.cpp))
+DEFAULT_FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/default_fp_selectors/*.cpp))
 INTERFACES_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/interfaces/*.cpp))
 TEST_OBJS := $(patsubst %.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard tests/*.cpp))
 
 FTRACE_OBJS := $(PINTOOL_OBJS)
-CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
+CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(DEFAULT_FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
 
-$(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
+$(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/default_fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
 	@mkdir -p $@
 
 # Compiles pintool-specific sources

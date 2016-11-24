@@ -1,4 +1,4 @@
-#include "client_lib/fp_selectors/normal_fp_implementation.h"
+#include "client_lib/default_fp_selectors/normal_fp_implementation.h"
 
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
 

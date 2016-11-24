@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "client_lib/fp_selectors/normal_fp_implementation.h"
+#include "client_lib/default_fp_selectors/normal_fp_implementation.h"
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/registry/register_function_level_fp_selector.h"
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
