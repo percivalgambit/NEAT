@@ -21,9 +21,8 @@ namespace internal {
 template <typename FpImpl>
 class SingleFpImplementationSelector : public FpSelector {
  public:
-  FpImplementation *SelectFpImplementation(const FLT32 &operand1,
-                                           const FLT32 &operand2,
-                                           const OPCODE &operation) override {
+  FpImplementation *SelectFpImplementation(
+      const FpOperation &operation) override {
     return &fp_impl_;
   }
 

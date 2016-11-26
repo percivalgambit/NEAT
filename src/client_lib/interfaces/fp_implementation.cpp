@@ -2,27 +2,28 @@
 
 #include <pin.H>
 
+#include <cstdlib>
 #include <iostream>
+
+#include "client_lib/utils/fp_operation.h"
 
 namespace ftrace {
 
-FLT32 FpImplementation::FpOperation(const FLT32 &operand1,
-                                    const FLT32 &operand2,
-                                    const OPCODE &operation) {
-  switch (operation) {
+FLT32 FpImplementation::PerformOperation(const FpOperation &operation) {
+  switch (operation.opcode) {
     case XED_ICLASS_ADDSS:
-      return FpAdd(operand1, operand2);
+      return FpAdd(operation);
     case XED_ICLASS_SUBSS:
-      return FpSub(operand1, operand2);
+      return FpSub(operation);
     case XED_ICLASS_MULSS:
-      return FpMul(operand1, operand2);
+      return FpMul(operation);
     case XED_ICLASS_DIVSS:
-      return FpDiv(operand1, operand2);
+      return FpDiv(operation);
     default:
-      std::cerr << "Unexpected opcode " << operation
+      std::cerr << "Unexpected opcode " << operation.opcode
                 << " encountered when replacing floating-point instructions"
                 << endl;
-      return operand1;
+      exit(1);
   }
 }
 

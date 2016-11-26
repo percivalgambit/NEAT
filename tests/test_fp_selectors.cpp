@@ -6,6 +6,7 @@
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/registry/register_function_stack_fp_selector.h"
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
+#include "client_lib/utils/fp_operation.h"
 
 namespace ftrace {
 
@@ -14,45 +15,25 @@ namespace ftrace {
  */
 class TestSimpleFpImplementation : public FpImplementation {
  public:
-  FLT32 FpAdd(const FLT32 &operand1, const FLT32 &operand2) override {
-    return 1.0;
-  }
+  FLT32 FpAdd(const FpOperation &operation) override { return 1.0; }
 
-  FLT32 FpSub(const FLT32 &operand1, const FLT32 &operand2) override {
-    return 1.0;
-  }
+  FLT32 FpSub(const FpOperation &operation) override { return 1.0; }
 
-  FLT32 FpMul(const FLT32 &operand1, const FLT32 &operand2) override {
-    return 1.0;
-  }
+  FLT32 FpMul(const FpOperation &operation) override { return 1.0; }
 
-  FLT32 FpDiv(const FLT32 &operand1, const FLT32 &operand2) override {
-    return 1.0;
-  }
+  FLT32 FpDiv(const FpOperation &operation) override { return 1.0; }
 };
 
 /**
  * A complex test implementation of floating-point arithmetic operations.
  */
-class TestComplexFpImplementation : public FpImplementation {
+class TestComplexFpImplementation : public NormalFpImplementation {
  public:
-  /*!
+  /**
    * A complex implementation of floating-point arithmetic operations.
    */
-  FLT32 FpAdd(const FLT32 &operand1, const FLT32 &operand2) override {
-    return (operand1 + operand2) * 0.9;
-  }
-
-  FLT32 FpSub(const FLT32 &operand1, const FLT32 &operand2) override {
-    return (operand1 - operand2) * 0.9;
-  }
-
-  FLT32 FpMul(const FLT32 &operand1, const FLT32 &operand2) override {
-    return (operand1 * operand2) * 0.9;
-  }
-
-  FLT32 FpDiv(const FLT32 &operand1, const FLT32 &operand2) override {
-    return (operand1 / operand2) * 0.9;
+  FLT32 PerformOperation(const FpOperation &operation) {
+    return NormalFpImplementation::PerformOperation(operation) * 0.9;
   }
 };
 

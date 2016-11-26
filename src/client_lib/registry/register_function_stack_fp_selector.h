@@ -10,6 +10,7 @@
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/register_initialized_fp_selector.h"
+#include "client_lib/utils/fp_operation.h"
 
 namespace ftrace {
 namespace internal {
@@ -18,8 +19,8 @@ namespace internal {
  * Implementation of a FpSelector that returns a different FpImplementation
  * based on the functions in the instrumented application's call stack. The
  * FpImplementation instance associated with the function name most recent in
- * the call stack will be selected, otherwise a default FpImplementation will
- * be selected.
+ * the call stack will be selected if one exists, otherwise a default
+ * FpImplementation will be selected.
  */
 class FunctionStackFpSelector : public FpSelector {
  public:
@@ -36,9 +37,8 @@ class FunctionStackFpSelector : public FpSelector {
         function_name_map_size_(function_name_map_size),
         default_fp_impl_(default_fp_impl) {}
 
-  FpImplementation *SelectFpImplementation(const FLT32 &operand1,
-                                           const FLT32 &operand2,
-                                           const OPCODE &operation) override {
+  FpImplementation *SelectFpImplementation(
+      const FpOperation &operation) override {
     if (fp_impl_stack_.empty()) {
       return default_fp_impl_;
     }

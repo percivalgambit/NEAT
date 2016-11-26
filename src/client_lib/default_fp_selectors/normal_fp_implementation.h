@@ -7,6 +7,7 @@
 
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/registry/register_fp_selector.h"
+#include "client_lib/utils/fp_operation.h"
 
 namespace ftrace {
 
@@ -16,20 +17,20 @@ namespace ftrace {
  */
 class NormalFpImplementation : public FpImplementation {
  public:
-  FLT32 FpAdd(const FLT32 &operand1, const FLT32 &operand2) {
-    return operand1 + operand2;
+  FLT32 FpAdd(const FpOperation &operation) override {
+    return operation.operand1 + operation.operand2;
   }
 
-  FLT32 FpSub(const FLT32 &operand1, const FLT32 &operand2) {
-    return operand1 - operand2;
+  FLT32 FpSub(const FpOperation &operation) override {
+    return operation.operand1 - operation.operand2;
   }
 
-  FLT32 FpMul(const FLT32 &operand1, const FLT32 &operand2) {
-    return operand1 * operand2;
+  FLT32 FpMul(const FpOperation &operation) override {
+    return operation.operand1 * operation.operand2;
   }
 
-  FLT32 FpDiv(const FLT32 &operand1, const FLT32 &operand2) {
-    return operand1 / operand2;
+  FLT32 FpDiv(const FpOperation &operation) override {
+    return operation.operand1 / operation.operand2;
   }
 };
 

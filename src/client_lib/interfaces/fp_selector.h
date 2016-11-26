@@ -6,6 +6,7 @@
 #include <string>
 
 #include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/utils/fp_operation.h"
 
 namespace ftrace {
 
@@ -50,15 +51,12 @@ class FpSelector {
    * Selects a floating-point arithmetic implementation to use for the supplied
    * floating-point instruction.
    *
-   * @param[in] operand1 The first operand of the floating-point instruction.
-   * @param[in] operand2 The second operand of the floating-point instruction.
    * @param[in] operation The floating-point instruction to be performed.
    * @return The floating-point implementation to use to calculate the result of
    *     the arithmetic instruction.
    */
-  virtual FpImplementation *SelectFpImplementation(const FLT32 &operand1,
-                                                   const FLT32 &operand2,
-                                                   const OPCODE &operation) = 0;
+  virtual FpImplementation *SelectFpImplementation(
+      const FpOperation &operation) = 0;
 };
 
 }  // namespace ftrace
