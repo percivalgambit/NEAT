@@ -5,6 +5,7 @@
 
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 #include "client_lib/interfaces/fp_implementation.h"
@@ -33,9 +34,11 @@ class FunctionStackFpSelector : public FpSelector {
   FunctionStackFpSelector(
       const pair<string, FpImplementation *> function_name_map[],
       const int function_name_map_size, FpImplementation *default_fp_impl)
-      : function_name_map_(function_name_map),
-        function_name_map_size_(function_name_map_size),
-        default_fp_impl_(default_fp_impl) {}
+      : default_fp_impl_(default_fp_impl) {
+    for (int i = 0; i < function_name_map_size; i++) {
+      function_name_map_.insert(function_name_map[i]);
+    }
+  }
 
   FpImplementation *SelectFpImplementation(
       const FpOperation &operation) override {
@@ -46,10 +49,9 @@ class FunctionStackFpSelector : public FpSelector {
   }
 
   VOID OnFunctionStart(const string &function_name) override {
-    for (int i = 0; i < function_name_map_size_; i++) {
-      if (function_name_map_[i].first == function_name) {
-        fp_impl_stack_.push(function_name_map_[i]);
-      }
+    if (function_name_map_.count(function_name) > 0) {
+      fp_impl_stack_.push(
+          make_pair(function_name, function_name_map_[function_name]));
     }
   }
 
@@ -61,8 +63,7 @@ class FunctionStackFpSelector : public FpSelector {
   }
 
  private:
-  const pair<string, FpImplementation *> *function_name_map_;
-  const int function_name_map_size_;
+  unordered_map<string, FpImplementation *> function_name_map_;
   FpImplementation *default_fp_impl_;
   /// Keeps track of the current FpImplementation to use based on the current
   /// call stack of the instrumented application.
