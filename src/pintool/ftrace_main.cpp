@@ -10,7 +10,6 @@
 
 #include <pin.H>
 
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>

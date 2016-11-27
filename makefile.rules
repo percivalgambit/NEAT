@@ -24,8 +24,10 @@ TEST_ROOTS := \
 	ftrace_normal_fp_implementation \
 	ftrace_replace_fp_ins_simple \
 	ftrace_replace_fp_ins_complex \
-	ftrace_function_level_replacement_simple \
-	ftrace_function_level_replacement_nested \
+	ftrace_function_stack_replacement_simple \
+	ftrace_function_stack_replacement_nested \
+	ftrace_current_function_replacement_simple \
+	ftrace_current_function_replacement_nested \
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -81,7 +83,6 @@ LIB_ROOTS :=
 %.test: FTRACE_TEST_FLAGS            += -print_function_num_fp_ops $(ACTUAL_FUNCTION_FP_OP_COUNT)
 %.test: FTRACE_TOOL                   = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
 %.test: TEST_APP                      = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
-%.test: TEST_IMPL_LIB_SRC_DIR         = tests/test_floating_point_implementations
 
 %.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE)
@@ -90,16 +91,19 @@ LIB_ROOTS :=
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
 	$(DIFF) $(ACTUAL_FUNCTION_FP_OP_COUNT) $(EXPECTED_FUNCTION_FP_OP_COUNT)
-	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
-	$(RM) $(FP_SELECTOR_REGISTRY_LIB)
+	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT) $(ACTUAL_BIT_COUNT) $(ACTUAL_FUNCTION_FP_OP_COUNT)
 
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
 
 ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS += -fp_selector_name test_complex
 
-ftrace_function_level_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_level
+ftrace_function_stack_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_stack
 
-ftrace_function_level_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_level
+ftrace_function_stack_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_stack
+
+ftrace_current_function_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_current_function
+
+ftrace_current_function_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_current_function
 
 ##############################################################
 #
@@ -126,13 +130,14 @@ PINTOOL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/pint
 REGISTRY_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/*.cpp))
 REGISTRY_INTERNAL_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/registry/internal/*.cpp))
 FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/fp_selectors/*.cpp))
+DEFAULT_FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/default_fp_selectors/*.cpp))
 INTERFACES_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/interfaces/*.cpp))
 TEST_OBJS := $(patsubst %.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard tests/*.cpp))
 
 FTRACE_OBJS := $(PINTOOL_OBJS)
-CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
+CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(DEFAULT_FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
 
-$(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
+$(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/default_fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
 	@mkdir -p $@
 
 # Compiles pintool-specific sources

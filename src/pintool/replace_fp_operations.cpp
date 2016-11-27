@@ -6,6 +6,7 @@
 
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/interfaces/fp_selector.h"
+#include "client_lib/utils/fp_operation.h"
 #include "pintool/utils.h"
 
 namespace ftrace {
@@ -18,24 +19,27 @@ namespace analysis {
  * operates on two registers if the KnobFpSelectorName flag is supplied on the
  * command line.
  *
- * @param[in] operation Opcode of the floating-point operation.
+ * @param[in] opcode Opcode of the floating-point operation.
  * @param[in] operand1 First operand of the instruction.
- * @param[in] operand2 Second operand of the instruction
+ * @param[in] operand2 Second operand of the instruction.
+ * @param[in] function_name Name of the function containing this operation.
  * @param[in,out] fp_selector Floating-point selector which selects the
  *     floating-point implementation to use.
  * @param[in,out] ctxt Context of the instrumented application, used to store
  *     the result of the floating-point operation in the correct register.
  */
-VOID ReplaceRegisterFpInstruction(const OPCODE operation, const REG operand1,
-                                  const REG operand2, FpSelector *fp_selector,
-                                  CONTEXT *ctxt) {
+VOID ReplaceRegisterFpInstruction(const OPCODE opcode, const REG operand1,
+                                  const REG operand2,
+                                  const string *function_name,
+                                  FpSelector *fp_selector, CONTEXT *ctxt) {
   PIN_REGISTER reg1, reg2, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
   PIN_GetContextRegval(ctxt, operand2, reg2.byte);
 
+  FpOperation operation(opcode, *reg1.flt, *reg2.flt, *function_name);
   FpImplementation *fp_implementation =
-      fp_selector->SelectFpImplementation(*reg1.flt, *reg2.flt, operation);
-  *result.flt = fp_implementation->FpOperation(*reg1.flt, *reg2.flt, operation);
+      fp_selector->SelectFpImplementation(operation);
+  *result.flt = fp_implementation->PerformOperation(operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
@@ -45,23 +49,26 @@ VOID ReplaceRegisterFpInstruction(const OPCODE operation, const REG operand1,
  * operates on a register and a memory location if the KnobFpSelectorName flag
  * is supplied on the command line.
  *
- * @param[in] operation Opcode of the floating-point operation.
+ * @param[in] opcode Opcode of the floating-point operation.
  * @param[in] operand1 First operand of the instruction.
  * @param[in] operand2 Second operand of the instruction
+ * @param[in] function_name Name of the function containing this operation.
  * @param[in,out] fp_selector Floating-point selector which selects the
  *     floating-point implementation to use.
  * @param[in,out] ctxt Context of the instrumented application, used to store
  *     the result of the floating-point operation in the correct register.
  */
-VOID ReplaceMemoryFpInstruction(const OPCODE operation, const REG operand1,
-                                const FLT32 *operand2, FpSelector *fp_selector,
-                                CONTEXT *ctxt) {
+VOID ReplaceMemoryFpInstruction(const OPCODE opcode, const REG operand1,
+                                const FLT32 *operand2,
+                                const string *function_name,
+                                FpSelector *fp_selector, CONTEXT *ctxt) {
   PIN_REGISTER reg1, result;
   PIN_GetContextRegval(ctxt, operand1, reg1.byte);
 
+  FpOperation operation(opcode, *reg1.flt, *operand2, *function_name);
   FpImplementation *fp_implementation =
-      fp_selector->SelectFpImplementation(*reg1.flt, *operand2, operation);
-  *result.flt = fp_implementation->FpOperation(*reg1.flt, *operand2, operation);
+      fp_selector->SelectFpImplementation(operation);
+  *result.flt = fp_implementation->PerformOperation(operation);
   PIN_SetContextRegval(ctxt, operand1, result.byte);
 }
 
@@ -160,6 +167,7 @@ VOID InstrumentationCallback(const RTN rtn, FpSelector *fp_selector) {
             IARG_UINT32, INS_Opcode(ins),
             IARG_UINT32, INS_OperandReg(ins, 0),
             IARG_UINT32, INS_OperandReg(ins, 1),
+            IARG_PTR, &function_name,
             IARG_PTR, fp_selector,
             IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
             IARG_END);
@@ -172,6 +180,7 @@ VOID InstrumentationCallback(const RTN rtn, FpSelector *fp_selector) {
             IARG_UINT32, INS_Opcode(ins),
             IARG_UINT32, INS_OperandReg(ins, 0),
             IARG_MEMORYREAD_EA,
+            IARG_PTR, &function_name,
             IARG_PTR, fp_selector,
             IARG_PARTIAL_CONTEXT, &regs_in, &regs_out,
             IARG_END);
