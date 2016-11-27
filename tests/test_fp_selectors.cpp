@@ -4,6 +4,7 @@
 
 #include "client_lib/default_fp_selectors/normal_fp_implementation.h"
 #include "client_lib/interfaces/fp_implementation.h"
+#include "client_lib/registry/register_current_function_fp_selector.h"
 #include "client_lib/registry/register_function_stack_fp_selector.h"
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
 #include "client_lib/utils/fp_operation.h"
@@ -64,5 +65,11 @@ static RegisterFunctionStackFpSelector test_simple_function_stack(
 static RegisterFunctionStackFpSelector test_nested_function_stack(
     test_nested_function_stack_map, test_nested_function_stack_map_size,
     &normal, "test_nested_function_stack");
+static RegisterCurrentFunctionFpSelector test_simple_current_function(
+    test_simple_function_stack_map, test_simple_function_stack_map_size,
+    &normal, "test_simple_current_function");
+static RegisterCurrentFunctionFpSelector test_nested_current_function(
+    test_nested_function_stack_map, test_nested_function_stack_map_size,
+    &normal, "test_nested_current_function");
 
 }  // namespace ftrace

@@ -26,6 +26,8 @@ TEST_ROOTS := \
 	ftrace_replace_fp_ins_complex \
 	ftrace_function_stack_replacement_simple \
 	ftrace_function_stack_replacement_nested \
+	ftrace_current_function_replacement_simple \
+	ftrace_current_function_replacement_nested \
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -89,8 +91,7 @@ LIB_ROOTS :=
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
 	$(DIFF) $(ACTUAL_FUNCTION_FP_OP_COUNT) $(EXPECTED_FUNCTION_FP_OP_COUNT)
-	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT)
-	$(RM) $(FP_SELECTOR_REGISTRY_LIB)
+	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT) $(ACTUAL_BIT_COUNT) $(ACTUAL_FUNCTION_FP_OP_COUNT)
 
 ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
 
@@ -99,6 +100,10 @@ ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS += -fp_selector_name test_
 ftrace_function_stack_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_stack
 
 ftrace_function_stack_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_stack
+
+ftrace_current_function_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_current_function
+
+ftrace_current_function_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_current_function
 
 ##############################################################
 #
