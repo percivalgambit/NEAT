@@ -1,7 +1,7 @@
 var classftrace_1_1NormalFpImplementation =
 [
-    [ "FpAdd", "classftrace_1_1NormalFpImplementation.html#a27bd8ee9bd849fae83adde8f3c73dfd1", null ],
-    [ "FpDiv", "classftrace_1_1NormalFpImplementation.html#a511bbb6113fe670ee2bc9f624c27e331", null ],
-    [ "FpMul", "classftrace_1_1NormalFpImplementation.html#a3a2a6b80cb989f529e032f3368ecc2c2", null ],
-    [ "FpSub", "classftrace_1_1NormalFpImplementation.html#aabd9a41a4237c46fd643753261d79915", null ]
+    [ "FpAdd", "classftrace_1_1NormalFpImplementation.html#acf8bc06f5424e3dd1d68d865466252f5", null ],
+    [ "FpDiv", "classftrace_1_1NormalFpImplementation.html#ae1016d3260bdbed8eceb3dfead291ef9", null ],
+    [ "FpMul", "classftrace_1_1NormalFpImplementation.html#ad47f0d554905c5bfd806bd3a158b779c", null ],
+    [ "FpSub", "classftrace_1_1NormalFpImplementation.html#a2d3533afe2959acc52a5412bd4560e99", null ]
 ];

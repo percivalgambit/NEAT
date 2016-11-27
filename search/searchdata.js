@@ -1,7 +1,7 @@
 var indexSectionsWithContent =
 {
   0: "cefgimnoprst",
-  1: "fnrst",
+  1: "cfnrst",
   2: "f",
   3: "s",
   4: "cefgimoprs",
