@@ -5,6 +5,8 @@
 #include <strings.h>
 
 #include <fstream>
+#include <unordered_map>
+#include <utility>
 
 #include "pintool/utils.h"
 
@@ -13,17 +15,9 @@ namespace {
 
 /**
  * Keeps track of the number of bits manipulated in every floating-point
- * arithmetic operation in the application.  This variable is wrapped in an
- * atomic type so it can be atomically updated by multiple threads at once.
+ * arithmetic operation per thread in the application.
  */
-UINT64 fp_bits_manipulated = 0;
-
-/**
- * Lock to protect the number of bits manipulated in every floating-point
- * operation so analysis results from multiple calls in multiple threads do not
- * overwrite each other.
- */
-PIN_MUTEX fp_bits_manipulated_lock;
+unordered_map<THREADID, UINT64> fp_bits_manipulated;
 
 /**
  * Counts the number of bits used in the matissa of the supplied floating-point
@@ -33,7 +27,7 @@ PIN_MUTEX fp_bits_manipulated_lock;
  * @note The number of bits used in the matissa is recorded as 23 minus the
  *     least significant set bit in the mantissa.
  */
-VOID CountFpMantissaBits(FLT32 flt) {
+VOID CountFpMantissaBits(FLT32 flt, THREADID threadid) {
   INT32 bits = *reinterpret_cast<INT32 *>(&flt);
   // Zero out all bits before the mantissa of the floating-point number.
   bits &= 0x007fffff;
@@ -41,9 +35,7 @@ VOID CountFpMantissaBits(FLT32 flt) {
   // mantissa, and we need to subtract this number from 24 because it is
   // 1-indexed.
   if (bits != 0) {
-    PIN_MutexLock(&fp_bits_manipulated_lock);
-    fp_bits_manipulated += 24 - ffs(bits);
-    PIN_MutexUnlock(&fp_bits_manipulated_lock);
+    fp_bits_manipulated[threadid] += 24 - ffs(bits);
   }
 }
 
@@ -65,9 +57,10 @@ namespace {
  *     set bit in the mantissa.
  */
 VOID CountRegisterFpOperandBits(const PIN_REGISTER *operand1,
-                                const PIN_REGISTER *operand2) {
-  CountFpMantissaBits(*operand1->flt);
-  CountFpMantissaBits(*operand2->flt);
+                                const PIN_REGISTER *operand2,
+                                const THREADID threadid) {
+  CountFpMantissaBits(*operand1->flt, threadid);
+  CountFpMantissaBits(*operand2->flt, threadid);
 }
 
 /**
@@ -83,9 +76,9 @@ VOID CountRegisterFpOperandBits(const PIN_REGISTER *operand1,
  *     set bit in the mantissa.
  */
 VOID CountMemoryFpOperandBits(const PIN_REGISTER *operand1,
-                              const FLT32 *operand2) {
-  CountFpMantissaBits(*operand1->flt);
-  CountFpMantissaBits(*operand2);
+                              const FLT32 *operand2, const THREADID threadid) {
+  CountFpMantissaBits(*operand1->flt, threadid);
+  CountFpMantissaBits(*operand2, threadid);
 }
 
 /**
@@ -98,8 +91,8 @@ VOID CountMemoryFpOperandBits(const PIN_REGISTER *operand1,
  * @note The number of bits used is recorded as 23 minus the least significant
  *     set bit in the mantissa.
  */
-VOID CountFpResultBits(const PIN_REGISTER *result) {
-  CountFpMantissaBits(*result->flt);
+VOID CountFpResultBits(const PIN_REGISTER *result, const THREADID threadid) {
+  CountFpMantissaBits(*result->flt, threadid);
 }
 
 }  // namespace
@@ -119,10 +112,14 @@ namespace {
  * @param[in,out] output The output file to use.
  */
 VOID PrintToFile(const INT32 code, ofstream *output) {
-  *output << fp_bits_manipulated << endl;
+  UINT64 total_bits_manipulated = 0;
+  for (const pair<THREADID, UINT64> &thread_count : fp_bits_manipulated) {
+    total_bits_manipulated += thread_count.second;
+  }
+
+  *output << total_bits_manipulated << endl;
   output->close();
   delete output;
-  PIN_MutexFini(&fp_bits_manipulated_lock);
 }
 
 /**
@@ -144,6 +141,7 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
           reinterpret_cast<AFUNPTR>(analysis::CountRegisterFpOperandBits),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 1),
+          IARG_THREAD_ID,
           IARG_CALL_ORDER, CALL_ORDER_FIRST,
           IARG_END);
       // clang-format on
@@ -154,6 +152,7 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
           reinterpret_cast<AFUNPTR>(analysis::CountMemoryFpOperandBits),
           IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
           IARG_MEMORYREAD_EA,
+          IARG_THREAD_ID,
           IARG_CALL_ORDER, CALL_ORDER_FIRST,
           IARG_END);
       // clang-format on
@@ -164,6 +163,7 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
         ins, IPOINT_AFTER,
         reinterpret_cast<AFUNPTR>(analysis::CountFpResultBits),
         IARG_REG_CONST_REFERENCE, INS_OperandReg(ins, 0),
+        IARG_THREAD_ID,
         IARG_END);
     // clang-format on
   }
@@ -173,8 +173,6 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
 }  // namespace callbacks
 
 VOID PrintFpBitsManipulated(ofstream *output) {
-  PIN_MutexInit(&fp_bits_manipulated_lock);
-
   PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(callbacks::PrintToFile),
                       output);
   INS_AddInstrumentFunction(reinterpret_cast<INS_INSTRUMENT_CALLBACK>(

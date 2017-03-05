@@ -5,6 +5,7 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 #include "pintool/utils.h"
@@ -16,14 +17,7 @@ namespace {
  * Keeps track of the number of floating-point arithmetic operations executed
  * per function in the application.
  */
-map<string, UINT64> function_fp_op_count;
-
-/**
- * Lock to protect the map of floating-point arithmetic operations per function
- * so analysis results from multiple calls in multiple threads do not overwrite
- * each other.
- */
-PIN_MUTEX function_fp_op_count_lock;
+unordered_map<THREADID, unordered_map<string, UINT64>> function_fp_op_count;
 
 }  // namespace
 
@@ -39,10 +33,9 @@ namespace {
  * @param[in] function_name The function name of the function executing a
  *     floating-point operation.
  */
-VOID IncrementFpFunctionOpCount(const string *function_name) {
-  PIN_MutexLock(&function_fp_op_count_lock);
-  function_fp_op_count[*function_name]++;
-  PIN_MutexUnlock(&function_fp_op_count_lock);
+VOID IncrementFpFunctionOpCount(const string *function_name,
+                                const THREADID threadid) {
+  function_fp_op_count[threadid][*function_name]++;
 }
 
 }  // namespace
@@ -61,12 +54,19 @@ namespace {
  * @param[in,out] output The output file to use.
  */
 VOID PrintToFile(const INT32 code, ofstream *output) {
-  for (const pair<string, UINT64> &count : function_fp_op_count) {
+  map<string, UINT64> total_function_fp_ops;
+  for (const pair<THREADID, unordered_map<string, UINT64>> &thread_count :
+       function_fp_op_count) {
+    for (const pair<string, UINT64> &count : thread_count.second) {
+      total_function_fp_ops[count.first] += count.second;
+    }
+  }
+
+  for (const pair<string, UINT64> &count : total_function_fp_ops) {
     *output << count.first << " " << count.second << endl;
   }
   output->close();
   delete output;
-  PIN_MutexFini(&function_fp_op_count_lock);
 }
 
 /**
@@ -89,6 +89,7 @@ VOID InstrumentationCallback(const RTN rtn, ofstream *output) {
           ins, IPOINT_BEFORE,
           reinterpret_cast<AFUNPTR>(analysis::IncrementFpFunctionOpCount),
           IARG_PTR, &RTN_Name(rtn),
+          IARG_THREAD_ID,
           IARG_END);
       // clang-format on
     }
@@ -100,8 +101,6 @@ VOID InstrumentationCallback(const RTN rtn, ofstream *output) {
 }  // namespace callbacks
 
 VOID PrintFunctionNumFpOps(ofstream *output) {
-  PIN_MutexInit(&function_fp_op_count_lock);
-
   PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(callbacks::PrintToFile),
                       output);
   RTN_AddInstrumentFunction(reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(
