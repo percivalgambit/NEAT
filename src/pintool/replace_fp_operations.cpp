@@ -10,8 +10,8 @@
 #include "pintool/utils.h"
 
 namespace ftrace {
-namespace {
 namespace analysis {
+namespace {
 
 /**
  * Replaces a floating-point operation with a user defined implementation.
@@ -99,9 +99,11 @@ VOID ExitFunction(const string *function_name, FpSelector *fp_selector) {
   fp_selector->OnFunctionEnd(*function_name);
 }
 
+}  // namespace
 }  // namespace analysis
 
 namespace callbacks {
+namespace {
 
 /**
  * Performs any setup needed by the given floating-point selector.
@@ -199,8 +201,8 @@ VOID InstrumentationCallback(const RTN rtn, FpSelector *fp_selector) {
   RTN_Close(rtn);
 }
 
-}  // namespace callbacks
 }  // namespace
+}  // namespace callbacks
 
 VOID ReplaceFpOperations(FpSelector *fp_selector) {
   PIN_AddApplicationStartFunction(

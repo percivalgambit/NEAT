@@ -13,9 +13,17 @@ namespace {
 
 /**
  * Keeps track of the number of bits manipulated in every floating-point
- * arithmetic operation in the application.
+ * arithmetic operation in the application.  This variable is wrapped in an
+ * atomic type so it can be atomically updated by multiple threads at once.
  */
 UINT64 fp_bits_manipulated = 0;
+
+/**
+ * Lock to protect the number of bits manipulated in every floating-point
+ * operation so analysis results from multiple calls in multiple threads do not
+ * overwrite each other.
+ */
+PIN_MUTEX fp_bits_manipulated_lock;
 
 /**
  * Counts the number of bits used in the matissa of the supplied floating-point
@@ -33,11 +41,16 @@ VOID CountFpMantissaBits(FLT32 flt) {
   // mantissa, and we need to subtract this number from 24 because it is
   // 1-indexed.
   if (bits != 0) {
+    PIN_MutexLock(&fp_bits_manipulated_lock);
     fp_bits_manipulated += 24 - ffs(bits);
+    PIN_MutexUnlock(&fp_bits_manipulated_lock);
   }
 }
 
+}  // namespace
+
 namespace analysis {
+namespace {
 
 /**
  * Counts the number of bits used in both operands of a floating-point
@@ -89,9 +102,11 @@ VOID CountFpResultBits(const PIN_REGISTER *result) {
   CountFpMantissaBits(*result->flt);
 }
 
+}  // namespace
 }  // namespace analysis
 
 namespace callbacks {
+namespace {
 
 /**
  * Prints the number of bits used in floating-point operations to the supplied
@@ -107,6 +122,7 @@ VOID PrintToFile(const INT32 code, ofstream *output) {
   *output << fp_bits_manipulated << endl;
   output->close();
   delete output;
+  PIN_MutexFini(&fp_bits_manipulated_lock);
 }
 
 /**
@@ -153,10 +169,12 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
   }
 }
 
-}  // namespace callbacks
 }  // namespace
+}  // namespace callbacks
 
 VOID PrintFpBitsManipulated(ofstream *output) {
+  PIN_MutexInit(&fp_bits_manipulated_lock);
+
   PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(callbacks::PrintToFile),
                       output);
   INS_AddInstrumentFunction(reinterpret_cast<INS_INSTRUMENT_CALLBACK>(

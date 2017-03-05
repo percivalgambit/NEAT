@@ -28,6 +28,9 @@ TEST_ROOTS := \
 	ftrace_function_stack_replacement_nested \
 	ftrace_current_function_replacement_simple \
 	ftrace_current_function_replacement_nested \
+	ftrace_normal_fp_implementation_multithreaded \
+	ftrace_replace_fp_ins_simple_multithreaded \
+	ftrace_replace_fp_ins_complex_multithreaded
 
 # This defines a list of tests that should run in the "short" sanity. Tests in this list must also
 # appear either in the TEST_TOOL_ROOTS or the TEST_ROOTS list.
@@ -48,7 +51,7 @@ TOOL_ROOTS := ftrace
 SA_TOOL_ROOTS :=
 
 # This defines all the applications that will be run during the tests.
-APP_ROOTS := sse_sample_app
+APP_ROOTS := sse_sample_app sse_multithreaded_app
 
 # This defines any additional object files that need to be compiled.
 OBJECT_ROOTS :=
@@ -93,9 +96,19 @@ LIB_ROOTS :=
 	$(DIFF) $(ACTUAL_FUNCTION_FP_OP_COUNT) $(EXPECTED_FUNCTION_FP_OP_COUNT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT) $(ACTUAL_BIT_COUNT) $(ACTUAL_FUNCTION_FP_OP_COUNT)
 
-ftrace_replace_fp_ins_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
+%multithreaded.test: TEST_APP = $(OBJDIR)sse_multithreaded_app$(EXE_SUFFIX)
+%multithreaded.test: $(OBJDIR)sse_multithreaded_app$(EXE_SUFFIX)
+	$(MAKE)
+	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PYTHON) tests/check_valid_output.py $(ACTUAL_TOOL_OUTPUT)
+	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
+	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
+	$(DIFF) $(ACTUAL_FUNCTION_FP_OP_COUNT) $(EXPECTED_FUNCTION_FP_OP_COUNT)
+	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT) $(ACTUAL_BIT_COUNT) $(ACTUAL_FUNCTION_FP_OP_COUNT)
 
-ftrace_replace_fp_ins_complex.test: FTRACE_TEST_FLAGS += -fp_selector_name test_complex
+ftrace_replace_fp_ins_simple.test ftrace_replace_fp_ins_simple_multithreaded.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
+
+ftrace_replace_fp_ins_complex.test ftrace_replace_fp_ins_complex_multithreaded.test: FTRACE_TEST_FLAGS += -fp_selector_name test_complex
 
 ftrace_function_stack_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_stack
 
@@ -104,6 +117,7 @@ ftrace_function_stack_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector
 ftrace_current_function_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_current_function
 
 ftrace_current_function_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_current_function
+
 
 ##############################################################
 #
@@ -160,7 +174,11 @@ $(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) | $(FP_SELECTOR_REGISTRY_LIB)
 ###### Special applications' build rules ######
 
 # Instrumented application used in integration tests.
-$(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_app/sse_sample_app.c
+$(OBJDIR)sse_sample_app$(EXE_SUFFIX): tests/integration/test_apps/sse_sample_app.c
+	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
+
+# Instrumented multithreaded application used in integration tests.
+$(OBJDIR)sse_multithreaded_app$(EXE_SUFFIX): tests/integration/test_apps/sse_multithreaded_app.c
 	$(APP_CC) $(APP_CXXFLAGS_NOOPT) $(COMP_EXE)$@ $< $(APP_LDFLAGS_NOOPT) $(APP_LIBS)
 
 ###### Special libraries' build rules ######

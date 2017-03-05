@@ -15,9 +15,19 @@
 #define FLT32_TO_HEX(fp) \
   StringHex(*reinterpret_cast<const UINT32 *>(&fp), 8, FALSE)
 
-namespace ftrace {
 namespace {
+
+/**
+ * Lock to protect the output file supplied in the analysis routines so analysis
+ * results from multiples calls in multiple threads do not get intermixed.
+ */
+PIN_MUTEX output_file_lock;
+
+}  // namespace
+
+namespace ftrace {
 namespace analysis {
+namespace {
 
 /**
  * Prints the operands of a floating point instruction to the supplied output
@@ -38,6 +48,10 @@ namespace analysis {
 VOID PrintRegisterFpOperands(const OPCODE operation,
                              const PIN_REGISTER *operand1,
                              const PIN_REGISTER *operand2, ofstream *output) {
+  // Take control of the output file from this point until the result is written
+  // to it
+  PIN_MutexLock(&output_file_lock);
+
   *output << OPCODE_StringShort(operation) << " ";
   // To disambiguate assosiative operations, list the largest operand first.
   if (operation == XED_ICLASS_SUBSS || operation == XED_ICLASS_DIVSS ||
@@ -69,6 +83,10 @@ VOID PrintRegisterFpOperands(const OPCODE operation,
  */
 VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
                            const FLT32 *operand2, ofstream *output) {
+  // Take control of the output file from this point until the result is written
+  // to it
+  PIN_MutexLock(&output_file_lock);
+
   *output << OPCODE_StringShort(operation) << " ";
   // To disambiguate assosiative operations, list the largest operand first.
   if (operation == XED_ICLASS_SUBSS || operation == XED_ICLASS_DIVSS ||
@@ -93,11 +111,16 @@ VOID PrintMemoryFpOperands(const OPCODE operation, const PIN_REGISTER *operand1,
  */
 VOID PrintFpResult(const PIN_REGISTER *result, ofstream *output) {
   *output << "  " << FLT32_TO_HEX(result->flt) << "\n";
+
+  // Release exclusive hold of the output file
+  PIN_MutexUnlock(&output_file_lock);
 }
 
+}  // namespace
 }  // namespace analysis
 
 namespace callbacks {
+namespace {
 
 /**
  * Closes the supplied output file.
@@ -110,6 +133,7 @@ namespace callbacks {
 VOID CloseOutputStream(const INT32 code, ofstream *output) {
   output->close();
   delete output;
+  PIN_MutexFini(&output_file_lock);
 }
 
 /**
@@ -161,10 +185,12 @@ VOID InstrumentationCallback(const INS ins, ofstream *output) {
   }
 }
 
-}  // namespace callbacks
 }  // namespace
+}  // namespace callbacks
 
 VOID PrintFpOperations(ofstream *output) {
+  PIN_MutexInit(&output_file_lock);
+
   PIN_AddFiniFunction(
       reinterpret_cast<FINI_CALLBACK>(callbacks::CloseOutputStream), output);
   INS_AddInstrumentFunction(reinterpret_cast<INS_INSTRUMENT_CALLBACK>(
