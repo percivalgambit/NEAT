@@ -1,4 +1,3 @@
-
 /*! @file
  * This is a sample application using SSE floating-point arithmetic instructions
  * to test the ftrace tool.

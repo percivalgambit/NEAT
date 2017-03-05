@@ -18,7 +18,17 @@ namespace {
  */
 map<string, UINT64> function_fp_op_count;
 
+/**
+ * Lock to protect the map of floating-point arithmetic operations per function
+ * so analysis results from multiple calls in multiple threads do not overwrite
+ * each other.
+ */
+PIN_MUTEX function_fp_op_count_lock;
+
+}  // namespace
+
 namespace analysis {
+namespace {
 
 /**
  * Increments the count of floating-point artithmetic operations executed in the
@@ -30,12 +40,16 @@ namespace analysis {
  *     floating-point operation.
  */
 VOID IncrementFpFunctionOpCount(const string *function_name) {
+  PIN_MutexLock(&function_fp_op_count_lock);
   function_fp_op_count[*function_name]++;
+  PIN_MutexUnlock(&function_fp_op_count_lock);
 }
 
+}  // namespace
 }  // namespace analysis
 
 namespace callbacks {
+namespace {
 
 /**
  * Prints the number of floating-point operations executed per function to the
@@ -52,6 +66,7 @@ VOID PrintToFile(const INT32 code, ofstream *output) {
   }
   output->close();
   delete output;
+  PIN_MutexFini(&function_fp_op_count_lock);
 }
 
 /**
@@ -81,10 +96,12 @@ VOID InstrumentationCallback(const RTN rtn, ofstream *output) {
   RTN_Close(rtn);
 }
 
-}  // namespace callbacks
 }  // namespace
+}  // namespace callbacks
 
 VOID PrintFunctionNumFpOps(ofstream *output) {
+  PIN_MutexInit(&function_fp_op_count_lock);
+
   PIN_AddFiniFunction(reinterpret_cast<FINI_CALLBACK>(callbacks::PrintToFile),
                       output);
   RTN_AddInstrumentFunction(reinterpret_cast<RTN_INSTRUMENT_CALLBACK>(
