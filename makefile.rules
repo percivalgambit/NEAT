@@ -137,6 +137,7 @@ FP_SELECTOR_REGISTRY_LIB := $(CURDIR)/$(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGIST
 
 # Adds project-specific compiler flags
 TOOL_CXXFLAGS += -MMD -MP -Isrc/ -std=gnu++11
+APP_CXXFLAGS_NOOPT += -MMD -MP -Isrc/ -std=gnu11
 
 ###### Special objects' build rules ######
 
