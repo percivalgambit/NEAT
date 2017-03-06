@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['main',['main',['../sse__sample__app_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'sse_sample_app.c']]]
+  ['incrementfpfunctionopcount',['IncrementFpFunctionOpCount',['../namespaceftrace_1_1analysis_1_1anonymous__namespace_02print__function__num__fp__ops_8cpp_03.html#a96586f7b2b401d50cf496ad9c6cbed93',1,'ftrace::analysis::anonymous_namespace{print_function_num_fp_ops.cpp}']]],
+  ['instrumentationcallback',['InstrumentationCallback',['../namespaceftrace_1_1callbacks_1_1anonymous__namespace_02print__fp__bits__manipulated_8cpp_03.html#a13b6d1558e826847a519df6a4460a3d2',1,'ftrace::callbacks::anonymous_namespace{print_fp_bits_manipulated.cpp}::InstrumentationCallback()'],['../namespaceftrace_1_1callbacks_1_1anonymous__namespace_02print__fp__operations_8cpp_03.html#a52777ee58db227ee0b663c1db311bb53',1,'ftrace::callbacks::anonymous_namespace{print_fp_operations.cpp}::InstrumentationCallback()'],['../namespaceftrace_1_1callbacks_1_1anonymous__namespace_02print__function__num__fp__ops_8cpp_03.html#a3da975f341c7855027da76cce75153c3',1,'ftrace::callbacks::anonymous_namespace{print_function_num_fp_ops.cpp}::InstrumentationCallback()'],['../namespaceftrace_1_1callbacks_1_1anonymous__namespace_02replace__fp__operations_8cpp_03.html#a05b8f83305c6af9ff5d0050cbe84d3e2',1,'ftrace::callbacks::anonymous_namespace{replace_fp_operations.cpp}::InstrumentationCallback()']]],
+  ['isfpinstruction',['IsFpInstruction',['../namespaceftrace.html#aef0da8d540d1d25914fe22555af72b0e',1,'ftrace']]]
 ];
