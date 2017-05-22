@@ -5,7 +5,7 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Instruments an application with functions from the supplied floating-point
@@ -16,6 +16,6 @@ namespace ftrace {
  */
 VOID ReplaceFpOperations(FpSelector *fp_selector);
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // PINTOOL_REPLACE_FP_OPERATIONS_H_

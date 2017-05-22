@@ -9,7 +9,7 @@
 #include "client_lib/registry/register_fp_selector.h"
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * A default implementation of floating-point arithmetic that performs each
@@ -34,6 +34,6 @@ class NormalFpImplementation : public FpImplementation {
   }
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_DEFAULT_FP_SELECTORS_NORMAL_FP_IMPLEMENTATION_H_

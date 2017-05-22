@@ -7,7 +7,7 @@
 
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 
 FLT32 FpImplementation::PerformOperation(const FpOperation &operation) {
   switch (operation.opcode) {
@@ -27,4 +27,4 @@ FLT32 FpImplementation::PerformOperation(const FpOperation &operation) {
   }
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

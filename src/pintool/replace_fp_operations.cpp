@@ -9,7 +9,7 @@
 #include "client_lib/utils/fp_operation.h"
 #include "pintool/utils.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace analysis {
 namespace {
 
@@ -215,4 +215,4 @@ VOID ReplaceFpOperations(FpSelector *fp_selector) {
                             fp_selector);
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

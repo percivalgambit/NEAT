@@ -7,7 +7,7 @@
 
 #include <pin.H>
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Return true if an instruction is an SSE floating-point arithmetic
@@ -26,6 +26,6 @@ namespace ftrace {
  */
 BOOL IsFpInstruction(const INS &ins);
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // PINTOOL_UTILS_H_

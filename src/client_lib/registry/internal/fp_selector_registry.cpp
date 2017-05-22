@@ -8,7 +8,7 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace internal {
 
 /**
@@ -41,4 +41,4 @@ FpSelector *FpSelectorRegistry::GetFpSelectorOrDie(
 }
 
 }  // namespace internal
-}  // namespace ftrace
+}  // namespace NEAT

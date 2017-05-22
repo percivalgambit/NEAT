@@ -25,7 +25,7 @@ PIN_MUTEX output_file_lock;
 
 }  // namespace
 
-namespace ftrace {
+namespace NEAT {
 namespace analysis {
 namespace {
 
@@ -198,4 +198,4 @@ VOID PrintFpOperations(ofstream *output) {
                             output);
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

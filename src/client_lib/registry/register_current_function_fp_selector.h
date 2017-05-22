@@ -13,7 +13,7 @@
 #include "client_lib/registry/register_initialized_fp_selector.h"
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace internal {
 
 /**
@@ -82,6 +82,6 @@ class RegisterCurrentFunctionFpSelector {
   RegisterInitializedFpSelector register_fp_selector_;
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_REGISTRY_REGISTER_CURRENT_FUNCTION_FP_SELECTOR_H_

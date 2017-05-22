@@ -21,12 +21,12 @@
 #include "pintool/print_function_num_fp_ops.h"
 #include "pintool/replace_fp_operations.h"
 
-using ftrace::FpSelector;
-using ftrace::PrintFpBitsManipulated;
-using ftrace::PrintFpOperations;
-using ftrace::PrintFunctionNumFpOps;
-using ftrace::ReplaceFpOperations;
-using ftrace::internal::FpSelectorRegistry;
+using NEAT::FpSelector;
+using NEAT::PrintFpBitsManipulated;
+using NEAT::PrintFpOperations;
+using NEAT::PrintFunctionNumFpOps;
+using NEAT::ReplaceFpOperations;
+using NEAT::internal::FpSelectorRegistry;
 
 KNOB<string> KnobFpSelectorName(KNOB_MODE_OVERWRITE, "pintool",
                                 "fp_selector_name", "",

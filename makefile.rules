@@ -40,7 +40,7 @@ SANITY_SUBSET :=
 
 # This defines the tools which will be run during the the tests, and were not already defined in
 # TEST_TOOL_ROOTS.
-TOOL_ROOTS := ftrace
+TOOL_ROOTS := neat
 
 # This defines the static analysis tools which will be run during the the tests. They should not
 # be defined in TEST_TOOL_ROOTS. If a test with the same name exists, it should be defined in
@@ -81,15 +81,15 @@ LIB_ROOTS :=
 %.test: ACTUAL_STDOUT                 = $(@:.test=.stdout.out)
 %.test: ACTUAL_BIT_COUNT              = $(@:.test=.bits.out)
 %.test: ACTUAL_FUNCTION_FP_OP_COUNT   = $(@:.test=.op_count.out)
-%.test: FTRACE_TEST_FLAGS             = -print_fp_ops $(ACTUAL_TOOL_OUTPUT)
-%.test: FTRACE_TEST_FLAGS            += -print_fp_bits_manipulated $(ACTUAL_BIT_COUNT)
-%.test: FTRACE_TEST_FLAGS            += -print_function_num_fp_ops $(ACTUAL_FUNCTION_FP_OP_COUNT)
-%.test: FTRACE_TOOL                   = $(OBJDIR)ftrace$(PINTOOL_SUFFIX)
+%.test: NEAT_TEST_FLAGS             = -print_fp_ops $(ACTUAL_TOOL_OUTPUT)
+%.test: NEAT_TEST_FLAGS            += -print_fp_bits_manipulated $(ACTUAL_BIT_COUNT)
+%.test: NEAT_TEST_FLAGS            += -print_function_num_fp_ops $(ACTUAL_FUNCTION_FP_OP_COUNT)
+%.test: NEAT_TOOL                   = $(OBJDIR)neat$(PINTOOL_SUFFIX)
 %.test: TEST_APP                      = $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 
 %.test: $(OBJDIR)sse_sample_app$(EXE_SUFFIX)
 	$(MAKE)
-	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PIN) -t $(NEAT_TOOL) $(NEAT_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(DIFF) $(ACTUAL_TOOL_OUTPUT) $(EXPECTED_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
@@ -99,24 +99,24 @@ LIB_ROOTS :=
 %multithreaded.test: TEST_APP = $(OBJDIR)sse_multithreaded_app$(EXE_SUFFIX)
 %multithreaded.test: $(OBJDIR)sse_multithreaded_app$(EXE_SUFFIX)
 	$(MAKE)
-	$(PIN) -t $(FTRACE_TOOL) $(FTRACE_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
+	$(PIN) -t $(NEAT_TOOL) $(NEAT_TEST_FLAGS) -- $(TEST_APP) > $(ACTUAL_STDOUT)
 	$(PYTHON) tests/check_valid_output.py $(ACTUAL_TOOL_OUTPUT)
 	$(DIFF) $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	$(DIFF) $(ACTUAL_BIT_COUNT) $(EXPECTED_BIT_COUNT)
 	$(DIFF) $(ACTUAL_FUNCTION_FP_OP_COUNT) $(EXPECTED_FUNCTION_FP_OP_COUNT)
 	$(RM) $(ACTUAL_TOOL_OUTPUT) $(ACTUAL_STDOUT) $(ACTUAL_BIT_COUNT) $(ACTUAL_FUNCTION_FP_OP_COUNT)
 
-ftrace_replace_fp_ins_simple.test ftrace_replace_fp_ins_simple_multithreaded.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple
+ftrace_replace_fp_ins_simple.test ftrace_replace_fp_ins_simple_multithreaded.test: NEAT_TEST_FLAGS += -fp_selector_name test_simple
 
-ftrace_replace_fp_ins_complex.test ftrace_replace_fp_ins_complex_multithreaded.test: FTRACE_TEST_FLAGS += -fp_selector_name test_complex
+ftrace_replace_fp_ins_complex.test ftrace_replace_fp_ins_complex_multithreaded.test: NEAT_TEST_FLAGS += -fp_selector_name test_complex
 
-ftrace_function_stack_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_function_stack
+ftrace_function_stack_replacement_simple.test: NEAT_TEST_FLAGS += -fp_selector_name test_simple_function_stack
 
-ftrace_function_stack_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_function_stack
+ftrace_function_stack_replacement_nested.test: NEAT_TEST_FLAGS += -fp_selector_name test_nested_function_stack
 
-ftrace_current_function_replacement_simple.test: FTRACE_TEST_FLAGS += -fp_selector_name test_simple_current_function
+ftrace_current_function_replacement_simple.test: NEAT_TEST_FLAGS += -fp_selector_name test_simple_current_function
 
-ftrace_current_function_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_selector_name test_nested_current_function
+ftrace_current_function_replacement_nested.test: NEAT_TEST_FLAGS += -fp_selector_name test_nested_current_function
 
 
 ##############################################################
@@ -132,7 +132,7 @@ ftrace_current_function_replacement_nested.test: FTRACE_TEST_FLAGS += -fp_select
 # See makefile.default.rules for the default build rules.
 
 # Location of the shared library containing the fp selector registry
-FP_SELECTOR_REGISTRY_LIB_BASE := ftrace_fp_selector_registry
+FP_SELECTOR_REGISTRY_LIB_BASE := neat_fp_selector_registry
 FP_SELECTOR_REGISTRY_LIB := $(CURDIR)/$(OBJDIR)$(DLL_PREFIX)$(FP_SELECTOR_REGISTRY_LIB_BASE)$(DLL_SUFFIX)
 
 # Adds project-specific compiler flags
@@ -149,7 +149,7 @@ DEFAULT_FP_SELECTORS_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wild
 INTERFACES_OBJS := $(patsubst src/%.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard src/client_lib/interfaces/*.cpp))
 TEST_OBJS := $(patsubst %.cpp,$(OBJDIR)%$(OBJ_SUFFIX),$(wildcard tests/*.cpp))
 
-FTRACE_OBJS := $(PINTOOL_OBJS)
+NEAT_OBJS := $(PINTOOL_OBJS)
 CLIENT_LIB_OBJS := $(REGISTRY_OBJS) $(REGISTRY_INTERNAL_OBJS) $(FP_SELECTORS_OBJS) $(DEFAULT_FP_SELECTORS_OBJS) $(INTERFACES_OBJS)
 
 $(OBJDIR)pintool $(OBJDIR)client_lib/registry $(OBJDIR)client_lib/registry/internal $(OBJDIR)client_lib/fp_selectors $(OBJDIR)client_lib/default_fp_selectors $(OBJDIR)client_lib/interfaces $(OBJDIR)tests:
@@ -169,7 +169,7 @@ $(OBJDIR)%.d: %.cpp
 
 ###### Special tools' build rules ######
 
-$(OBJDIR)ftrace$(PINTOOL_SUFFIX): $(FTRACE_OBJS) | $(FP_SELECTOR_REGISTRY_LIB)
+$(OBJDIR)neat$(PINTOOL_SUFFIX): $(NEAT_OBJS) | $(FP_SELECTOR_REGISTRY_LIB)
 	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(FP_SELECTOR_REGISTRY_LIB) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 ###### Special applications' build rules ######

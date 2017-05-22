@@ -9,7 +9,7 @@
 
 #include "pintool/utils.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace {
 
 /**
@@ -109,4 +109,4 @@ VOID PrintFunctionNumFpOps(ofstream *output) {
                             output);
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

@@ -5,10 +5,10 @@
 
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
- * Implementation of floating-point arithmetic to be used in the ftrace
+ * Implementation of floating-point arithmetic to be used in the NEAT
  * instrumentation tool.
  */
 class FpImplementation {
@@ -55,6 +55,6 @@ class FpImplementation {
   virtual FLT32 FpDiv(const FpOperation &operation) = 0;
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_INTERFACES_FP_IMPLEMENTATION_H_

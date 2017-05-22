@@ -1,6 +1,6 @@
 /*! @file
  * This is a sample application using SSE floating-point arithmetic instructions
- * and multiple threads to test the concurrency of the ftrace application
+ * and multiple threads to test the concurrency of the NEAT application
  */
 
 #include <pthread.h>

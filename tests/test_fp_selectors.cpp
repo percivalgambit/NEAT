@@ -9,7 +9,7 @@
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * A simple test implementation of floating-point arithmetic operations.
@@ -72,4 +72,4 @@ static RegisterCurrentFunctionFpSelector test_nested_current_function(
     test_nested_function_stack_map, test_nested_function_stack_map_size,
     &normal, "test_nested_current_function");
 
-}  // namespace ftrace
+}  // namespace NEAT

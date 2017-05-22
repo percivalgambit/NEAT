@@ -5,7 +5,7 @@
 
 #include "client_lib/registry/internal/fp_selector_registry.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Registers an FpSelector instance in the global FpSelectorRegistry.
@@ -28,6 +28,6 @@ struct RegisterFpSelector {
   FpSelector fp_selector;
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_REGISTRY_REGISTER_FP_SELECTOR_H_

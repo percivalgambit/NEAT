@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Instruments an application with functions to print the number of
@@ -16,6 +16,6 @@ namespace ftrace {
  */
 VOID PrintFunctionNumFpOps(ofstream *output);
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // PINTOOL_PRINT_FUNCTION_NUM_FP_OPS_H_

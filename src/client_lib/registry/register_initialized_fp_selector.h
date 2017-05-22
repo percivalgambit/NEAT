@@ -6,7 +6,7 @@
 #include "client_lib/interfaces/fp_selector.h"
 #include "client_lib/registry/internal/fp_selector_registry.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Registers a previously allocated FpSelector instance in the global
@@ -26,6 +26,6 @@ struct RegisterInitializedFpSelector {
   }
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_REGISTRY_REGISTER_INITIALIZED_FP_SELECTOR_H_

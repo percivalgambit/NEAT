@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Instruments an application with functions to print the number of bits
@@ -15,6 +15,6 @@ namespace ftrace {
  */
 VOID PrintFpBitsManipulated(ofstream *output);
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // PINTOOL_PRINT_FP_BITS_MANIPULATED_H_

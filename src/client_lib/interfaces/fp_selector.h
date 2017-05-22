@@ -8,7 +8,7 @@
 #include "client_lib/interfaces/fp_implementation.h"
 #include "client_lib/utils/fp_operation.h"
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Selects which floating-point arithmetic implementation to use for an
@@ -59,6 +59,6 @@ class FpSelector {
       const FpOperation &operation) = 0;
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_INTERFACES_FP_SELECTOR_H_

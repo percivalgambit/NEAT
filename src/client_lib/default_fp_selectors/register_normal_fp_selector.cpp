@@ -2,9 +2,9 @@
 
 #include "client_lib/registry/register_single_fp_implementation_selector.h"
 
-namespace ftrace {
+namespace NEAT {
 
 static RegisterSingleFpImplementationSelector<NormalFpImplementation>
     fp_selector("default");
 
-}  // namespace ftrace
+}  // namespace NEAT

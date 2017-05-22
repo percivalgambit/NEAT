@@ -2,7 +2,7 @@
 
 #include <pin.H>
 
-namespace ftrace {
+namespace NEAT {
 
 BOOL IsFpInstruction(const INS &ins) {
   const OPCODE op = INS_Opcode(ins);
@@ -17,4 +17,4 @@ BOOL IsFpInstruction(const INS &ins) {
   }
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

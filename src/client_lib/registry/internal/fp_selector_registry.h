@@ -8,7 +8,7 @@
 
 #include "client_lib/interfaces/fp_selector.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace internal {
 
 /**
@@ -49,6 +49,6 @@ class FpSelectorRegistry {
 };
 
 }  // namespace internal
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_REGISTRY_INTERNAL_FP_SELECTOR_REGISTRY_H_

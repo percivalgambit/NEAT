@@ -8,7 +8,7 @@
 
 #include "pintool/utils.h"
 
-namespace ftrace {
+namespace NEAT {
 namespace {
 
 /**
@@ -182,4 +182,4 @@ VOID PrintFpBitsManipulated(ofstream *output) {
                             output);
 }
 
-}  // namespace ftrace
+}  // namespace NEAT

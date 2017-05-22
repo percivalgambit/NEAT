@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace ftrace {
+namespace NEAT {
 
 /**
  * Contains all the contextual information for a single floating-point
@@ -31,6 +31,6 @@ struct FpOperation {
   string function_name;
 };
 
-}  // namespace ftrace
+}  // namespace NEAT
 
 #endif  // CLIENT_LIB_UTILS_FP_OPERATION_H_
