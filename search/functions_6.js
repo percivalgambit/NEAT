@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['onfunctionend',['OnFunctionEnd',['../classftrace_1_1FpSelector.html#a24e3b13fde2203a32189162c06d56b4c',1,'ftrace::FpSelector::OnFunctionEnd()'],['../classftrace_1_1internal_1_1FunctionStackFpSelector.html#ae6494296e662fc8fa0a07ab9f29d3a5d',1,'ftrace::internal::FunctionStackFpSelector::OnFunctionEnd()']]],
-  ['onfunctionstart',['OnFunctionStart',['../classftrace_1_1FpSelector.html#aac29138bd3adb56e2da7baa182afbbeb',1,'ftrace::FpSelector::OnFunctionStart()'],['../classftrace_1_1internal_1_1FunctionStackFpSelector.html#a290c64afb1d5cba7bc3a369874e64d16',1,'ftrace::internal::FunctionStackFpSelector::OnFunctionStart()']]]
+  ['onfunctionend',['OnFunctionEnd',['../classNEAT_1_1FpSelector.html#a6f8a68bb6bf15c0456dc329aa3e37312',1,'NEAT::FpSelector::OnFunctionEnd()'],['../classNEAT_1_1internal_1_1FunctionStackFpSelector.html#aae90f5e5ea3d55f55f0fc66f70e3d597',1,'NEAT::internal::FunctionStackFpSelector::OnFunctionEnd()']]],
+  ['onfunctionstart',['OnFunctionStart',['../classNEAT_1_1FpSelector.html#a81422a380bb2ca40f590fff7efec98ce',1,'NEAT::FpSelector::OnFunctionStart()'],['../classNEAT_1_1internal_1_1FunctionStackFpSelector.html#a813833a1f6775c2cb165408c1213cb75',1,'NEAT::internal::FunctionStackFpSelector::OnFunctionStart()']]]
 ];

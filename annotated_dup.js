@@ -1,4 +1,4 @@
 var annotated_dup =
 [
-    [ "ftrace", "namespaceftrace.html", "namespaceftrace" ]
+    [ "NEAT", "namespaceNEAT.html", "namespaceNEAT" ]
 ];

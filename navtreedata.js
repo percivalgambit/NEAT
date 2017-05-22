@@ -1,6 +1,6 @@
 var NAVTREE =
 [
-  [ "ftrace", "index.html", [
+  [ "NEAT", "index.html", [
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
       [ "Namespace Members", "namespacemembers.html", [

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ftrace: ftrace</title>
+<title>NEAT: NEAT</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">ftrace
+   <div id="projectname">NEAT
    </div>
    <div id="projectbrief">An instrumentation tool that automatically replaces floating point operations with user-defined functions</div>
   </td>
@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">ftrace </div>  </div>
+<div class="title"><a class="el" href="namespaceNEAT.html">NEAT</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>A Pin tool to replace floating-point instructions with user-defined implementations in an IA-32 or x86-64 program.</p>
@@ -99,17 +99,16 @@ SUBSS
 MULSS
 DIVSS
 </pre><h2>Setup </h2>
-<p>Before running the tool, make sure that you have the Intel PIN library downloaded and that the shell variable PIN_ROOT is set to the path where the PIN library is located. To build the tool, simply run <code>make</code> from the main directory. To run the tool, run the following command: </p><pre class="fragment">pin -t obj-intel64/ftrace.so [-fp_selector_name &lt;fp_selector_name&gt;] -- &lt;your_program&gt;
+<p>Before running the tool, make sure that you have the Intel PIN library downloaded and that the shell variable PIN_ROOT is set to the path where the PIN library is located. To build the tool, simply run <code>make</code> from the main directory. To run the tool, run the following command: </p><pre class="fragment">pin -t obj-intel64/neat.so [-fp_selector_name &lt;fp_selector_name&gt;] -- &lt;your_program&gt;
 </pre><p>For the IA-32 architecture, use <code>obj-ia32</code> instead of <code>obj-intel64</code></p>
-<p>You can use the <code>-print_floating_point_operations</code> flag to print the operands and result of every floating-point arithmetic operation in the instrumented application.</p>
-<p>You can specify the name of an output file for the operands and result of each floating-point operation by using the <code>-o</code> flag. The default name of an output file is <code>ftrace.out</code>.</p>
+<p>There also exist other flags for printing various statistics about the floating-point operations in a program. You can use the <code>-print_fp_ops</code> flag to print the operands and result of every floating-point arithmetic operation in the instrumented application. The <code>-print_fp_bits_manipulated</code> flag can be used to print the total number of bits manipulated in every floating-point operation in the instrumented program. The <code>-print_function_num_fp_ops</code> flag can be used to print the number of floating-point operations executed per function in the instrumented application.</p>
 <h2>Floating-Point Instruction Replacement </h2>
 <p>Custom floating-point implementation selectors can be written to test the accuracy of different floating-point implementations. Each <code>FpSelector</code> selects an <code>FpImplementation</code> to replace each SSE floating-point arithmetic instruction. To use an <code>FpSelector</code> to instrument an application, the <code>FpSelector</code> must first be registered with one of the classes in <code>src/client_lib/registry</code>. Once an <code>FpSelector</code> has been registered to a name, that name may be used to specify the <code>FpSelector</code> to be used to instrument an application with the <code>-fp_selector_name</code> flag.</p>
 <p>See the <code>tests/</code> directory for examples of user-defined <code>FpSelector</code>s.</p>
 <h2>Testing </h2>
 <p>To run the tests for this pintool, run <code>make test</code> from the main directory.</p>
 <h2>Documentation </h2>
-<p>Full documentation can be found here: <a href="http://percivalgambit.github.io/ftrace/">http://percivalgambit.github.io/ftrace/</a></p>
+<p>Full documentation can be found here: <a href="http://percivalgambit.github.io/NEAT/">http://percivalgambit.github.io/NEAT/</a></p>
 <h2>Contact </h2>
 <p>If you have any questions or comments, or find a bug in the code, please contact <a href="#" onclick="location.href='mai'+'lto:'+'ehu'+'di'+'nl@'+'uc'+'hic'+'ag'+'o.e'+'du'; return false;">ehudinl@uchicago.edu</a>. </p>
 </div></div><!-- contents -->
@@ -117,7 +116,7 @@ DIVSS
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Mar 6 2017 01:31:14 for ftrace by
+    <li class="footer">Generated on Mon May 22 2017 14:40:31 for NEAT by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
